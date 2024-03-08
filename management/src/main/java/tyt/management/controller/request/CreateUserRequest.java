@@ -10,7 +10,6 @@ import java.util.Set;
  */
 @Value
 public class CreateUserRequest {
-    @Getter
     Role role;
     String name;
     String surname;

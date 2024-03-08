@@ -17,8 +17,6 @@ public class UserDTO {
     private String email;
     private String password;
     private boolean isActive;
-    @Setter
-    @Getter
     private Role role;
 //    public UserDTO() {
 //        this.name = name;

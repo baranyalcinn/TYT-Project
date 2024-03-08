@@ -28,7 +28,9 @@ public class UserEntity extends BaseEntity implements Serializable {
     private String password;
     @Column(nullable = false)
     private boolean isActive = true;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
 
@@ -39,6 +41,7 @@ public class UserEntity extends BaseEntity implements Serializable {
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setPassword(userDTO.getPassword());
         userEntity.setActive(true);
+        userEntity.setRole(userDTO.getRole());
         return userEntity;
     }
 
