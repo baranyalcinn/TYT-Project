@@ -19,7 +19,6 @@ public class RoleEntity extends BaseEntity implements Serializable {
     private Role roleName;
 
 
-
     public RoleEntity(Role roleName) {
         this.roleName = roleName;
     }

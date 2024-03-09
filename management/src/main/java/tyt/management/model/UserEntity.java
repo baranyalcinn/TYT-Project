@@ -2,13 +2,12 @@ package tyt.management.model;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import tyt.management.model.dto.UserDTO;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -17,11 +16,6 @@ import java.util.stream.Collectors;
 @Data
 public class UserEntity extends BaseEntity implements Serializable {
 
-    //todo: add @GeneratedValue
-    //todo: add Serialization
-    //todo: BaseEntity created, all entites ex
-    // tends BaseEntity
-    //todo: createdAt, updatedAt, createdBy, updatedBy, deletedAt, deletedBy will be add
     private String name;
     private String surname;
     private String email;
@@ -50,6 +44,7 @@ public class UserEntity extends BaseEntity implements Serializable {
         this.setSurname(userDTO.getSurname());
         this.setEmail(userDTO.getEmail());
         this.setPassword(userDTO.getPassword());
+        this.setRole(userDTO.getRole());
     }
 
     public void softDelete() {

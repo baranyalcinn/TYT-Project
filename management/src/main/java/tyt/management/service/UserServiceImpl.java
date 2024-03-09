@@ -1,93 +1,77 @@
 package tyt.management.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tyt.management.database.UserRepository;
 import tyt.management.model.UserEntity;
 import tyt.management.model.dto.UserDTO;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public String createUser(UserDTO userDTO) {
-        UserEntity entity = UserEntity.of(userDTO);
-        UserEntity savedEntity = userRepository.save(entity);
-
+        UserEntity savedEntity = userRepository.save(toEntity(userDTO));
         return savedEntity.getId().toString();
     }
+
     @Override
     public String updateUser(UserDTO userDTO) {
-        Optional<UserEntity> optionalEntity = userRepository.findById(userDTO.getId());
-
-        if (optionalEntity.isPresent()) {
-            UserEntity entity = optionalEntity.get();
-            entity.update(userDTO);
-            UserEntity updatedEntity = userRepository.save(entity);
-            return updatedEntity.getId().toString();
-        } else {
-            throw new RuntimeException("User not found with id: " + userDTO.getId());
-        }
+        UserEntity entity = userRepository.findById(userDTO.getId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userDTO.getId()));
+        entity.update(userDTO);
+        UserEntity updatedEntity = userRepository.save(entity);
+        return updatedEntity.getId().toString();
     }
 
     //todo: add findAllByIsActiveTrue
     @Override
     public UserDTO getUser(Long id) {
-        Optional<UserEntity> optionalEntity = userRepository.findById(id);
-
-        if (optionalEntity.isPresent()) {
-            UserEntity entity = optionalEntity.get();
-            return UserDTO.builder()
-                    .id(entity.getId())
-                    .name(entity.getName())
-                    .surname(entity.getSurname())
-                    .email(entity.getEmail())
-                    .password(entity.getPassword())
-                    .isActive(entity.isActive())
-                    .build();
-        } else {
-            throw new RuntimeException("User not found with id: " + id);
-        }
+        UserEntity entity = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return toDTO(entity);
     }
+
     @Override
     public void deleteUser(UserDTO userDTO) {
-        Optional<UserEntity> optionalEntity = userRepository.findById(userDTO.getId());
-
-        if (optionalEntity.isPresent()) {
-            UserEntity entity = optionalEntity.get();
-            entity.setActive(false); // Soft delete by setting isActive to false
-            userRepository.save(entity);
-        } else {
-            throw new RuntimeException("User not found with id: " + userDTO.getId());
-        }
+        UserEntity entity = userRepository.findById(userDTO.getId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userDTO.getId()));
+        entity.setActive(false);
+        userRepository.save(entity);
     }
 
-@Override
-public List<UserDTO> getAllUsers() {
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .filter(UserEntity::isActive)
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
-    List<UserDTO> allUsers = userRepository.findAll().stream()
-            .map(entity -> UserDTO.builder()
-                    .id(entity.getId())
-                    .name(entity.getName())
-                    .surname(entity.getSurname())
-                    .email(entity.getEmail())
-                    .password(entity.getPassword())
-                    .isActive(entity.isActive())
-                    .build())
-            .toList();
+    private UserEntity toEntity(UserDTO userDTO) {
+        return UserEntity.of(userDTO);
+    }
 
-    return allUsers.stream()
-            .filter(UserDTO::isActive)
-            .collect(Collectors.toList());
+    private UserDTO toDTO(UserEntity entity) {
+        return UserDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .surname(entity.getSurname())
+                .email(entity.getEmail())
+                .password(entity.getPassword())
+                .isActive(entity.isActive())
+                .role(entity.getRole())
+                .build();
+    }
+
 }
-
-    }
 
 

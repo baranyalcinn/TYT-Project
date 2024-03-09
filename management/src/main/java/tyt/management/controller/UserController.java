@@ -35,8 +35,7 @@ public class UserController {
 
     @PostMapping("/create")
     public String createUser(@Validated @RequestBody CreateUserRequest request) {
-        UserDTO userDTO = UserDTO.of(request);
-        return userService.createUser(userDTO);
+        return userService.createUser(UserDTO.of(request));
     }
 
     @PutMapping("/update")

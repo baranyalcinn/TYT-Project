@@ -1,7 +1,10 @@
 package tyt.management.model.dto;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import tyt.management.controller.request.CreateUserRequest;
 import tyt.management.controller.request.UpdateUserRequest;
 import tyt.management.model.Role;
@@ -18,21 +21,6 @@ public class UserDTO {
     private String password;
     private boolean isActive;
     private Role role;
-//    public UserDTO() {
-//        this.name = name;
-//        this.surname = surname;
-//        this.email = email;
-//        this.password = password;
-//        this.isActive = true;
-//    }
-//    public UserDTO(Long id, String name, String surname, String email, String password, boolean isActive) {
-//        this.id = id;
-//        this.name = name;
-//        this.surname = surname;
-//        this.email = email;
-//        this.password = password;
-//        this.isActive = isActive;
-//    }
 
     public static UserDTO of(CreateUserRequest createUserRequest) {
         return UserDTO.builder()
@@ -43,7 +31,8 @@ public class UserDTO {
                 .role(createUserRequest.getRole())
                 .build();
     }
-    public  static UserDTO of(UpdateUserRequest updateUserRequest){
+
+    public static UserDTO of(UpdateUserRequest updateUserRequest) {
         return UserDTO.builder()
                 .name(updateUserRequest.getName())
                 .surname(updateUserRequest.getSurname())
@@ -53,9 +42,9 @@ public class UserDTO {
                 .build();
     }
 
-        public boolean isActive() {
-            return isActive;
-        }
+    public boolean isActive() {
+        return isActive;
+    }
 
 }
 
