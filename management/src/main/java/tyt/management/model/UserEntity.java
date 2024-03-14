@@ -1,7 +1,9 @@
 package tyt.management.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,9 +25,7 @@ public class UserEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private boolean isActive = true;
 
-    @Enumerated(EnumType.STRING)
     private Role role;
-
 
 
     public static UserEntity of(UserDTO userDTO) {

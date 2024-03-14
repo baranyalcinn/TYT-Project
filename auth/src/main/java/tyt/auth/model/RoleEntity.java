@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
-public class Role {
+public class RoleEntity {
 
     @Id
     private String roleId;
     private String roleName;
 
-    public Role(String roleId, String roleName) {
+    public RoleEntity(String roleId, String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
     }

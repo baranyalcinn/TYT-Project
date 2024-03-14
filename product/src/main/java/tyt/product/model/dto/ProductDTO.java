@@ -28,7 +28,7 @@ public class ProductDTO {
                 .description(createProductRequest.getDescription())
                 .price(createProductRequest.getPrice())
                 .stock(createProductRequest.getStock())
-                .categoryId(createProductRequest.getCategoryId())
+//                .categoryId(createProductRequest.getCategoryId())
                 .build();
     }
 

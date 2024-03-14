@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
         productEntity.setPrice(productDTO.getPrice());
         productEntity.setStock(productDTO.getStock());
         productEntity.setDescription(productDTO.getDescription());
-        productEntity.setCategoryId(productDTO.getCategoryId());
+//        productEntity.setCategoryId(productDTO.getCategoryId());
         productRepository.save(productEntity);
         return productEntity.getId().toString();
     }
@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
                 .isActive(productEntity.isActive())
                 .stock(productEntity.getStock())
                 .description(productEntity.getDescription())
-                .categoryId(productEntity.getCategoryId())
+//                .categoryId(productEntity.getCategoryId())
                 .build();
     }
 

@@ -3,12 +3,8 @@ package tyt.product.controller.request;
 import lombok.Value;
 
 @Value
-public class CreateProductRequest {
+public class UpdateCategoryRequest {
+    long id;
     String name;
-    String description;
-    double price;
-    int stock;
     boolean isActive;
-
-
 }

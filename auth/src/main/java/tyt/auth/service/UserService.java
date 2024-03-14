@@ -1,7 +1,7 @@
 package tyt.auth.service;
 
 import org.springframework.stereotype.Service;
-import tyt.auth.model.User;
+import tyt.auth.model.UserEntity;
 import tyt.auth.repository.UserRepository;
 
 @Service
@@ -12,7 +12,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User findUserById(int userid) {
+    public UserEntity findUserById(int userid) {
         return userRepository.findById(userid).orElse(null);
     }
 

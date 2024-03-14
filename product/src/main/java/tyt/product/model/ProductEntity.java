@@ -23,7 +23,9 @@ public class ProductEntity extends BaseEntity implements Serializable {
     private int stock;
     @Column(nullable = false)
     private boolean isActive = true;
-    private long categoryId;
+//    @ManyToOne
+//    @JoinColumn(name="categoryId", nullable=false)
+//    private CategoryEntity category;
 
 
     public static ProductEntity of(ProductDTO createProductRequest) {
@@ -32,7 +34,7 @@ public class ProductEntity extends BaseEntity implements Serializable {
         productEntity.setDescription(createProductRequest.getDescription());
         productEntity.setPrice(createProductRequest.getPrice());
         productEntity.setStock(createProductRequest.getStock());
-        productEntity.setCategoryId(createProductRequest.getCategoryId());
+//        productEntity.setCategory(createProductRequest.getCategory());
         return productEntity;
     }
 

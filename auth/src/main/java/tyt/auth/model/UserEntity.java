@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class User extends BaseEntity{
+public class UserEntity extends BaseEntity{
 
     //todo: add @GeneratedValue
     //todo: add Serialization

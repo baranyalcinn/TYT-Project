@@ -43,7 +43,7 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     public void deleteProduct(@PathVariable long id) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setId((long) id);
+        productDTO.setId(id);
         productDTO.setActive(false); // Set isActive to false for soft delete
         productService.deleteProduct(productDTO);
     }

@@ -18,6 +18,10 @@ public class RoleEntity extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role roleName;
 
+    @ManyToOne
+    private UserEntity entity;
+
+
 
     public RoleEntity(Role roleName) {
         this.roleName = roleName;
