@@ -6,7 +6,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tyt.product.model.dto.ProductDTO;
 
 import java.io.Serializable;
 
@@ -23,20 +22,6 @@ public class ProductEntity extends BaseEntity implements Serializable {
     private int stock;
     @Column(nullable = false)
     private boolean isActive = true;
-//    @ManyToOne
-//    @JoinColumn(name="categoryId", nullable=false)
-//    private CategoryEntity category;
-
-
-    public static ProductEntity of(ProductDTO createProductRequest) {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setName(createProductRequest.getName());
-        productEntity.setDescription(createProductRequest.getDescription());
-        productEntity.setPrice(createProductRequest.getPrice());
-        productEntity.setStock(createProductRequest.getStock());
-//        productEntity.setCategory(createProductRequest.getCategory());
-        return productEntity;
-    }
 
 
 }

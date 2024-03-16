@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import tyt.product.database.ProductRepository;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
+import tyt.product.model.mapper.ProductMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,17 @@ public class ProductServiceImpl implements ProductService {
 
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper = ProductMapper.INSTANCE;
+
+
+    private ProductDTO toDTO(ProductEntity productEntity) {
+        return productMapper.toDTO(productEntity);
+    }
+
+    private ProductEntity toEntity(ProductDTO productDTO) {
+        return productMapper.toEntity(productDTO);
+    }
+
 
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -29,13 +41,13 @@ public class ProductServiceImpl implements ProductService {
     public String updateProduct(ProductDTO productDTO) {
         ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow();
         productEntity.setName(productDTO.getName());
+        productEntity.setDescription(productDTO.getDescription());
         productEntity.setPrice(productDTO.getPrice());
         productEntity.setStock(productDTO.getStock());
-        productEntity.setDescription(productDTO.getDescription());
-//        productEntity.setCategoryId(productDTO.getCategoryId());
         productRepository.save(productEntity);
-        return productEntity.getId().toString();
+        return "Product updated successfully" + productEntity.getId();
     }
+
 
     @Override
     public void deleteProduct(ProductDTO productDTO) {
@@ -46,31 +58,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO getProduct(long id) {
-        return toDTO(productRepository.findById(id).orElseThrow());
+        return productMapper.toDTO(productRepository.findById(id).orElseThrow());
     }
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll().stream()
-                .filter(ProductEntity::isActive)
-                .map(this::toDTO)
+        List<ProductEntity> productEntities = productRepository.findAll();
+        return productEntities.stream()
+                .map(ProductMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
-    }
-
-    private ProductEntity toEntity(ProductDTO productDTO) {
-        return ProductEntity.of(productDTO);
-    }
-
-    private ProductDTO toDTO(ProductEntity productEntity) {
-        return ProductDTO.builder()
-                .id(productEntity.getId())
-                .name(productEntity.getName())
-                .price(productEntity.getPrice())
-                .isActive(productEntity.isActive())
-                .stock(productEntity.getStock())
-                .description(productEntity.getDescription())
-//                .categoryId(productEntity.getCategoryId())
-                .build();
     }
 
 }
