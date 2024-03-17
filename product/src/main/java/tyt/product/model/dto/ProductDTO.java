@@ -19,5 +19,8 @@ public class ProductDTO {
     @Builder.Default
     private boolean isActive = true;
 
+    private Long categoryId;
+    private String categoryName;
+
 
 }

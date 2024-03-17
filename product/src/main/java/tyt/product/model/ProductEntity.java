@@ -1,8 +1,6 @@
 package tyt.product.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,5 +21,8 @@ public class ProductEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private boolean isActive = true;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
 
 }

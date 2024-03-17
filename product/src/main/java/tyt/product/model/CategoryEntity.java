@@ -1,14 +1,13 @@
 package tyt.product.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import tyt.product.model.dto.CategoryDTO;
 
 import java.io.Serializable;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -21,9 +20,7 @@ public class CategoryEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private boolean isActive = true;
 
-    public static CategoryEntity of(CategoryDTO createCategoryRequest) {
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setName(createCategoryRequest.getName());
-        return categoryEntity;
-    }
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<ProductEntity> products;
+
 }
