@@ -2,7 +2,7 @@ package tyt.management.controller.request;
 
 
 import lombok.Value;
-import tyt.management.model.Role;
+import tyt.management.model.role.Role;
 
 import java.util.Set;
 
@@ -13,6 +13,6 @@ public class UpdateUserRequest {
      String surname;
      String email;
      String password;
-     Role role;
+     Set<Role> roles;
 }
 

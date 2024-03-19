@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.management.controller.request.CreateUserRequest;
-import tyt.management.controller.request.UpdateUserRequest;
-import tyt.management.model.Role;
+import tyt.management.model.role.Role;
+
+import java.util.Set;
 
 @Builder
 @Data
@@ -19,28 +19,10 @@ public class UserDTO {
     private String surname;
     private String email;
     private String password;
-    private boolean isActive;
-    private Role role;
+    @Builder.Default
+    private boolean isActive = true;
+    private Set<Role> roles;
 
-    public static UserDTO of(CreateUserRequest createUserRequest) {
-        return UserDTO.builder()
-                .name(createUserRequest.getName())
-                .surname(createUserRequest.getSurname())
-                .email(createUserRequest.getEmail())
-                .password(createUserRequest.getPassword())
-                .role(createUserRequest.getRole())
-                .build();
-    }
-
-    public static UserDTO of(UpdateUserRequest updateUserRequest) {
-        return UserDTO.builder()
-                .name(updateUserRequest.getName())
-                .surname(updateUserRequest.getSurname())
-                .email(updateUserRequest.getEmail())
-                .password(updateUserRequest.getPassword())
-                .role(updateUserRequest.getRole())
-                .build();
-    }
 
     public boolean isActive() {
         return isActive;

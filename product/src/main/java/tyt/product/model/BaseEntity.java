@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 @Data
 @MappedSuperclass
-public abstract class BaseEntity  implements Serializable {
+public abstract class BaseEntity implements Serializable {
 
     /**
      * This is the primary key for the entity.

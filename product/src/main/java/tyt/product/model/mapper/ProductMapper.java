@@ -43,7 +43,6 @@ public interface ProductMapper {
     @Mapping(target = "isActive", constant = "true")
     @Mapping(source = "productEntity.category.id", target = "categoryId")
     @Mapping(source = "productEntity.category.name", target = "categoryName")
-
     ProductDTO toDTO(ProductEntity productEntity);
 
     /**

@@ -1,15 +1,15 @@
 package tyt.management.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tyt.management.model.dto.UserDTO;
+import tyt.management.model.role.Role;
 
 import java.io.Serializable;
+import java.util.Set;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -25,30 +25,10 @@ public class UserEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private boolean isActive = true;
 
-    private Role role;
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
-
-    public static UserEntity of(UserDTO userDTO) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName(userDTO.getName());
-        userEntity.setSurname(userDTO.getSurname());
-        userEntity.setEmail(userDTO.getEmail());
-        userEntity.setPassword(userDTO.getPassword());
-        userEntity.setActive(true);
-        userEntity.setRole(userDTO.getRole());
-        return userEntity;
-    }
-
-    public void update(UserDTO userDTO) {
-        this.setName(userDTO.getName());
-        this.setSurname(userDTO.getSurname());
-        this.setEmail(userDTO.getEmail());
-        this.setPassword(userDTO.getPassword());
-        this.setRole(userDTO.getRole());
-    }
-
-    public void softDelete() {
-        this.isActive = false;
-    }
 
 }

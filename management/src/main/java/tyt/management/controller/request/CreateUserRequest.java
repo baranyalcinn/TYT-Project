@@ -1,8 +1,7 @@
 package tyt.management.controller.request;
 
-import lombok.Getter;
 import lombok.Value;
-import tyt.management.model.Role;
+import tyt.management.model.role.Role;
 
 import java.util.Set;
 
@@ -10,7 +9,7 @@ import java.util.Set;
  */
 @Value
 public class CreateUserRequest {
-    Role role;
+    Set<Role> roles;
     String name;
     String surname;
     String email;

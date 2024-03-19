@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tyt.product.model.dto.CategoryDTO;
 
 import java.io.Serializable;
 import java.util.List;
