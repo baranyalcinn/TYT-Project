@@ -1,5 +1,6 @@
 package tyt.product.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import tyt.product.database.CategoryRepository;
 import tyt.product.model.CategoryEntity;
@@ -12,6 +13,8 @@ import java.util.List;
  * Service class for Category related operations.
  */
 @Service
+@Log4j2
+
 public class CategoryServiceImpl  implements CategoryService{
 
     private final CategoryRepository categoryRepository;

@@ -1,6 +1,7 @@
 package tyt.product.database;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import tyt.product.model.CategoryEntity;
 
 /**
@@ -14,5 +15,6 @@ import tyt.product.model.CategoryEntity;
  * @version 1.0
  * @since 2023.3.5
  */
+@Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 }
