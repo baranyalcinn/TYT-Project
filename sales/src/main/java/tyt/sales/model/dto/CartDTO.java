@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tyt.sales.model.CartEntity;
+import tyt.sales.model.ProductEntity;
+
+import java.util.List;
 
 @Builder
 @Data
@@ -13,22 +16,19 @@ import tyt.sales.model.CartEntity;
 public class CartDTO {
 
     private Long id;
-    private int quantity;
-    private ProductDTO product;
+    private List<CartItemDTO> cartItems;
+
+
 
     public static CartDTO fromEntity(CartEntity cartEntity) {
         return CartDTO.builder()
                 .id(cartEntity.getId())
-                .quantity(cartEntity.getQuantity())
-                .product(ProductDTO.fromEntity(cartEntity.getProduct()))
+                .cartItems(CartItemDTO.fromEntities(cartEntity.getCartItems()))
                 .build();
     }
 
-    public static CartEntity toEntity(CartDTO cartDTO) {
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setId(cartDTO.getId());
-        cartEntity.setQuantity(cartDTO.getQuantity());
-        cartEntity.setProduct(ProductDTO.toEntity(cartDTO.getProduct()));
-        return cartEntity;
+    public static List<CartDTO> fromEntities(List<CartEntity> cartEntities) {
+        return cartEntities.stream().map(CartDTO::fromEntity).toList();
     }
+
 }

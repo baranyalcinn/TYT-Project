@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tyt.sales.model.CartEntity;
 import tyt.sales.model.OrderEntity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Builder
 @Data
@@ -15,23 +16,23 @@ import java.time.LocalDateTime;
 public class OrderDto {
 
     private Long id;
-    private LocalDateTime orderDate;
-    private double totalPrice;
-    private CartDTO cartItems;
+    private double total;
+    private Date date;
 
     public static OrderDto fromEntity(OrderEntity orderEntity) {
         return OrderDto.builder()
                 .id(orderEntity.getId())
-                .orderDate(orderEntity.getOrderDate())
-                .totalPrice(orderEntity.getTotalPrice())
+                .total(orderEntity.getTotal())
+                .date(orderEntity.getDate())
                 .build();
     }
 
-    public static OrderEntity toEntity(OrderDto orderDto) {
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setId(orderDto.getId());
-        orderEntity.setOrderDate(orderDto.getOrderDate());
-        orderEntity.setTotalPrice(orderDto.getTotalPrice());
-        return orderEntity;
+    public static OrderEntity toEntity(OrderDto orderDto, OrderEntity entity) {
+        entity.setId(orderDto.getId());
+        entity.setTotal(orderDto.getTotal());
+        entity.setDate(orderDto.getDate());
+        return entity;
     }
+
+
 }

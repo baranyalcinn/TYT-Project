@@ -1,35 +1,23 @@
 package tyt.sales.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Data
-
 @Entity
 public class CartEntity extends BaseEntity implements Serializable {
 
-    private int quantity;
-    private double price;
-
-    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private ProductEntity product;
+    @OneToMany(mappedBy = "cart")
+    private List<CartItemEntity> cartItems;
 
 
-    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnore
-    private OrderEntity order;
 }

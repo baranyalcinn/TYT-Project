@@ -1,26 +1,29 @@
 package tyt.sales.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
+import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 @Table(name = "orders")
 @Entity
 public class OrderEntity extends BaseEntity implements Serializable {
 
-    private LocalDateTime orderDate;
-    private double totalPrice;
+    @ManyToOne
+    private CartEntity cart;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    private List<CartEntity> cartItems;
+    private double total;
+    private Date date;
+
 
 }

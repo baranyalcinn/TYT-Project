@@ -52,7 +52,7 @@ public class CategoryController {
      * Endpoint to delete a category.
      * @param id The id of the category to be deleted.
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteCategory(@PathVariable long id){
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(id);
@@ -74,7 +74,7 @@ public class CategoryController {
      * Endpoint to get the details of all active categories.
      * @return A list of all active categories.
      */
-    @GetMapping("/getAll")
+    @GetMapping("/All")
     public List<CategoryDTO> getAllCategories(){
         return categoryService.getAllCategories().stream()
                 .filter(CategoryDTO::isActive)
