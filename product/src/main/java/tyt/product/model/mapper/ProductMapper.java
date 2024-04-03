@@ -1,7 +1,6 @@
 package tyt.product.model.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
@@ -60,4 +59,7 @@ public interface ProductMapper {
      * @return the mapped ProductDTO.
      */
     ProductDTO updateRequestToDto(UpdateProductRequest updateProductRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateProductFromDTO(ProductDTO dto, @MappingTarget ProductEntity entity);
 }

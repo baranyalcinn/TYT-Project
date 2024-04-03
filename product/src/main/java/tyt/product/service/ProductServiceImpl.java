@@ -7,7 +7,6 @@ import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -40,12 +39,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public String updateProduct(ProductDTO productDTO) {
         ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow();
-        productEntity.setName(productDTO.getName());
-        productEntity.setDescription(productDTO.getDescription());
-        productEntity.setPrice(productDTO.getPrice());
-        productEntity.setStock(productDTO.getStock());
-        productRepository.save(productEntity);
-        return "Product updated successfully" + productEntity.getId();
+        productMapper.updateProductFromDTO(productDTO,productEntity);
+        return "Product updated successfully" + productRepository.save(productEntity).getId();
     }
 
 
@@ -66,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductEntity> productEntities = productRepository.findAll();
         return productEntities.stream()
                 .map(ProductMapper.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

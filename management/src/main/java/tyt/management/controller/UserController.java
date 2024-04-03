@@ -18,12 +18,12 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public UserDTO getUser(@PathVariable Long id) {
         return userService.getUser(id);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/All")
     public List<UserDTO> getAllActiveUsers() {
         return userService.getAllUsers();
     }
@@ -39,7 +39,7 @@ public class UserController {
         return userService.updateUser(UserMapper.INSTANCE.updateRequestToDto(request));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(id);

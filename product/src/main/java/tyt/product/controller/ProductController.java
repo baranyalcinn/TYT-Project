@@ -7,7 +7,6 @@ import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +34,7 @@ public class ProductController {
      * @param id The id of the product to retrieve.
      * @return The product with the given id.
      */
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ProductDTO getProduct(@PathVariable int id) {
         return productService.getProduct(id);
     }
@@ -45,7 +44,7 @@ public class ProductController {
      *
      * @return A list of all active products.
      */
-    @GetMapping("/getAll")
+    @GetMapping("/All")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
@@ -70,7 +69,8 @@ public class ProductController {
      */
     @PutMapping("/update")
     public String updateProduct(@RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
+        return null;
+        //return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
     }
 
     /**
@@ -78,7 +78,7 @@ public class ProductController {
      *
      * @param id The id of the product to be deleted.
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable long id) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setId(id);
