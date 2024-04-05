@@ -24,16 +24,4 @@ public class ProductEntity extends BaseEntity implements Serializable {
     private Long categoryId;
 
 
-    public ProductEntity(String name, String description, double price, int stock, boolean isActive, Long categoryId) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.stock = stock;
-        this.isActive = isActive;
-        this.categoryId = categoryId;
-    }
-
-    public void reduceStock(int quantity) {
-        this.stock -= quantity;
-    }
 }

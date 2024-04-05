@@ -18,26 +18,24 @@ public class CartItemDTO {
     private Long cartId;
     private Long productId;
     private int quantity;
+    private String productName; // new field
+    private double productPrice; // new field
 
 
-    public static CartItemDTO fromEntity(Long id, Long cartId, Long productId, int quantity) {
+    public static CartItemDTO fromEntity(CartItemEntity cartItemEntity) {
         return CartItemDTO.builder()
-                .id(id)
-                .cartId(cartId)
-                .productId(productId)
-                .quantity(quantity)
+                .id(cartItemEntity.getId())
+                .cartId(cartItemEntity.getCart().getId())
+                .productId(cartItemEntity.getProduct().getId())
+                .quantity(cartItemEntity.getQuantity())
+                .productName(cartItemEntity.getProductName())
+                .productPrice(cartItemEntity.getProductPrice())
                 .build();
     }
 
-    public static CartItemEntity toEntity(CartItemDTO cartItemDTO, CartItemEntity entity) {
-        entity.setId(cartItemDTO.getId());
-        entity.setCartId(cartItemDTO.getCartId());
-        entity.setProductId(cartItemDTO.getProductId());
-        entity.setQuantity(cartItemDTO.getQuantity());
-        return entity;
-    }
 
     public static List<CartItemDTO> fromEntities(List<CartItemEntity> cartItems) {
-        return cartItems.stream().map(cartItem -> CartItemDTO.fromEntity(cartItem.getId(), cartItem.getCartId(), cartItem.getProductId(), cartItem.getQuantity())).toList();
+        return cartItems.stream().map(CartItemDTO::fromEntity).toList();
     }
+
 }

@@ -1,6 +1,5 @@
 package tyt.sales.service;
 
-import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.ProductDTO;
 
 public interface ProductService {
@@ -11,5 +10,5 @@ public interface ProductService {
 
  ProductDTO save (ProductDTO productDTO);
 
-    ProductEntity findById(Long productId);
+    ProductDTO findById(Long productId);
 }

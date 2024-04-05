@@ -1,7 +1,9 @@
 package tyt.sales.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,26 +17,22 @@ import java.io.Serializable;
 public class CartItemEntity extends BaseEntity implements Serializable {
 
     @ManyToOne
+    @JsonBackReference
     private CartEntity cart;
     @ManyToOne
     private ProductEntity product;
     private int quantity;
 
-    public void setCartId(Long id) {
-        this.cart = new CartEntity();
-        this.cart.setId(id);
-    }
+    @Transient
+    private double totalPrice;
 
-    public void setProductId(Long id) {
-        this.product = new ProductEntity();
-        this.product.setId(id);
-    }
+    @Transient
+    private String productName;
 
-    public Long getCartId() {
-        return this.cart.getId();
-    }
+    @Transient
+    private double productPrice;
 
-    public Long getProductId() {
-        return this.product.getId();
+    public double getTotalPrice() {
+        return product.getPrice() * quantity;
     }
 }

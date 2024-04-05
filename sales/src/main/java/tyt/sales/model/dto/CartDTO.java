@@ -5,30 +5,34 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tyt.sales.model.CartEntity;
-import tyt.sales.model.ProductEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartDTO {
-
     private Long id;
     private List<CartItemDTO> cartItems;
-
-
+    private double totalPrice; // new field
 
     public static CartDTO fromEntity(CartEntity cartEntity) {
-        return CartDTO.builder()
+        List<CartItemDTO> cartItemDTOs = cartEntity.getCartItems().stream()
+                .map(CartItemDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        CartDTO cartDTO = CartDTO.builder()
                 .id(cartEntity.getId())
-                .cartItems(CartItemDTO.fromEntities(cartEntity.getCartItems()))
+                .cartItems(cartItemDTOs)
                 .build();
-    }
+        // Calculate total price
+        double totalPrice = cartDTO.getCartItems().stream()
+                .mapToDouble(cartItem -> cartItem.getProductPrice() * cartItem.getQuantity())
+                .sum();
+        cartDTO.setTotalPrice(totalPrice);
 
-    public static List<CartDTO> fromEntities(List<CartEntity> cartEntities) {
-        return cartEntities.stream().map(CartDTO::fromEntity).toList();
+        return cartDTO;
     }
-
 }

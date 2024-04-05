@@ -32,16 +32,15 @@ public class ProductDTO {
                 .categoryId(productEntity.getCategoryId())
                 .build();
     }
-public static ProductEntity toEntity(ProductDTO productDTO) {
-    ProductEntity entity = new ProductEntity();
-    entity.setId(productDTO.getId());
-    entity.setName(productDTO.getName());
-    entity.setDescription(productDTO.getDescription());
-    entity.setPrice(productDTO.getPrice());
-    entity.setStock(productDTO.getStock());
-    entity.setActive(productDTO.isActive());
-    return entity;
-}
+
+    public static ProductEntity toEntity(ProductDTO productDTO) {
+        ProductEntity entity = new ProductEntity();
+        entity.setId(productDTO.getId());
+        entity.setName(productDTO.getName());
+        entity.setPrice(productDTO.getPrice());
+        entity.setStock(productDTO.getStock());
+        return entity;
+    }
 
 
 }

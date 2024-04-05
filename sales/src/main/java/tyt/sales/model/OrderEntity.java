@@ -2,14 +2,12 @@ package tyt.sales.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -23,7 +21,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
     private CartEntity cart;
 
     private double total;
-    private Date date;
+    private Date orderDate;
 
 
 }
