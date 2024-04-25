@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import tyt.management.model.role.Role;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table(name = "users")
 @NoArgsConstructor
 @Data
+@SQLRestriction("is_active = true")
 public class UserEntity extends BaseEntity implements Serializable {
 
     private String name;

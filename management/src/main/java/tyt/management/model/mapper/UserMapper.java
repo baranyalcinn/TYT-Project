@@ -13,10 +13,8 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "active", defaultValue = "true")
     UserEntity toEntity(UserDTO userDTO);
 
-    @Mapping(target = "isActive", constant = "true")
     UserDTO toDTO(UserEntity userEntity);
 
     UserDTO createRequestToDto(CreateUserRequest createUserRequest);

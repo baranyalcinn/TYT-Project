@@ -9,7 +9,6 @@ import tyt.management.model.role.Role;
 
 import java.util.Set;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,8 +18,7 @@ public class UserDTO {
     private String surname;
     private String email;
     private String password;
-    @Builder.Default
-    private boolean isActive = true;
+    private boolean isActive;
     private Set<Role> roles;
 
 
