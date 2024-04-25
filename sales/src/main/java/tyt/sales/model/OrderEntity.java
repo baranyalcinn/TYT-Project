@@ -1,14 +1,13 @@
 package tyt.sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -17,8 +16,13 @@ import java.util.Date;
 @Entity
 public class OrderEntity extends BaseEntity implements Serializable {
 
-    @ManyToOne
-    private CartEntity cart;
+    @ManyToMany
+    @JoinTable(
+            name = "order_product",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<ProductEntity> products;
 
     private double total;
     private Date orderDate;

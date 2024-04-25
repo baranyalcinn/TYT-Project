@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import tyt.sales.model.OrderEntity;
 
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @Data
@@ -15,6 +16,7 @@ import java.util.Date;
 public class OrderDto {
 
     private Long id;
+    private List<ProductDTO> products;
     private double total;
     private Date orderDate;
 
@@ -23,6 +25,8 @@ public class OrderDto {
                 .id(orderEntity.getId())
                 .total(orderEntity.getTotal())
                 .orderDate(orderEntity.getOrderDate())
+                .products(orderEntity.getProducts() != null ? ProductDTO.fromEntities(orderEntity.getProducts()) : null
+                )
                 .build();
     }
 
