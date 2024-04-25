@@ -1,7 +1,7 @@
 package tyt.sales.controller;
 
 import org.springframework.web.bind.annotation.*;
-import tyt.sales.model.dto.OrderDto;
+import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.service.OrderService;
 
 import java.util.List;
@@ -17,12 +17,12 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    public List<OrderDto> getAllOrders() {
+    public List<OrderDTO> getAllOrders() {
         return orderService.getAllOrders();
     }
 
     @GetMapping("/{id}")
-    public OrderDto getOrderById(@PathVariable Long id) {
+    public OrderDTO getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
 }

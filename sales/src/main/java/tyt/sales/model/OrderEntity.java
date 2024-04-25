@@ -1,6 +1,8 @@
 package tyt.sales.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,13 +18,9 @@ import java.util.List;
 @Entity
 public class OrderEntity extends BaseEntity implements Serializable {
 
-    @ManyToMany
-    @JoinTable(
-            name = "order_product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<ProductEntity> products;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderProductEntity> orderProducts;
 
     private double total;
     private Date orderDate;

@@ -3,7 +3,7 @@ package tyt.sales.service;
 import org.springframework.stereotype.Service;
 import tyt.sales.database.OrderRepository;
 import tyt.sales.model.OrderEntity;
-import tyt.sales.model.dto.OrderDto;
+import tyt.sales.model.dto.OrderDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,17 +18,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrders() {
+    public List<OrderDTO> getAllOrders() {
         List<OrderEntity> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderDto::fromEntity)
+                .map(OrderDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public OrderDto getOrderById(Long id) {
+    public OrderDTO getOrderById(Long id) {
         return orderRepository.findById(id)
-                .map(OrderDto::fromEntity)
+                .map(OrderDTO::fromEntity)
                 .orElse(null);
     }
 }

@@ -1,13 +1,13 @@
 package tyt.sales.service;
 
-import tyt.sales.model.dto.OrderDto;
+import tyt.sales.model.dto.OrderDTO;
 
 import java.util.List;
 
 public interface OrderService {
 
-    List<OrderDto> getAllOrders();
+    List<OrderDTO> getAllOrders();
 
     //get order by id
-    OrderDto getOrderById(Long id);
+    OrderDTO getOrderById(Long id);
 }

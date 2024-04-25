@@ -3,10 +3,12 @@ package tyt.sales.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tyt.sales.database.CartRepository;
+import tyt.sales.database.OrderProductRepository;
 import tyt.sales.database.OrderRepository;
 import tyt.sales.database.ProductRepository;
 import tyt.sales.model.CartEntity;
 import tyt.sales.model.OrderEntity;
+import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.ProductDTO;
@@ -22,12 +24,14 @@ public class CartServiceImpl implements CartService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final OrderProductRepository orderProductRepository;
 
     public CartServiceImpl(OrderRepository orderRepository,
-                           ProductRepository productRepository, CartRepository cartRepository) {
+                           ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
+        this.orderProductRepository = orderProductRepository;
     }
 
 
@@ -102,15 +106,20 @@ public class CartServiceImpl implements CartService {
         order.setTotal(totalPrice);
         order.setOrderDate(new Date());
 
-        List<ProductEntity> products = cart.stream()
+        List<OrderProductEntity> orderProducts = cart.stream()
                 .map(cartItem -> {
                     ProductEntity product = cartItem.getProduct();
                     product.setStock(product.getStock() - cartItem.getQuantity()); // Update stock
                     productRepository.save(product); // Save updated product
-                    return product;
+
+                    OrderProductEntity orderProduct = new OrderProductEntity();
+                    orderProduct.setOrder(order);
+                    orderProduct.setProduct(product);
+                    orderProduct.setQuantity(cartItem.getQuantity());
+                    return orderProductRepository.save(orderProduct); // Save OrderProductEntity to the database
                 })
                 .collect(Collectors.toList());
-        order.setProducts(products);
+        order.setOrderProducts(orderProducts);
 
         orderRepository.save(order);
 

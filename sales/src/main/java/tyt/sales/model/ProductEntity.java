@@ -1,12 +1,14 @@
 package tyt.sales.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * ProductEntity class represents the product entity in the database.
@@ -38,4 +40,8 @@ public class ProductEntity extends BaseEntity implements Serializable {
 
     // Category ID to which the product belongs
     private Long categoryId;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderProductEntity> orderProducts;
+
 }
