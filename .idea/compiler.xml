@@ -12,12 +12,10 @@
         <module name="auth" />
         <module name="management" />
         <module name="sales" />
+        <module name="gateway" />
         <module name="record" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="gateway" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

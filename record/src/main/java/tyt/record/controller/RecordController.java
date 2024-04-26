@@ -1,10 +1,7 @@
 package tyt.record.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tyt.record.service.RecordService;
 
 @RestController
@@ -22,4 +19,5 @@ public class RecordController {
     public String createRecordForOrder(@PathVariable Long id) {
         return recordService.createRecordForOrder(id);
     }
+
 }
