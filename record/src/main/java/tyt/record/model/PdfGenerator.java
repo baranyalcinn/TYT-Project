@@ -2,23 +2,22 @@ package tyt.record.model;
 
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tyt.record.database.OrderRepository;
-import tyt.record.model.dto.OrderProductDTO;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
+@Log4j2
 @Component
 public class PdfGenerator {
 
     private final OrderRepository orderRepository;
-    private static final Logger logger = LogManager.getLogger(PdfGenerator.class);
     private static final String FONT_PATH = "fonts/arial.ttf";
 
     public void generatePdf(String filePath, OrderEntity order) throws IOException {
@@ -30,7 +29,7 @@ public class PdfGenerator {
 
             writer.close();
         } catch (FileNotFoundException e) {
-            logger.error("File not found", e);
+            log.error("File not found", e);
         }
     }
 

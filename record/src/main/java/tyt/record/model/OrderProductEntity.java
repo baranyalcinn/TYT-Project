@@ -13,7 +13,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@Table(name = "order_products")
+@Table(name = "order_product")
 @Entity
 public class OrderProductEntity extends BaseEntity implements Serializable {
 
