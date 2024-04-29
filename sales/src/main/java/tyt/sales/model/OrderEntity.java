@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -24,6 +25,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
 
     private double total;
     private Date orderDate;
+    private UUID orderNumber = UUID.randomUUID();
 
 
 }

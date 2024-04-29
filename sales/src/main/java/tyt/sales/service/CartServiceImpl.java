@@ -1,6 +1,7 @@
 package tyt.sales.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import tyt.sales.database.CartRepository;
 import tyt.sales.database.OrderProductRepository;
@@ -12,14 +13,21 @@ import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.ProductDTO;
+import tyt.sales.rules.InsufficientStockException;
+import tyt.sales.rules.ProductNotFoundException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+
 @Service
+@Log4j2
 public class CartServiceImpl implements CartService {
+
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -36,30 +44,29 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
+    @Transactional
     public String addToCart(ProductDTO product, Integer quantity) {
+        ProductEntity productEntity = productRepository.findById(product.getId())
+                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
 
-        ProductEntity productEntity = productRepository.findById(product.getId()).orElse(null);
-        if (productEntity == null) {
-            return "Product not found";
+        if (productEntity.getStock() < quantity) {
+            throw new InsufficientStockException(product.getName());
         }
 
-        // Optimized: Check for existing cart item using a repository query
         Optional<CartEntity> existingCartItem = cartRepository.findByProductId(product.getId());
-        if (existingCartItem.isPresent()) {
-            CartEntity cartItem = existingCartItem.get();
-
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-            cartRepository.save(cartItem);
-        } else {
-            // No change needed here:
+        CartEntity cartItem = existingCartItem.orElseGet(() -> {
             CartEntity newCartItem = new CartEntity();
             newCartItem.setProduct(productEntity);
-            newCartItem.setQuantity(quantity);
-            cartRepository.save(newCartItem);
-        }
+            newCartItem.setQuantity(quantity); // Set quantity directly
+            return newCartItem;
+        });
 
-        return "Product added to cart";
+        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        cartRepository.save(cartItem);
+
+        return "Product added to cart: " + product.getName();
     }
+
 
 
     @Override
@@ -68,64 +75,79 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeItemFromCart(Long productId) {
-        cartRepository.deleteCartItemEntityByProductId(productId);
+    public String removeAllItemsFromCart() {
+        cartRepository.deleteAll();
+        return "All items removed from cart";
     }
 
+    @Override
+    public String removeItemFromCart(Long productId) {
+        cartRepository.deleteCartItemEntityByProductId(productId);
+        return null;
+    }
 
     @Override
     public List<CartDTO> getCart() {
-        List<CartEntity> cart = cartRepository.findAll(); // Delegate getting active cart
-
-        // Fetch necessary product information directly from the database
-        cart.forEach(cartItem -> {
-            ProductEntity product = cartItem.getProduct();
-            cartItem.setProductName(product.getName());
-            cartItem.setProductPrice(product.getPrice());
-        });
-
+        List<CartEntity> cart = cartRepository.findAll();
+        Map<Long, ProductEntity> productMap = getProductMap(cart);
+        assignProductInfoToCartItems(cart, productMap);
         return CartDTO.fromEntities(cart);
     }
 
 
     @Override
-    @Transactional // Ensure transaction management for atomicity
+    @Transactional
     public String checkout() {
-
         List<CartEntity> cart = cartRepository.findAll();
-
-
-        // Create a new order
         OrderEntity order = new OrderEntity();
-
-
-        // Calculate total price
-        double totalPrice = cart.stream()
-                .mapToDouble(cartItem -> cartItem.getProduct().getPrice() * cartItem.getQuantity())
-                .sum();
+        double totalPrice = calculateTotalPrice(cart);
         order.setTotal(totalPrice);
         order.setOrderDate(new Date());
-
-        List<OrderProductEntity> orderProducts = cart.stream()
-                .map(cartItem -> {
-                    ProductEntity product = cartItem.getProduct();
-                    product.setStock(product.getStock() - cartItem.getQuantity()); // Update stock
-                    productRepository.save(product); // Save updated product
-
-                    OrderProductEntity orderProduct = new OrderProductEntity();
-                    orderProduct.setOrder(order);
-                    orderProduct.setProduct(product);
-                    orderProduct.setQuantity(cartItem.getQuantity());
-                    return orderProductRepository.save(orderProduct); // Save OrderProductEntity to the database
-                })
-                .collect(Collectors.toList());
+        List<OrderProductEntity> orderProducts = createOrderProducts(cart, order);
         order.setOrderProducts(orderProducts);
-
         orderRepository.save(order);
-
         cartRepository.deleteAll();
-
         return "Checkout successful, a new cart created";
+    }
+
+
+    private double calculateTotalPrice(List<CartEntity> cart) {
+        return cart.stream()
+                .mapToDouble(cartItem -> cartItem.getProduct().getPrice() * cartItem.getQuantity())
+                .sum();
+    }
+
+    private List<OrderProductEntity> createOrderProducts(List<CartEntity> cart, OrderEntity order) {
+        return cart.stream()
+                .map(cartItem -> createOrderProduct(cartItem, order))
+                .collect(Collectors.toList());
+    }
+
+    private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
+        ProductEntity product = cartItem.getProduct();
+        product.setStock(product.getStock() - cartItem.getQuantity());
+        productRepository.save(product);
+        OrderProductEntity orderProduct = new OrderProductEntity();
+        orderProduct.setOrder(order);
+        orderProduct.setProduct(product);
+        orderProduct.setQuantity(cartItem.getQuantity());
+        return orderProductRepository.save(orderProduct);
+    }
+
+    private Map<Long, ProductEntity> getProductMap(List<CartEntity> cart) {
+        List<Long> productIds = cart.stream()
+                .map(cartItem -> cartItem.getProduct().getId())
+                .collect(Collectors.toList());
+        return productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(ProductEntity::getId, Function.identity()));
+    }
+
+    private void assignProductInfoToCartItems(List<CartEntity> cart, Map<Long, ProductEntity> productMap) {
+        cart.forEach(cartItem -> {
+            ProductEntity product = productMap.get(cartItem.getProduct().getId());
+            cartItem.setProductName(product.getName());
+            cartItem.setProductPrice(product.getPrice());
+        });
     }
 
 

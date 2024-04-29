@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
+import tyt.sales.controller.response.CartResponse;
 import tyt.sales.model.dto.CartDTO;
-import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.service.CartService;
 import tyt.sales.service.ProductService;
 
@@ -38,28 +38,48 @@ public class CartController {
      * @return A response entity containing a message and HTTP status.
      */
     @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestBody CartRequest cartRequest) {
-        ProductDTO product = productService.findById(cartRequest.getProductId());
-        if (product != null) {
-            String result = cartService.addToCart(product, cartRequest.getQuantity());
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+    public ResponseEntity<CartResponse> addToCart(@RequestBody CartRequest cartRequest) {
+        var product = productService.findById(cartRequest.getProductId());
+        var response = product != null ?
+                new CartResponse(cartService.addToCart(product, cartRequest.getQuantity()), HttpStatus.OK.value()) :
+                new CartResponse("Product not found", HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, product != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Endpoint for checking out the cart.
+     *
+     * @return A response entity containing a message and HTTP status.
+     */
+    @PostMapping("/checkout")
+    public ResponseEntity<CartResponse> checkout() {
+        try {
+            return new ResponseEntity<>(new CartResponse(cartService.checkout(), HttpStatus.OK.value()), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
      * Endpoint for removing an item from the cart.
      * @param cartItemId The ID of the cart item to remove.
+     * @return A response entity containing a message and HTTP status.
      */
-    @DeleteMapping("/remove{cartItemId}")
-    public void removeItemFromCart(@PathVariable Long cartItemId) {
-        cartService.removeItemFromCart(cartItemId);
+    @DeleteMapping("/remove/{cartItemId}")
+    public ResponseEntity<CartResponse> removeItemFromCart(@PathVariable Long cartItemId) {
+        try {
+            String result = cartService.removeItemFromCart(cartItemId);
+            CartResponse cartResponse = new CartResponse(result, HttpStatus.OK.value());
+            return new ResponseEntity<>(cartResponse, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            CartResponse cartResponse = new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(cartResponse, HttpStatus.BAD_REQUEST);
+    }
     }
 
     /**
      * Endpoint for getting the current state of the cart.
-     * @return The current state of the cart.
+     * @return The current state of the cart as a list of CartDTO objects.
      */
     @GetMapping("/getCart")
     public List<CartDTO> getCart() {
@@ -67,17 +87,18 @@ public class CartController {
     }
 
     /**
-     * Endpoint for checking out the cart.
+     * Endpoint for removing all items from the cart.
      * @return A response entity containing a message and HTTP status.
      */
-   @PostMapping("/checkout")
-public ResponseEntity<String> checkout() {
-    try {
-        String result = cartService.checkout();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @DeleteMapping("/all")
+    public ResponseEntity<CartResponse> removeAllItemsFromCart() {
+        try {
+            String result = cartService.removeAllItemsFromCart();
+            CartResponse cartResponse = new CartResponse(result, HttpStatus.OK.value());
+            return new ResponseEntity<>(cartResponse, HttpStatus.OK);
     } catch (RuntimeException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            CartResponse cartResponse = new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(cartResponse, HttpStatus.BAD_REQUEST);
     }
 }
-
 }
