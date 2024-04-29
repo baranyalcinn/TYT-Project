@@ -1,5 +1,6 @@
 package tyt.management.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import tyt.management.database.UserRepository;
 import tyt.management.model.UserEntity;
@@ -13,11 +14,14 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
     private final UserRepository userRepository;
     private final UserMapper userMapper = UserMapper.INSTANCE;
 
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -25,6 +29,7 @@ public class UserServiceImpl implements UserService {
     public String createUser(UserDTO userDTO) {
         UserEntity userEntity = userMapper.toEntity(userDTO);
         userEntity.setActive(true);
+        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         return userRepository.save(userEntity).getId().toString();
     }
 
@@ -34,7 +39,7 @@ public class UserServiceImpl implements UserService {
         entity.setName(userDTO.getName());
         entity.setSurname(userDTO.getSurname());
         entity.setEmail(userDTO.getEmail());
-        entity.setPassword(userDTO.getPassword());
+        entity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         entity.setRoles(userDTO.getRoles());
         userRepository.save(entity);
         return entity.getId().toString();
@@ -59,7 +64,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toDTO).collect(Collectors.toList());
+        return userRepository.findAll().stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
 }
