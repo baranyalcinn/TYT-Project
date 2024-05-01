@@ -16,17 +16,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
+    // Unique identifier for the product
     private Long id;
+
+    // Name of the product
     private String name;
+
+    // Description of the product
     private String description;
+
+    // Price of the product
     private double price;
+
+    // Stock quantity of the product. This field is ignored during serialization/deserialization
     @JsonIgnore
     private int stock;
+
+    // Category name of the product. This field is ignored during serialization/deserialization
     @JsonIgnore
     private String categoryName;
+
+    // Flag indicating if the product is active. This field is ignored during serialization/deserialization
     @JsonIgnore
     private boolean isActive;
+
+    // Identifier for the category of the product
     private Long categoryId;
-
-
 }
