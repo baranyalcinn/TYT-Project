@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
     /**
      * This field represents the date when the order was placed.
      */
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     /**
      * This field represents the unique identifier for the order.

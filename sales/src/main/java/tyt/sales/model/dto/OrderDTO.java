@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -30,7 +30,7 @@ public class OrderDTO {
     private double total;
 
     // Date when the order was placed
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     // Unique number for the order
     private String orderNumber;

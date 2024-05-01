@@ -19,7 +19,8 @@ import tyt.sales.model.mapper.OrderMapper;
 import tyt.sales.model.mapper.ProductMapper;
 import tyt.sales.rules.InsufficientStockException;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -171,10 +172,12 @@ private CartEntity getCartItem(ProductDTO product, ProductEntity productEntity, 
  * @param cart the list of CartEntity objects to create the order from
  * @return the newly created OrderEntity object
  */
+
 private OrderEntity createOrder(List<CartEntity> cart) {
     OrderEntity order = new OrderEntity();
     order.setTotal(calculateTotalPrice(cart));
-    order.setOrderDate(new Date());
+    LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    order.setOrderDate(localDateTime);
     order.setOrderProducts(createOrderProducts(cart, order));
     return order;
 }
