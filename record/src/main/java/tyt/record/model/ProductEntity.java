@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * ProductEntity class represents the product entity in the database.
+ * It extends BaseEntity and implements Serializable interface.
+ * It includes fields for product's name, description, price, stock, activity status, category ID and a list of order products.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -34,6 +39,10 @@ public class ProductEntity extends BaseEntity implements Serializable {
     // Category ID to which the product belongs
     private Long categoryId;
 
+    /**
+     * List of OrderProductEntity that represents the orders associated with this product.
+     * It is mapped by "product" field in OrderProductEntity.
+     */
     @OneToMany(mappedBy = "product")
     private List<OrderProductEntity> orderProducts;
 }

@@ -4,36 +4,42 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.record.model.OrderEntity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Order Data Transfer Object (DTO) class.
+ * This class is used to transfer data between different parts of the application.
+ * It includes all the fields that are needed for an order.
+ */
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
+    /**
+     * Unique identifier for the order.
+     */
     private Long id;
+
+    /**
+     * List of products associated with the order.
+     */
     private List<OrderProductDTO> orderProducts;
+
+    /**
+     * Total cost of the order.
+     */
     private double total;
+
+    /**
+     * Date when the order was placed.
+     */
     private Date orderDate;
 
-    public static OrderDTO fromEntity(OrderEntity orderEntity) {
-        return OrderDTO.builder()
-                .id(orderEntity.getId())
-                .total(orderEntity.getTotal())
-                .orderDate(orderEntity.getOrderDate())
-                .orderProducts(orderEntity.getOrderProducts()
-                        != null ? orderEntity.getOrderProducts().stream().map(OrderProductDTO::fromEntity).collect(Collectors.toList()) : null)
-                .build();
-    }
-
-    public static OrderEntity toEntity(OrderDTO orderDto, OrderEntity entity) {
-        entity.setId(orderDto.getId());
-        entity.setTotal(orderDto.getTotal());
-        entity.setOrderDate(orderDto.getOrderDate());
-        return entity;
-    }
+    /**
+     * Unique number associated with the order.
+     */
+    private String orderNumber;
 }
