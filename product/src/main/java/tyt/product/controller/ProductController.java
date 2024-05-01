@@ -1,8 +1,13 @@
 package tyt.product.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
+import tyt.product.exception.ProductNotFoundException;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
@@ -18,7 +23,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-
+    private static final Logger logger = LogManager.getLogger(ProductController.class);
     /**
      * Constructor for the ProductController.
      *
@@ -35,16 +40,23 @@ public class ProductController {
      * @return The product with the given id.
      */
     @GetMapping("/{id}")
-    public ProductDTO getProduct(@PathVariable int id) {
-        return productService.getProduct(id);
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
+        try {
+            ProductDTO productDTO = productService.getProduct(id);
+            return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        } catch (ProductNotFoundException e) {
+            logger.error("Product not found", e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+    }
+
 
     /**
      * Get all active products.
      *
      * @return A list of all active products.
      */
-    @GetMapping("/All")
+    @GetMapping("/all")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
@@ -68,9 +80,8 @@ public class ProductController {
      * @return A message indicating the result of the operation.
      */
     @PutMapping("/update")
-    public String updateProduct(@RequestBody UpdateProductRequest request) {
-        return null;
-        //return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
+    public String updateProduct(@RequestBody UpdateProductRequest request) throws Exception {
+        return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
     }
 
     /**
