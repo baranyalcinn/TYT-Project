@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -26,9 +27,6 @@ public class PdfGenerator {
     /**
      * Current date and time.
      */
-    public final LocalDateTime now = LocalDateTime.now();
-    final Date date = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
-
 
 
     /**
@@ -40,9 +38,14 @@ public class PdfGenerator {
      */
     public void generatePdf(String filePath, OrderDTO order) throws IOException {
         try {
+
+            LocalDateTime now = LocalDateTime.now();
+            Date date = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
+
+
             PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
 
-            String htmlContent = generateHtmlContent(order);
+            String htmlContent = generateHtmlContent(order,now,date);
             HtmlConverter.convertToPdf(htmlContent, writer);
 
             writer.close();
@@ -57,7 +60,7 @@ public class PdfGenerator {
      * @param order The OrderEntity object to be converted to HTML.
      * @return The generated HTML content.
      */
-    private String generateHtmlContent(OrderDTO order) {
+    private String generateHtmlContent(OrderDTO order,LocalDateTime now,Date date) {
         StringBuilder htmlBuilder = new StringBuilder();
 
         htmlBuilder.append("<!DOCTYPE html>");
@@ -76,14 +79,15 @@ public class PdfGenerator {
         SimpleDateFormat nowFormatter = new SimpleDateFormat("HH.mm");
         SimpleDateFormat nowDateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         String formattedDate = formatter.format(order.getOrderDate());
-        String now = nowFormatter.format(date);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
+        String formattedNow = now.format(timeFormatter);
 
         htmlBuilder.append("<div style=\"display: flex; justify-content: space-between;\">");
         htmlBuilder.append("<div style=\"width: 50%;\">");
         htmlBuilder.append("<h2>Order Slip</h2>");
         htmlBuilder.append("</div>");
         htmlBuilder.append("<div style=\"width: 50%; text-align: right;\">");
-        htmlBuilder.append("<p style=\"font-size: 15px; margin: 0;\">").append(now).append("</p>");
+        htmlBuilder.append("<p style=\"font-size: 15px; margin: 0;\">").append(formattedNow).append("</p>");
         htmlBuilder.append("<p style=\"font-size: 15px; margin: 0;\">").append(nowDateFormatter.format(date)).append("</p>");
         htmlBuilder.append("</div>");
 
