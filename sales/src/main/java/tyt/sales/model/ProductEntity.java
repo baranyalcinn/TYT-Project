@@ -41,6 +41,11 @@ public class ProductEntity extends BaseEntity implements Serializable {
     // Category ID to which the product belongs
     private Long categoryId;
 
+    /**
+     * List of OrderProductEntity instances.
+     * This represents all the orders that include this product.
+     * It is a one-to-many relationship with OrderProductEntity.
+     */
     @OneToMany(mappedBy = "product")
     private List<OrderProductEntity> orderProducts;
 
