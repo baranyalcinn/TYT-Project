@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.OrderProductEntity;
 
 /**
  * This class represents a Data Transfer Object (DTO) for the OrderProduct entity.
@@ -30,19 +29,4 @@ public class OrderProductDTO {
     // Quantity of the product in the order
     private int quantity;
 
-    /**
-     * This static method converts an OrderProductEntity to an OrderProductDTO.
-     * It takes an OrderProductEntity as a parameter and returns an OrderProductDTO.
-     *
-     * @param orderProductEntity The OrderProductEntity to be converted.
-     * @return The converted OrderProductDTO.
-     */
-    public static OrderProductDTO fromEntity(OrderProductEntity orderProductEntity) {
-        return OrderProductDTO.builder()
-                .id(orderProductEntity.getId())
-                .orderId(orderProductEntity.getOrder().getId())
-                .productId(orderProductEntity.getProduct().getId())
-                .quantity(orderProductEntity.getQuantity())
-                .build();
-    }
 }

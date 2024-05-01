@@ -1,12 +1,7 @@
 package tyt.sales.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import tyt.sales.model.CartEntity;
+import lombok.*;
 
-import java.util.List;
 
 /**
  * This class represents a Data Transfer Object (DTO) for the CartItemEntity.
@@ -34,28 +29,9 @@ public class CartDTO {
     // Total price of the product in the cart
     private double totalPrice;
 
-    /**
-     * Converts a CartEntity object to a CartDTO object.
-     * @param cartEntity The CartEntity object to be converted.
-     * @return A CartDTO object that represents the given CartEntity object.
-     */
-    public static CartDTO fromEntity(CartEntity cartEntity) {
-        return CartDTO.builder()
-                .id(cartEntity.getId())
-                .productId(cartEntity.getProduct().getId())
-                .quantity(cartEntity.getQuantity())
-                .productName(cartEntity.getProductName())
-                .totalPrice(cartEntity.getTotalPrice())
-                .build();
-    }
+    @Getter
+    private Double productPrice;
 
-    /**
-     * Converts a list of CartEntity objects to a list of CartDTO objects.
-     * @param cartItems The list of CartEntity objects to be converted.
-     * @return A list of CartDTO objects that represents the given list of CartEntity objects.
-     */
-    public static List<CartDTO> fromEntities(List<CartEntity> cartItems) {
-        return cartItems.stream().map(CartDTO::fromEntity).toList();
-    }
+
 
 }

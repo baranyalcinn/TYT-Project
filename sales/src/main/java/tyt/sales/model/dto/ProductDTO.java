@@ -32,46 +32,5 @@ public class ProductDTO {
     private boolean isActive;
     private Long categoryId;
 
-    /**
-     * This static method is used to convert a ProductEntity object to a ProductDTO object.
-     * @param productEntity The ProductEntity object to be converted.
-     * @return A ProductDTO object.
-     */
-    public static ProductDTO fromEntity(ProductEntity productEntity) {
-        return ProductDTO.builder()
-                .id(productEntity.getId())
-                .name(productEntity.getName())
-                .description(productEntity.getDescription())
-                .price(productEntity.getPrice())
-                .stock(productEntity.getStock())
-                .isActive(productEntity.isActive())
-                .categoryId(productEntity.getCategoryId())
-                .build();
-    }
 
-    /**
-     * This static method is used to convert a ProductDTO object to a ProductEntity object.
-     * @param productDTO The ProductDTO object to be converted.
-     * @return A ProductEntity object.
-     */
-    public static ProductEntity toEntity(ProductDTO productDTO) {
-        ProductEntity entity = new ProductEntity();
-        entity.setId(productDTO.getId());
-        entity.setName(productDTO.getName());
-        entity.setPrice(productDTO.getPrice());
-        entity.setStock(productDTO.getStock());
-        return entity;
-    }
-
-    /**
-     * This static method is used to convert a list of ProductEntity objects to a list of ProductDTO objects.
-     * @param products The list of ProductEntity objects to be converted.
-     * @return A list of ProductDTO objects.
-     */
-    public static List<ProductDTO> fromEntities(List<ProductEntity> products) {
-
-        return products.stream()
-                .map(ProductDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
 }

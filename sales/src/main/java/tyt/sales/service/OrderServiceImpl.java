@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import tyt.sales.database.OrderRepository;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.OrderDTO;
+import tyt.sales.model.mapper.OrderMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,10 +35,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrders() {
         List<OrderEntity> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderDTO::fromEntity)
+                .map(OrderMapper.INSTANCE::fromEntity)
                 .collect(Collectors.toList());
     }
-
     /**
      * Fetches an order by its ID from the database and converts it to a DTO.
      *
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderById(Long id) {
         return orderRepository.findById(id)
-                .map(OrderDTO::fromEntity)
+                .map(OrderMapper.INSTANCE::fromEntity)
                 .orElse(null);
     }
 }

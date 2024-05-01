@@ -2,6 +2,7 @@ package tyt.sales.service;
 
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.CartDTO;
+import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
 
 import java.util.List;
@@ -20,12 +21,9 @@ public interface CartService {
      */
     String addToCart(ProductDTO product, Integer quantity);
 
-    /**
-     * Creates an order.
-     *
-     * @param order The order to be created.
-     */
-    void createOrder(OrderEntity order);
+
+
+    void createOrder(OrderDTO orderDTO);
 
     /**
      * Removes all items from the cart.

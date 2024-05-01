@@ -2,7 +2,6 @@ package tyt.sales.service;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tyt.sales.database.CartRepository;
 import tyt.sales.database.OrderProductRepository;
@@ -13,11 +12,17 @@ import tyt.sales.model.OrderEntity;
 import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.CartDTO;
+import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
+import tyt.sales.model.mapper.CartMapper;
+import tyt.sales.model.mapper.OrderMapper;
+import tyt.sales.model.mapper.ProductMapper;
 import tyt.sales.rules.InsufficientStockException;
-import tyt.sales.rules.ProductNotFoundException;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,12 +33,16 @@ import java.util.stream.Collectors;
 @Log4j2
 public class CartServiceImpl implements CartService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final OrderProductRepository orderProductRepository;
+
+    private final CartMapper cartMapper = CartMapper.INSTANCE;
+    private final ProductMapper productMapper = ProductMapper.INSTANCE;
+    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+
 
     /**
      * Constructor for CartServiceImpl.
@@ -42,15 +51,14 @@ public class CartServiceImpl implements CartService {
      * @param productRepository      the repository for products
      * @param cartRepository         the repository for cart items
      * @param orderProductRepository the repository for order products
-     * @param redisTemplate          the template for Redis operations
      */
     public CartServiceImpl(OrderRepository orderRepository,
-                           ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository, RedisTemplate<String, Object> redisTemplate) {
+                           ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
         this.orderProductRepository = orderProductRepository;
-        this.redisTemplate = redisTemplate;
+
     }
 
     /**
@@ -63,23 +71,17 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public String addToCart(ProductDTO product, Integer quantity) {
-        ProductEntity productEntity = findProduct(product);
+        ProductEntity productEntity = productMapper.toEntity(product);
         validateStock(productEntity, quantity);
         CartEntity cartItem = getCartItem(product, productEntity, quantity);
         cartRepository.save(cartItem);
-        return "Product added to cart: " + product.getName();
+        return "Product added to cart: " + productMapper.fromEntity(productEntity).getName();
     }
 
-    /**
-     * Creates an order.
-     *
-     * @param order the order to create
-     */
     @Override
-    public void createOrder(OrderEntity order) {
-        orderRepository.save(order);
-        // Assuming you want to send the full order object:
-        redisTemplate.opsForStream().add("orderStream", Collections.singletonMap("orderId", order.getId()));
+    public void createOrder(OrderDTO orderDTO) {
+        OrderEntity orderEntity = orderMapper.orderDtoToOrderEntity(orderDTO);
+        orderRepository.save(orderEntity);
     }
 
     /**
@@ -115,7 +117,7 @@ public class CartServiceImpl implements CartService {
         List<CartEntity> cart = cartRepository.findAll();
         Map<Long, ProductEntity> productMap = getProductMap(cart);
         assignProductInfoToCartItems(cart, productMap);
-        return CartDTO.fromEntities(cart);
+        return cartMapper.fromEntities(cart);
     }
 
     /**
@@ -127,24 +129,15 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public String checkout() {
         List<CartEntity> cart = cartRepository.findAll();
+        List<CartDTO> cartDTOs = cartMapper.fromEntities(cart);
+        log.info("Checking out the following cart: {}", cartDTOs);
         OrderEntity order = createOrder(cart);
         orderRepository.save(order);
         cartRepository.deleteAll();
         return "Checkout successful, a new cart created";
     }
 
-/**
- * Finds a product in the repository using the provided ProductDTO object.
- *
- * @param product the ProductDTO object containing the ID of the product to find
- * @return the found ProductEntity object
- * @throws ProductNotFoundException if the product is not found in the repository
- */
-private ProductEntity findProduct(ProductDTO product) {
-    return productRepository.findById(product.getId()).orElseThrow(() -> new ProductNotFoundException("Product not found."));
-}
-
-/**
+    /**
  * Validates if the stock of a product is sufficient for the requested quantity.
  *
  * @param productEntity the ProductEntity object to check the stock of
@@ -167,26 +160,12 @@ private void validateStock(ProductEntity productEntity, Integer quantity) {
  */
 private CartEntity getCartItem(ProductDTO product, ProductEntity productEntity, Integer quantity) {
     Optional<CartEntity> existingCartItem = cartRepository.findByProductId(product.getId());
-    CartEntity cartItem = existingCartItem.orElseGet(() -> createNewCartItem(productEntity, quantity));
+    CartEntity cartItem = existingCartItem.orElseGet(() -> cartMapper.toEntity(product, productEntity));
     cartItem.setQuantity(cartItem.getQuantity() + quantity);
     return cartItem;
 }
 
-/**
- * Creates a new cart item for a given product and quantity.
- *
- * @param productEntity the ProductEntity object of the product
- * @param quantity the quantity of the product to add to the cart
- * @return the newly created CartEntity object
- */
-private CartEntity createNewCartItem(ProductEntity productEntity, Integer quantity) {
-    CartEntity newCartItem = new CartEntity();
-    newCartItem.setProduct(productEntity);
-    newCartItem.setQuantity(quantity);
-    return newCartItem;
-}
-
-/**
+    /**
  * Creates a new order from a list of cart items.
  *
  * @param cart the list of CartEntity objects to create the order from

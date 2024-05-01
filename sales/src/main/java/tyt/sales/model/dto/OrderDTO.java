@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.OrderEntity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 /**
  * This class represents a Data Transfer Object (DTO) for the Order entity.
@@ -35,22 +34,5 @@ public class OrderDTO {
 
     // Unique number for the order
     private String orderNumber;
-
-    /**
-     * This method is used to convert an OrderEntity object into an OrderDTO object.
-     * It uses the builder pattern for object creation.
-     * @param orderEntity The OrderEntity object to be converted.
-     * @return An OrderDTO object that represents the given OrderEntity object.
-     */
-    public static OrderDTO fromEntity(OrderEntity orderEntity) {
-        return OrderDTO.builder()
-                .id(orderEntity.getId())
-                .total(orderEntity.getTotal())
-                .orderDate(orderEntity.getOrderDate())
-                .orderNumber(orderEntity.getOrderNumber() != null ? orderEntity.getOrderNumber().toString() : null)
-                .orderProducts(orderEntity.getOrderProducts()
-                        != null ? orderEntity.getOrderProducts().stream().map(OrderProductDTO::fromEntity).collect(Collectors.toList()) : null)
-                .build();
-    }
 
 }
