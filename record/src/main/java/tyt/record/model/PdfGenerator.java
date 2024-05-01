@@ -24,10 +24,6 @@ import java.util.Date;
 @Component
 public class PdfGenerator {
 
-    /**
-     * Current date and time.
-     */
-
 
     /**
      * Generates a PDF document for the given OrderEntity and saves it to the specified file path.
@@ -76,7 +72,6 @@ public class PdfGenerator {
 
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat nowFormatter = new SimpleDateFormat("HH.mm");
         SimpleDateFormat nowDateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         String formattedDate = formatter.format(order.getOrderDate());
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
