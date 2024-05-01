@@ -5,10 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.ProductEntity;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a Data Transfer Object (DTO) for the Product entity.
