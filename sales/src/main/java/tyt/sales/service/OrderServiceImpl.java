@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+
     private final OrderRepository orderRepository;
 
     /**
@@ -34,8 +36,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> getAllOrders() {
         List<OrderEntity> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderMapper.INSTANCE::fromEntity)
+        return orders.stream().map(orderMapper::fromEntity)
                 .collect(Collectors.toList());
     }
     /**
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderById(Long id) {
         return orderRepository.findById(id)
-                .map(OrderMapper.INSTANCE::fromEntity)
+                .map(orderMapper::fromEntity)
                 .orElse(null);
     }
 }

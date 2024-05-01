@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.record.model.ProductEntity;
 
 /**
  * This class represents a Data Transfer Object (DTO) for the Product entity.
