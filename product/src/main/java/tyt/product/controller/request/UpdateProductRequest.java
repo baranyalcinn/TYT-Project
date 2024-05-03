@@ -33,11 +33,6 @@ public class UpdateProductRequest {
      */
     int stock;
 
-    /**
-     * The new active status of the product.
-     * If true, the product is active. If false, the product is inactive.
-     */
-    boolean isActive;
 
     /**
      * The unique identifier of the category to which the product belongs.

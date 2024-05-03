@@ -1,12 +1,16 @@
 package tyt.product.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * This is a base entity class that other entities can extend.
@@ -17,6 +21,7 @@ import java.io.Serializable;
  */
 @Data
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {
 
     /**
@@ -30,20 +35,30 @@ public abstract class BaseEntity implements Serializable {
     /**
      * This field represents the creation time of the entity.
      */
-    protected String createdAt;
+    @CreatedDate
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @Column(updatable = false)
+    protected LocalDateTime createdAt;
 
     /**
      * This field represents the user who created the entity.
      */
+
+    @CreatedBy
     protected String createdBy;
 
     /**
      * This field represents the last update time of the entity.
      */
-    protected String updatedAt;
+    @LastModifiedDate
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @Column(insertable = false)
+    protected LocalDateTime updatedAt;
 
     /**
      * This field represents the user who last updated the entity.
      */
+    @LastModifiedBy
+    @Column(insertable = false)
     protected String updatedBy;
 }

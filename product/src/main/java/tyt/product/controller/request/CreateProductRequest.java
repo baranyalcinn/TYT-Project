@@ -30,11 +30,6 @@ public class CreateProductRequest {
     int stock;
 
     /**
-     * A flag indicating whether the product is active or not.
-     */
-    boolean isActive;
-
-    /**
      * The id of the category to which the product belongs.
      */
     Long categoryId;

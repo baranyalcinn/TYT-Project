@@ -1,5 +1,6 @@
 package tyt.product.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +47,7 @@ public class ProductDTO {
      * By default, it is set to true.
      */
     @Builder.Default
+    @JsonIgnore
     private boolean isActive = true;
 
     /**

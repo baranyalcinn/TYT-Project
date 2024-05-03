@@ -74,7 +74,7 @@ public class CategoryController {
      * Endpoint to get the details of all active categories.
      * @return A list of all active categories.
      */
-    @GetMapping("/All")
+    @GetMapping("/all")
     public List<CategoryDTO> getAllCategories(){
         return categoryService.getAllCategories().stream()
                 .filter(CategoryDTO::isActive)
