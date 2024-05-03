@@ -29,7 +29,6 @@ public class CartDTO {
     // Total price of the product in the cart
     private double totalPrice;
 
-    @Getter
     private Double productPrice;
 
 

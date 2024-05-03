@@ -54,5 +54,8 @@ public interface CartMapper {
     @Mapping(source = "product.id", target = "product.id")
     @Mapping(source = "product.id", target = "id")
     @Mapping(target = "quantity", constant = "0")
+    @Mapping(target = "totalPrice", expression = "java(product.getPrice() * 0)")
+    @Mapping(source = "product.name", target = "productName")
+    @Mapping(source = "product.price", target = "productPrice")
     CartEntity toEntity(ProductDTO product, ProductEntity productEntity);
 }
