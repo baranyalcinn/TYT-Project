@@ -13,6 +13,7 @@ import tyt.product.model.mapper.CategoryMapper;
 import tyt.product.service.CategoryService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -62,7 +63,6 @@ public class CategoryServiceImpl  implements CategoryService {
      */
     @Override
     public String createCategory(CategoryDTO categoryDTO) {
-
         CategoryEntity existingCategory = categoryRepository.findByName(categoryDTO.getName());
         if (existingCategory != null) {
             log.error("Category with name {} already exists", categoryDTO.getName());
@@ -70,6 +70,11 @@ public class CategoryServiceImpl  implements CategoryService {
         }
 
         CategoryEntity savedEntity = categoryRepository.save(toEntity(categoryDTO));
+        if (savedEntity.getId() == null) {
+            log.error("Saved category ID is null");
+            throw new RuntimeException("Saved category ID is null");
+        }
+
         CategoryResponse categoryResponse = new CategoryResponse("Category created successfully with ID: " + savedEntity.getId(), HttpStatus.CREATED.value());
         return categoryResponse.getMessage();
     }
@@ -82,8 +87,12 @@ public class CategoryServiceImpl  implements CategoryService {
      */
     @Override
     public String updateCategory(CategoryDTO categoryDTO) {
-        CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
-                .orElseThrow(() -> new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found"));
+        Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(categoryDTO.getId());
+        if (optionalCategoryEntity.isEmpty()) {
+            log.error("Category with id {} not found", categoryDTO.getId());
+            throw new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
+        }
+        CategoryEntity categoryEntity = optionalCategoryEntity.get();
 
         CategoryEntity updatedEntity = categoryMapper.toEntity(categoryDTO);
         categoryEntity.setName(updatedEntity.getName());
@@ -92,19 +101,25 @@ public class CategoryServiceImpl  implements CategoryService {
         CategoryResponse categoryResponse = new CategoryResponse("Category updated successfully with ID: " + categoryEntity.getId(), HttpStatus.OK.value());
         return categoryResponse.getMessage();
     }
-
     /**
      * Deletes a category by setting its active status to false.
      * @param categoryDTO The data transfer object containing the details of the category to be deleted.
      * @throws NoSuchCategoryException if no category with the given ID exists.
      */
+
     @Override
     public void deleteCategory(CategoryDTO categoryDTO) {
-        CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
-            .orElseThrow(() -> new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found"));
+        Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(categoryDTO.getId());
+        if (optionalCategoryEntity.isEmpty()) {
+            log.error("Category with name {} not found", categoryDTO.getName());
+            throw new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
+        }
+        CategoryEntity categoryEntity = optionalCategoryEntity.get();
+
         categoryEntity.setActive(false);
         categoryRepository.save(categoryEntity);
     }
+
 
     /**
      * Retrieves a category by its ID.
@@ -130,4 +145,5 @@ public class CategoryServiceImpl  implements CategoryService {
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
+
 }

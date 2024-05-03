@@ -1,6 +1,10 @@
 package tyt.product.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,21 +29,26 @@ public class ProductDTO {
     /**
      * Name of the product.
      */
+    @NotBlank(message = "Product name cannot be blank")
+    @Size(min = 2, max = 50, message = "Product name must be between 2 and 50 characters")
     private String name;
 
     /**
      * Description of the product.
      */
+    @NotBlank(message = "Product description cannot be blank")
     private String description;
 
     /**
      * Price of the product.
      */
+    @Positive(message = "Product price must be a positive number")
     private double price;
 
     /**
      * Stock quantity of the product.
      */
+    @Min(value = 0, message = "Product stock cannot be less than 0")
     private int stock;
 
     /**

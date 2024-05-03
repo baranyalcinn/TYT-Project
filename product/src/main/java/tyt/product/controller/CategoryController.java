@@ -1,5 +1,6 @@
 package tyt.product.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateCategoryRequest;
 import tyt.product.controller.request.UpdateCategoryRequest;
@@ -33,7 +34,7 @@ public class CategoryController {
      * @return A string message indicating the result of the operation.
      */
     @PostMapping("/create")
-    public String createCategory(@RequestBody CreateCategoryRequest request){
+    public String createCategory(@Valid @RequestBody CreateCategoryRequest request){
         return categoryService.createCategory(CategoryMapper.INSTANCE.createRequestToDto(request));
     }
 
@@ -44,7 +45,7 @@ public class CategoryController {
      * @return A string message indicating the result of the operation.
      */
     @PutMapping("/update")
-    public String updateCategory(@RequestBody UpdateCategoryRequest request){
+    public String updateCategory(@Valid @RequestBody UpdateCategoryRequest request){
         return categoryService.updateCategory(CategoryMapper.INSTANCE.updateRequestToDto(request));
     }
 
@@ -53,7 +54,7 @@ public class CategoryController {
      * @param id The id of the category to be deleted.
      */
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable long id){
+    public void deleteCategory(@Valid @PathVariable long id){
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(id);
         categoryDTO.setActive(false);
@@ -66,7 +67,7 @@ public class CategoryController {
      * @return The details of the category.
      */
     @GetMapping("/get")
-    public CategoryDTO getCategory(@RequestParam long id){
+    public CategoryDTO getCategory(@Valid @RequestParam long id){
         return categoryService.getCategory(id);
     }
 

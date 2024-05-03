@@ -2,6 +2,7 @@ package tyt.product.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,7 +123,10 @@ class BaseEntityTest {
      */
     @Test
     void equalsWithDifferentObject() {
-        BaseEntity otherEntity = new BaseEntity() {};
+        BaseEntity otherEntity = new BaseEntity() {
+        };
+        otherEntity.setId(2L);
+        otherEntity.setCreatedBy("user2");
         assertNotEquals(baseEntity, otherEntity);
     }
 
@@ -139,10 +143,14 @@ class BaseEntityTest {
      */
     @Test
     void hashCodeWithDifferentObject() {
-        BaseEntity otherEntity = new BaseEntity() {};
+        BaseEntity otherEntity = new BaseEntity() {
+        };
+        otherEntity.setId(2L);
+        otherEntity.setCreatedBy("user2");
+        baseEntity.setId(1L);
+        baseEntity.setCreatedBy("user1");
         assertNotEquals(baseEntity.hashCode(), otherEntity.hashCode());
     }
-
     /**
      * Test to check if toString() contains the class name.
      */
@@ -150,4 +158,22 @@ class BaseEntityTest {
     void toStringContainsClassName() {
         assertTrue(baseEntity.toString().contains("BaseEntity"));
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + getId();
+        result = prime * result + ((baseEntity.getCreatedAt() == null) ? 0 : baseEntity.getCreatedAt().hashCode());
+        result = prime * result + ((baseEntity.getCreatedBy() == null) ? 0 : baseEntity.getCreatedBy().hashCode());
+        result = prime * result + ((baseEntity.getUpdatedAt() == null) ? 0 : baseEntity.getUpdatedAt().hashCode());
+        result = prime * result + ((baseEntity.getUpdatedBy() == null) ? 0 : baseEntity.getUpdatedBy().hashCode());
+        return result;
+    }
+
+    private int getId() {
+        return 0;
+    }
+
+
 }

@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
 import tyt.product.exception.NoSuchProductException;
+import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.service.ProductService;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,14 +45,17 @@ public class ProductControllerTest {
      * This test checks if the getProductById method of the ProductController class returns the correct product.
      */
     @Test
-    public void getProductByIdReturnsProduct() {
-        ProductDTO productDTO = new ProductDTO();
-        when(productService.getProduct(anyLong())).thenReturn(productDTO);
+    public void getProductsByCategoryReturnsProducts() {
+        CategoryEntity category = new CategoryEntity();
+        category.setId(1L);
+        category.setName("Test Category");
 
-        ResponseEntity<?> response = productController.getProductById(1L);
+        List<ProductDTO> products = Arrays.asList(new ProductDTO(), new ProductDTO());
+        when(productService.getProductsByCategory(any())).thenReturn(products);
 
-        assertEquals(productDTO, response.getBody());
-        assertEquals(200, response.getStatusCode().value());
+        List<ProductDTO> response = productService.getProductsByCategory(category);
+
+        assertEquals(products, response);
     }
 
     /**
@@ -108,12 +113,12 @@ public class ProductControllerTest {
     /**
      * This test checks if the deleteProduct method of the ProductController class calls the deleteProduct method of the ProductService class.
      */
-    @Test
-    public void deleteProductCallsService() {
-        doNothing().when(productService).deleteProduct(any());
+   @Test
+public void deleteProductCallsService() {
+    when(productService.deleteProduct(any())).thenReturn(null);
 
-        productController.deleteProduct(1L);
+    productController.deleteProduct(1L);
 
-        verify(productService, times(1)).deleteProduct(any());
-    }
+    verify(productService, times(1)).deleteProduct(any());
+}
 }

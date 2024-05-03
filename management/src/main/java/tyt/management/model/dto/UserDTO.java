@@ -1,6 +1,7 @@
 package tyt.management.model.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,8 @@ public class UserDTO {
     private String surname;
     private String email;
     private String password;
+
+    @JsonIgnore
     private boolean isActive;
     private Set<Role> roles;
 

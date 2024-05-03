@@ -38,7 +38,7 @@ public abstract class BaseEntity implements Serializable {
      * It is not updatable.
      */
     @CreatedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(updatable = false)
     protected LocalDateTime createdAt;
 
@@ -55,7 +55,7 @@ public abstract class BaseEntity implements Serializable {
      * It is not insertable.
      */
     @LastModifiedDate
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(insertable = false)
     protected LocalDateTime updatedAt;
 

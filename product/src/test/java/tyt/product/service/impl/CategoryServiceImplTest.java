@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import tyt.product.database.CategoryRepository;
 import tyt.product.exception.CategoryExistsException;
@@ -37,56 +37,43 @@ public class CategoryServiceImplTest {
      * It initializes the mocks.
      */
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
+    void setUp() {
+        // Create a CategoryEntity for testing
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Test Category");
 
-    /**
-     * Test case for successful category creation.
-     */
-    @Test
-    public void createCategorySuccessfully() {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setName("Electronics");
+        // Mock the behavior of categoryRepository.findById
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(categoryEntity));
 
-        when(categoryRepository.findByName(anyString())).thenReturn(null);
-
-        String response = categoryService.createCategory(categoryDTO);
-
-        assertTrue(response.contains("Category created successfully"));
+        // Mock the behavior of categoryRepository.save
+        Mockito.when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
     }
 
     /**
      * Test case for category creation with an existing name.
+     * It should throw a CategoryExistsException.
      */
     @Test
     public void createCategoryWithExistingName() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setName("Electronics");
 
-        when(categoryRepository.findByName(anyString())).thenReturn(new CategoryEntity());
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Electronics");
+
+        assertNotNull(categoryEntity);
+
+        when(categoryRepository.findByName(anyString())).thenReturn(categoryEntity);
+        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
 
         assertThrows(CategoryExistsException.class, () -> categoryService.createCategory(categoryDTO));
     }
 
     /**
-     * Test case for successful category update.
-     */
-    @Test
-    public void updateCategorySuccessfully() {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setId(1L);
-        categoryDTO.setName("Electronics");
-
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(new CategoryEntity()));
-
-        String response = categoryService.updateCategory(categoryDTO);
-
-        assertTrue(response.contains("Category updated successfully"));
-    }
-
-    /**
      * Test case for updating a non-existing category.
+     * It should throw a NoSuchCategoryException.
      */
     @Test
     public void updateNonExistingCategory() {
@@ -100,20 +87,8 @@ public class CategoryServiceImplTest {
     }
 
     /**
-     * Test case for deleting an existing category.
-     */
-    @Test
-    public void deleteExistingCategory() {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setId(1L);
-
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(new CategoryEntity()));
-
-        assertDoesNotThrow(() -> categoryService.deleteCategory(categoryDTO));
-    }
-
-    /**
      * Test case for deleting a non-existing category.
+     * It should throw a NoSuchCategoryException.
      */
     @Test
     public void deleteNonExistingCategory() {
@@ -121,27 +96,97 @@ public class CategoryServiceImplTest {
         categoryDTO.setId(1L);
 
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-
         assertThrows(NoSuchCategoryException.class, () -> categoryService.deleteCategory(categoryDTO));
     }
 
     /**
-     * Test case for getting an existing category.
-     */
-    @Test
-    public void getCategorySuccessfully() {
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(new CategoryEntity()));
-
-        assertDoesNotThrow(() -> categoryService.getCategory(1L));
-    }
-
-    /**
      * Test case for getting a non-existing category.
+     * It should throw a NoSuchCategoryException.
      */
     @Test
     public void getNonExistingCategory() {
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-
         assertThrows(NoSuchCategoryException.class, () -> categoryService.getCategory(1L));
+    }
+
+    /**
+     * Test case for updating a category successfully.
+     * It should not throw any exception and return a success message.
+     */
+    @Test
+    public void updateCategorySuccessfully() {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(1L);
+        categoryDTO.setName("Electronics");
+
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Electronics");
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(categoryEntity));
+        String response = categoryService.updateCategory(categoryDTO);
+
+        assertTrue(response.contains("Category updated successfully"));
+    }
+
+    /**
+     * Test case for creating a category successfully.
+     * It should not throw any exception and return a success message.
+     */
+    @Test
+    public void createCategorySuccessfully() {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Electronics");
+
+        assertNotNull(categoryEntity);
+
+        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
+
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setName("Electronics");
+
+        when(categoryRepository.findByName(anyString())).thenReturn(null);
+
+        String response = categoryService.createCategory(categoryDTO);
+
+        assertNotNull(response);
+
+        assertTrue(response.contains("Category created successfully"));
+    }
+
+    /**
+     * Test case for getting a category successfully.
+     * It should not throw any exception.
+     */
+    @Test
+    public void getCategorySuccessfully() {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Electronics");
+
+        // Ensure a CategoryEntity with the same ID exists
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(categoryEntity));
+        // Then call the method
+        assertDoesNotThrow(() -> categoryService.getCategory(1L));
+    }
+
+    /**
+     * Test case for deleting an existing category.
+     * It should not throw any exception.
+     */
+    @Test
+    public void deleteExistingCategory() {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(1L);
+
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(1L);
+        categoryEntity.setName("Electronics");
+
+        // Ensure a CategoryEntity with the same ID exists
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(categoryEntity));
+        // Then call the method
+        assertDoesNotThrow(() -> categoryService.deleteCategory(categoryDTO));
     }
 }

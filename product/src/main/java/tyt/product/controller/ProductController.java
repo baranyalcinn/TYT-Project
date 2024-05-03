@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
 import tyt.product.exception.NoSuchProductException;
+import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
@@ -90,11 +91,13 @@ public class ProductController {
      * @param id The id of the product to be deleted.
      */
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable long id) {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(id);
-        productDTO.setActive(false); // Set isActive to false for soft delete
-        productService.deleteProduct(productDTO);
+    public String deleteProduct(@PathVariable long id) {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(id);
+        productEntity.setActive(false); // Set isActive to false for soft delete
+
+        ProductDTO productDTO = ProductMapper.INSTANCE.toDTO(productEntity);
+        return productService.deleteProduct(productDTO);
     }
 
 }

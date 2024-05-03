@@ -33,8 +33,9 @@ public interface ProductService {
      * Deletes a product.
      *
      * @param productDTO the product data transfer object containing the details of the product to be deleted.
+     * @return
      */
-    void deleteProduct(ProductDTO productDTO);
+    String deleteProduct(ProductDTO productDTO);
 
     /**
      * Retrieves a single product by its ID.

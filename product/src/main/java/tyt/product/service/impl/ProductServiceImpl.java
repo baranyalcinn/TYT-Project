@@ -96,15 +96,19 @@ public class ProductServiceImpl implements ProductService {
      * Deletes a product.
      *
      * @param productDTO the product DTO to delete
+     * @return a success message with the ID of the deleted product
+     * @throws NoSuchProductException if the product with the given ID does not exist
      */
     @Override
-    public void deleteProduct(ProductDTO productDTO) {
+    public String deleteProduct(ProductDTO productDTO) {
 
         ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(() -> new NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
 
         productEntity.setActive(false);
-        log.info("Product deleted successfully. ID: {}", productEntity.getId());
+        log.info("Product deactivated successfully. ID: {}", productEntity.getId());
         productRepository.save(productEntity);
+
+        return "Product with ID: " + productEntity.getId() + " was successfully deactivated.";
     }
     /**
      * Retrieves a product by its ID.
