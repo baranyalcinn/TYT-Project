@@ -46,7 +46,7 @@ public class ProductDTO {
      * Flag indicating whether the product is active or not.
      * By default, it is set to true.
      */
-    @Builder.Default
+
     @JsonIgnore
     private boolean isActive = true;
 
@@ -59,4 +59,9 @@ public class ProductDTO {
      * Name of the category of the product.
      */
     private String categoryName;
+
+
+    public boolean isActive() {
+        return isActive;
+    }
 }

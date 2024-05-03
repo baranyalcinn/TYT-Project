@@ -17,4 +17,11 @@ import tyt.product.model.CategoryEntity;
  */
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
+
+    /**
+     * This method is used to find a category by its name.
+     * @param name The name of the category to be found.
+     * @return The category entity with the given name.
+     */
+    CategoryEntity findByName(String name);
 }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
-import tyt.product.exception.ProductNotFoundException;
+import tyt.product.exception.NoSuchProductException;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
@@ -44,7 +44,7 @@ public class ProductController {
         try {
             ProductDTO productDTO = productService.getProduct(id);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
-        } catch (ProductNotFoundException e) {
+        } catch (NoSuchProductException e) {
             logger.error("Product not found", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }

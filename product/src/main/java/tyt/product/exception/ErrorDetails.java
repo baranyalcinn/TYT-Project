@@ -1,8 +1,10 @@
 package tyt.product.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
@@ -21,6 +23,8 @@ public class ErrorDetails {
     /**
      * The timestamp when the error occurred.
      */
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date timestamp;
 
     /**
@@ -32,4 +36,9 @@ public class ErrorDetails {
      * Additional details about the error.
      */
     private String details;
+
+    /**
+     * The HTTP status code of the error.
+     */
+    private HttpStatus status;
 }

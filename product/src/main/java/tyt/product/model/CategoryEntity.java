@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @Table(name = "categories")
 @NoArgsConstructor
 @Data
+@SQLRestriction("is_active = true")
 public class CategoryEntity extends BaseEntity implements Serializable {
 
     // Name of the category

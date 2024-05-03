@@ -1,5 +1,6 @@
 package tyt.product.service;
 
+import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 
 import java.util.List;
@@ -49,4 +50,12 @@ public interface ProductService {
      * @return a list of product data transfer objects of all products.
      */
     List<ProductDTO> getAllProducts();
+
+
+    /**
+     * Retrieves all products by category.
+     *
+     * @return a list of product data transfer objects of all products.
+     */
+    List<ProductDTO> getProductsByCategory(CategoryEntity category);
 }

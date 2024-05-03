@@ -2,7 +2,10 @@ package tyt.product.database;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
+
+import java.util.List;
 
 /**
  * This interface represents the repository for the ProductEntity.
@@ -16,4 +19,19 @@ import tyt.product.model.ProductEntity;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
+    /**
+     * Finds a product by its name.
+     *
+     * @param name The name of the product to be found.
+     * @return The product with the given name.
+     */
+    List<ProductEntity> findByName(String name);
+
+    /**
+     * Finds all products in a given category.
+     *
+     * @param category The category of the products to be found.
+     * @return The products in the given category.
+     */
+    List<ProductEntity> findByCategory(CategoryEntity category);
 }

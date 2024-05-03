@@ -5,7 +5,7 @@ package tyt.product.exception;
  * It extends the RuntimeException class, meaning it's an unchecked exception.
  * Unchecked exceptions are exceptions that can be thrown during the execution of the program.
  */
-public class ProductNotFoundException extends RuntimeException {
+public class NoSuchProductException extends RuntimeException {
 
     /**
      * Constructor for the ProductNotFoundException class.
@@ -13,7 +13,7 @@ public class ProductNotFoundException extends RuntimeException {
      * @param message The detail message. The detail message is saved for
      *                later retrieval by the Throwable.getMessage() method.
      */
-    public ProductNotFoundException(String message) {
+    public NoSuchProductException(String message) {
         super(message);
     }
 }

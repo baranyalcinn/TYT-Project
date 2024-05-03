@@ -30,7 +30,11 @@ public class CategoryDTO {
      * Flag indicating whether the category is active or not.
      * By default, it is set to true.
      */
-    @Builder.Default
     @JsonIgnore
     private boolean isActive = true;
+
+
+    public boolean isActive() {
+        return isActive;
+    }
 }

@@ -11,7 +11,7 @@ import tyt.product.model.dto.CategoryDTO;
  * This interface is used to map between different category-related objects.
  * It uses the MapStruct library to generate the implementation at compile time.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CategoryMapper {
     /**
      * An instance of the mapper that can be used anywhere in the application.
@@ -48,5 +48,6 @@ public interface CategoryMapper {
      * @param updateCategoryRequest The UpdateCategoryRequest object to convert.
      * @return The converted CategoryDTO object.
      */
+
     CategoryDTO updateRequestToDto(UpdateCategoryRequest updateCategoryRequest);
 }

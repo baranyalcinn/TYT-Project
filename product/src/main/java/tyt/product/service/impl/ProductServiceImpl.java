@@ -1,11 +1,17 @@
-package tyt.product.service;
+package tyt.product.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import tyt.product.database.ProductRepository;
-import tyt.product.exception.ProductNotFoundException;
+import tyt.product.exception.NoSuchCategoryException;
+import tyt.product.exception.NoSuchProductException;
+import tyt.product.exception.ProductExistException;
+import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
+import tyt.product.service.ProductService;
 
 import java.util.List;
 
@@ -15,6 +21,7 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private static final Logger log = LogManager.getLogger(ProductServiceImpl.class);
     private final ProductRepository productRepository;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
 
@@ -55,8 +62,16 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public String createProduct(ProductDTO productDTO) {
+        List<ProductEntity> existingProducts = productRepository.findByName(productDTO.getName());
+        if (existingProducts.isEmpty()) {
         ProductEntity savedEntity = productRepository.save(toEntity(productDTO));
+        log.info("Product created successfully. ID: {}", savedEntity.getId());
         return savedEntity.getId().toString();
+        } else {
+            log.error("Product with name {} already exists", productDTO.getName());
+            throw new ProductExistException("A product with the name " + productDTO.getName() + " already exists.");
+        }
+
     }
 
     /**
@@ -67,9 +82,14 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public String updateProduct(ProductDTO productDTO) {
-        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow();
-        productMapper.updateProductFromDTO(productDTO,productEntity);
-        return "Product updated successfully" + productRepository.save(productEntity).getId();
+        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(()
+                -> new NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
+
+        productMapper.updateProductFromDTO(productDTO, productEntity);
+        ProductEntity updatedEntity = productRepository.save(productEntity);
+
+        log.info("Product updated successfully. ID: {}", updatedEntity.getId());
+        return "Product updated successfully. ID: " + updatedEntity.getId();
     }
 
     /**
@@ -79,11 +99,13 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public void deleteProduct(ProductDTO productDTO) {
-        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow();
+
+        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(() -> new NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
+
         productEntity.setActive(false);
+        log.info("Product deleted successfully. ID: {}", productEntity.getId());
         productRepository.save(productEntity);
     }
-
     /**
      * Retrieves a product by its ID.
      *
@@ -92,9 +114,7 @@ public class ProductServiceImpl implements ProductService {
      */
 @Override
 public ProductDTO getProduct(long id) {
-    return productRepository.findById(id)
-            .map(productMapper::toDTO)
-            .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found"));
+    return productRepository.findById(id).map(productMapper::toDTO).orElseThrow(() -> new NoSuchProductException("Product with id " + id + " not found"));
 }
 
     /**
@@ -110,4 +130,31 @@ public ProductDTO getProduct(long id) {
                 .toList();
     }
 
+
+    /**
+     * Retrieves all products by category.
+     *
+     * @return a list of product data transfer objects of all products.
+     */
+    @Override
+    public List<ProductDTO> getProductsByCategory(CategoryEntity category) {
+        try {
+            if (category == null) {
+                throw new NoSuchCategoryException("Category cannot be null");
+            }
+
+            List<ProductEntity> productEntities = productRepository.findByCategory(category);
+
+            if (productEntities.isEmpty()) {
+                throw new NoSuchProductException("No products found for the given category");
+            }
+
+            return productEntities.stream().map(ProductMapper.INSTANCE::toDTO).toList();
+        } catch (NoSuchCategoryException | NoSuchProductException e) {
+
+
+            System.err.println(e.getMessage());
+            throw e;
+        }
+    }
 }

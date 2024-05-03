@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Table(name = "products")
 @Data
 @NoArgsConstructor
+@SQLRestriction("is_active = true")
 public class ProductEntity extends BaseEntity implements Serializable {
 
     // Name of the product

@@ -18,9 +18,5 @@ public class UpdateCategoryRequest {
      * The new name for the category.
      */
     String name;
-
-    /**
-     * A flag indicating whether the category should be active or not.
-     */
-    boolean isActive;
+    
 }
