@@ -8,7 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
-import tyt.product.exception.NoSuchProductException;
+import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.service.ProductService;
@@ -63,7 +63,7 @@ public class ProductControllerTest {
      */
     @Test
     public void getProductByIdReturnsNotFound() {
-        when(productService.getProduct(anyLong())).thenThrow(new NoSuchProductException("Product not found"));
+        when(productService.getProduct(anyLong())).thenThrow(new Exceptions.NoSuchProductException("Product not found"));
 
         ResponseEntity<?> response = productController.getProductById(1L);
 

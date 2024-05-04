@@ -5,8 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.product.controller.response.CategoryResponse;
 import tyt.product.database.CategoryRepository;
-import tyt.product.exception.CategoryExistsException;
-import tyt.product.exception.NoSuchCategoryException;
+import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
 import tyt.product.model.mapper.CategoryMapper;
@@ -59,14 +58,14 @@ public class CategoryServiceImpl  implements CategoryService {
      * Creates a new category.
      * @param categoryDTO The data transfer object containing the details of the category to be created.
      * @return The ID of the created category.
-     * @throws CategoryExistsException if a category with the same name already exists.
+     * @throws Exceptions.CategoryExistsException if a category with the same name already exists.
      */
     @Override
     public String createCategory(CategoryDTO categoryDTO) {
         CategoryEntity existingCategory = categoryRepository.findByName(categoryDTO.getName());
         if (existingCategory != null) {
             log.error("Category with name {} already exists", categoryDTO.getName());
-            throw new CategoryExistsException("Category with name " + categoryDTO.getName() + " already exists");
+            throw new Exceptions.CategoryExistsException("Category with name " + categoryDTO.getName() + " already exists");
         }
 
         CategoryEntity savedEntity = categoryRepository.save(toEntity(categoryDTO));
@@ -83,14 +82,14 @@ public class CategoryServiceImpl  implements CategoryService {
      * Updates an existing category.
      * @param categoryDTO The data transfer object containing the updated details of the category.
      * @return The ID of the updated category.
-     * @throws NoSuchCategoryException if no category with the given ID exists.
+     * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
      */
     @Override
     public String updateCategory(CategoryDTO categoryDTO) {
         Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(categoryDTO.getId());
         if (optionalCategoryEntity.isEmpty()) {
             log.error("Category with id {} not found", categoryDTO.getId());
-            throw new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
+            throw new Exceptions.NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
         }
         CategoryEntity categoryEntity = optionalCategoryEntity.get();
 
@@ -104,7 +103,7 @@ public class CategoryServiceImpl  implements CategoryService {
     /**
      * Deletes a category by setting its active status to false.
      * @param categoryDTO The data transfer object containing the details of the category to be deleted.
-     * @throws NoSuchCategoryException if no category with the given ID exists.
+     * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
      */
 
     @Override
@@ -112,7 +111,7 @@ public class CategoryServiceImpl  implements CategoryService {
         Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(categoryDTO.getId());
         if (optionalCategoryEntity.isEmpty()) {
             log.error("Category with name {} not found", categoryDTO.getName());
-            throw new NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
+            throw new Exceptions.NoSuchCategoryException("Category with id " + categoryDTO.getId() + " not found");
         }
         CategoryEntity categoryEntity = optionalCategoryEntity.get();
 
@@ -125,13 +124,13 @@ public class CategoryServiceImpl  implements CategoryService {
      * Retrieves a category by its ID.
      * @param id The ID of the category to be retrieved.
      * @return The data transfer object of the retrieved category.
-     * @throws NoSuchCategoryException if no category with the given ID exists.
+     * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
      */
     @Override
     public CategoryDTO getCategory(long id) {
         return categoryRepository.findById(id)
                 .map(this::toDTO)
-                .orElseThrow(() -> new NoSuchCategoryException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new Exceptions.NoSuchCategoryException("Category with id " + id + " not found"));
     }
 
     /**

@@ -4,9 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import tyt.product.database.ProductRepository;
-import tyt.product.exception.NoSuchCategoryException;
-import tyt.product.exception.NoSuchProductException;
-import tyt.product.exception.ProductExistException;
+import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
@@ -69,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
         return savedEntity.getId().toString();
         } else {
             log.error("Product with name {} already exists", productDTO.getName());
-            throw new ProductExistException("A product with the name " + productDTO.getName() + " already exists.");
+            throw new Exceptions.ProductExistException("A product with the name " + productDTO.getName() + " already exists.");
         }
 
     }
@@ -83,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public String updateProduct(ProductDTO productDTO) {
         ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(()
-                -> new NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
+                -> new Exceptions.NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
 
         productMapper.updateProductFromDTO(productDTO, productEntity);
         ProductEntity updatedEntity = productRepository.save(productEntity);
@@ -97,12 +95,12 @@ public class ProductServiceImpl implements ProductService {
      *
      * @param productDTO the product DTO to delete
      * @return a success message with the ID of the deleted product
-     * @throws NoSuchProductException if the product with the given ID does not exist
+     * @throws Exceptions.NoSuchProductException if the product with the given ID does not exist
      */
     @Override
     public String deleteProduct(ProductDTO productDTO) {
 
-        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(() -> new NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
+        ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(() -> new Exceptions.NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
 
         productEntity.setActive(false);
         log.info("Product deactivated successfully. ID: {}", productEntity.getId());
@@ -118,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
      */
 @Override
 public ProductDTO getProduct(long id) {
-    return productRepository.findById(id).map(productMapper::toDTO).orElseThrow(() -> new NoSuchProductException("Product with id " + id + " not found"));
+    return productRepository.findById(id).map(productMapper::toDTO).orElseThrow(() -> new Exceptions.NoSuchProductException("Product with id " + id + " not found"));
 }
 
     /**
@@ -144,17 +142,17 @@ public ProductDTO getProduct(long id) {
     public List<ProductDTO> getProductsByCategory(CategoryEntity category) {
         try {
             if (category == null) {
-                throw new NoSuchCategoryException("Category cannot be null");
+                throw new Exceptions.NoSuchCategoryException("Category cannot be null");
             }
 
             List<ProductEntity> productEntities = productRepository.findByCategory(category);
 
             if (productEntities.isEmpty()) {
-                throw new NoSuchProductException("No products found for the given category");
+                throw new Exceptions.NoSuchProductException("No products found for the given category");
             }
 
             return productEntities.stream().map(ProductMapper.INSTANCE::toDTO).toList();
-        } catch (NoSuchCategoryException | NoSuchProductException e) {
+        } catch (Exceptions.NoSuchCategoryException | Exceptions.NoSuchProductException e) {
 
 
             System.err.println(e.getMessage());

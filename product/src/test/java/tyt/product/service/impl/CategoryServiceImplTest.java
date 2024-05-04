@@ -7,8 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import tyt.product.database.CategoryRepository;
-import tyt.product.exception.CategoryExistsException;
-import tyt.product.exception.NoSuchCategoryException;
+import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
 
@@ -68,7 +67,7 @@ public class CategoryServiceImplTest {
         when(categoryRepository.findByName(anyString())).thenReturn(categoryEntity);
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
 
-        assertThrows(CategoryExistsException.class, () -> categoryService.createCategory(categoryDTO));
+        assertThrows(Exceptions.CategoryExistsException.class, () -> categoryService.createCategory(categoryDTO));
     }
 
     /**
@@ -83,7 +82,7 @@ public class CategoryServiceImplTest {
 
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchCategoryException.class, () -> categoryService.updateCategory(categoryDTO));
+        assertThrows(Exceptions.NoSuchCategoryException.class, () -> categoryService.updateCategory(categoryDTO));
     }
 
     /**
@@ -96,7 +95,7 @@ public class CategoryServiceImplTest {
         categoryDTO.setId(1L);
 
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NoSuchCategoryException.class, () -> categoryService.deleteCategory(categoryDTO));
+        assertThrows(Exceptions.NoSuchCategoryException.class, () -> categoryService.deleteCategory(categoryDTO));
     }
 
     /**
@@ -106,7 +105,7 @@ public class CategoryServiceImplTest {
     @Test
     public void getNonExistingCategory() {
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NoSuchCategoryException.class, () -> categoryService.getCategory(1L));
+        assertThrows(Exceptions.NoSuchCategoryException.class, () -> categoryService.getCategory(1L));
     }
 
     /**

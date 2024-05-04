@@ -27,8 +27,8 @@ public class RestExceptionHandler {
      * @return ResponseEntity containing the error details and HTTP status.
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoSuchProductException.class)
-    public ResponseEntity<ErrorDetails> handleProductNotFoundException(NoSuchProductException ex) {
+    @ExceptionHandler(Exceptions.NoSuchProductException.class)
+    public ResponseEntity<ErrorDetails> handleProductNotFoundException(Exceptions.NoSuchProductException ex) {
         Date timestamp = new Date();
         String message = "Product Not Found";
         String details = ex.getMessage();
@@ -44,8 +44,8 @@ public class RestExceptionHandler {
      * @return ResponseEntity containing the error details and HTTP status.
      */
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(CategoryExistsException.class)
-    public ResponseEntity<ErrorDetails> handleCategoryExistsException(CategoryExistsException ex) {
+    @ExceptionHandler(Exceptions.CategoryExistsException.class)
+    public ResponseEntity<ErrorDetails> handleCategoryExistsException(Exceptions.CategoryExistsException ex) {
         Date timestamp = new Date();
         String message = "Category Already Exists";
         String details = ex.getMessage();
@@ -61,8 +61,8 @@ public class RestExceptionHandler {
      * @return ResponseEntity containing the error details and HTTP status.
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoSuchCategoryException.class)
-    public ResponseEntity<ErrorDetails> handleCategoryNotFoundException(NoSuchCategoryException ex) {
+    @ExceptionHandler(Exceptions.NoSuchCategoryException.class)
+    public ResponseEntity<ErrorDetails> handleCategoryNotFoundException(Exceptions.NoSuchCategoryException ex) {
         Date timestamp = new Date();
         String message = "Category Not Found";
         String details = ex.getMessage();
@@ -78,8 +78,8 @@ public class RestExceptionHandler {
      * @return ResponseEntity containing the error details and HTTP status.
      */
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(ProductExistException.class)
-    public ResponseEntity<ErrorDetails> handleProductExistException(ProductExistException ex) {
+    @ExceptionHandler(Exceptions.ProductExistException.class)
+    public ResponseEntity<ErrorDetails> handleProductExistException(Exceptions.ProductExistException ex) {
         Date timestamp = new Date();
         String message = "Product Already Exists";
         String details = ex.getMessage();
