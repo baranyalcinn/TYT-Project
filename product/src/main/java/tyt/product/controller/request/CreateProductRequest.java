@@ -1,6 +1,5 @@
 package tyt.product.controller.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Value;
 
