@@ -1,5 +1,6 @@
 package tyt.record.controller.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Value;
 
 /**
@@ -15,5 +16,6 @@ public class CreateRecordRequest {
     /**
      * The ID of the order for which a record is to be created.
      */
+    @NotBlank(message = "Order ID must not be blank")
     Long orderId;
 }

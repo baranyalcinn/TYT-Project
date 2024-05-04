@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A utility class that generates a PDF document for an OrderEntity object.
@@ -100,7 +101,9 @@ public class PdfGenerator {
         htmlBuilder.append("</tr>");
 
 
-        for (OrderProductDTO orderProduct : order.getOrderProducts()) {
+        List<OrderProductDTO> orderProducts = order.getOrderProducts();
+        if (orderProducts != null) {
+            for (OrderProductDTO orderProduct : orderProducts) {
             ProductDTO product = orderProduct.getProduct();
             htmlBuilder.append("<tr>");
             htmlBuilder.append("<td>").append(product.getName()).append("</td>");
@@ -108,7 +111,7 @@ public class PdfGenerator {
             htmlBuilder.append("<td>").append(product.getPrice() * orderProduct.getQuantity()).append("</td>");
             htmlBuilder.append("</tr>");
         }
-
+        }
         htmlBuilder.append("</table>");
         htmlBuilder.append("<p style=\"font-size: 15px;\">Order Total: ").append(order.getTotal()).append("</p>");
 

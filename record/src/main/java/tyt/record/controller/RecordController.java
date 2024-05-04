@@ -1,12 +1,16 @@
 package tyt.record.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tyt.record.controller.response.RecordResponse;
 import tyt.record.service.RecordService;
+
+import java.io.IOException;
 
 /**
  * This class is a controller for handling requests related to records.
@@ -37,11 +41,11 @@ public class RecordController {
      * @param id The ID of the order for which a record is to be created.
      * @return A string message indicating the result of the operation.
      */
-    @PostMapping("/create/{id}")
-    public String createRecordForOrder(@PathVariable Long id) {
-        log.info("Creating record for order with id: {}", id);
-        return recordService.createRecordForOrder(id);
-    }
+  @PostMapping("/create/{id}")
+public RecordResponse createRecordForOrder(@Valid @PathVariable Long id) throws IOException {
+    log.info("Creating record for order with id: {}", id);
+    return recordService.createRecordForOrder(id);
+}
 
 
 }

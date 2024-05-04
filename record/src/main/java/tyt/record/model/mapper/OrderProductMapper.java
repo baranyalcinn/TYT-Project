@@ -1,6 +1,7 @@
 package tyt.record.model.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import tyt.record.model.OrderProductEntity;
 import tyt.record.model.dto.OrderProductDTO;
@@ -24,6 +25,9 @@ public interface OrderProductMapper {
      * @param orderProductEntity The OrderProductEntity that needs to be converted to OrderProductDTO.
      * @return OrderProductDTO The mapped OrderProductDTO.
      */
-   OrderProductDTO toDTO(OrderProductEntity orderProductEntity);
+
+    @Mapping(source = "order.id", target = "orderId")
+    @Mapping(source = "product.id", target = "productId")
+    OrderProductDTO toDTO(OrderProductEntity orderProductEntity);
 
 }
