@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import tyt.product.database.CategoryRepository;
 import tyt.product.database.ProductRepository;
-import tyt.product.exception.NoSuchProductException;
+import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
@@ -125,7 +125,7 @@ class ProductServiceImplTest {
     void updateProductNotFound() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchProductException.class, () -> productService.updateProduct(productDTO));
+        assertThrows(Exceptions.NoSuchProductException.class, () -> productService.updateProduct(productDTO));
     }
 
     /**
@@ -153,7 +153,7 @@ class ProductServiceImplTest {
     void deleteProductNotFound() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchProductException.class, () -> productService.deleteProduct(productDTO));
+        assertThrows(Exceptions.NoSuchProductException.class, () -> productService.deleteProduct(productDTO));
     }
 
     /**
@@ -181,7 +181,7 @@ class ProductServiceImplTest {
     void getProductNotFound() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchProductException.class, () -> productService.getProduct(1L));
+        assertThrows(Exceptions.NoSuchProductException.class, () -> productService.getProduct(1L));
     }
 
     /**
