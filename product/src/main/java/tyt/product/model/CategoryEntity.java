@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class CategoryEntity extends BaseEntity implements Serializable {
     private String name;
 
     // Boolean field to check if the category is active or not. By default, it is set to true.
+    @Setter
     @Column(nullable = false)
     private boolean isActive = true;
 
@@ -38,5 +40,9 @@ public class CategoryEntity extends BaseEntity implements Serializable {
      */
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<ProductEntity> products;
+
+    public boolean getIsActive() {
+        return isActive;
+    }
 
 }

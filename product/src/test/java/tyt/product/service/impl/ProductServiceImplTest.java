@@ -159,14 +159,14 @@ class ProductServiceImplTest {
     /**
      * Test case for successful product retrieval.
      * It mocks the behavior of productRepository.findById to return a ProductEntity,
-     * and tests the getProduct method of the productService.
+     * and tests the getProductById method of the productService.
      * The test asserts that the returned product ID matches the expected ID.
      */
     @Test
-    void getProductSuccessfully() {
+    void getProductByIdSuccessfully() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(productEntity));
 
-        ProductDTO result = productService.getProduct(1L);
+        ProductDTO result = productService.getProductById(1L);
 
         assertEquals(productEntity.getId(), result.getId());
     }
@@ -174,14 +174,14 @@ class ProductServiceImplTest {
     /**
      * Test case for product retrieval when product is not found.
      * It mocks the behavior of productRepository.findById to return an empty Optional,
-     * and tests the getProduct method of the productService.
+     * and tests the getProductById method of the productService.
      * The test asserts that a NoSuchProductException is thrown.
      */
     @Test
-    void getProductNotFound() {
+    void getProductByIdNotFound() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(Exceptions.NoSuchProductException.class, () -> productService.getProduct(1L));
+        assertThrows(Exceptions.NoSuchProductException.class, () -> productService.getProductById(1L));
     }
 
     /**
@@ -202,11 +202,11 @@ class ProductServiceImplTest {
 
     /**
      * Test case for successful retrieval of all products by category.
-     * It creates a CategoryEntity and tests the getProductsByCategory method of the productService.
+     * It creates a CategoryEntity and tests the getProductsByCategoryById method of the productService.
      * The test asserts that the category is not null.
      */
     @Test
-    public void getProductsByCategory() {
+    public void getProductsByCategoryById() {
         CategoryEntity category = new CategoryEntity();
         category.setId(1L);
         category.setName("Test Category");

@@ -140,7 +140,6 @@ public class CategoryServiceImpl  implements CategoryService {
     @Override
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()
-                .filter(CategoryEntity::isActive)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

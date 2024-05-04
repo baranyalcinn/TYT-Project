@@ -1,14 +1,12 @@
 package tyt.product.controller;
 
 import jakarta.validation.Valid;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
-import tyt.product.exception.Exceptions;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
@@ -20,12 +18,13 @@ import java.util.List;
  * This is the main controller for the Product entity.
  * It handles all the HTTP requests related to the Product entity.
  */
+@Log4j2
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
-    private static final Logger logger = LogManager.getLogger(ProductController.class);
+    private final ProductMapper productMapper = ProductMapper.INSTANCE;
     /**
      * Constructor for the ProductController.
      *
@@ -42,13 +41,12 @@ public class ProductController {
      * @return The product with the given id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@Valid @PathVariable long id) {
-        try {
-            ProductDTO productDTO = productService.getProduct(id);
+    public ResponseEntity<?> getProductById(@PathVariable long id) {
+        ProductDTO productDTO = productService.getProductById(id);
+        if (productDTO != null) {
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
-        } catch (Exceptions.NoSuchProductException e) {
-            logger.error("Product not found", e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     }
 
@@ -72,7 +70,9 @@ public class ProductController {
 
     @PostMapping("/create")
     public String createProduct(@Valid @RequestBody CreateProductRequest request) {
-        return productService.createProduct(ProductMapper.INSTANCE.createRequestToDto(request));
+
+        log.info("Creating product with name: {}", request.getName());
+        return productService.createProduct(productMapper.createRequestToDto(request));
     }
 
     /**

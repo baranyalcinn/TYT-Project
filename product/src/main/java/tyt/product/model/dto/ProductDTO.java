@@ -57,7 +57,7 @@ public class ProductDTO {
      */
 
     @JsonIgnore
-    private boolean isActive = true;
+    private boolean isActive;
 
     /**
      * Unique identifier for the category of the product.

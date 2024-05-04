@@ -1,6 +1,7 @@
 package tyt.product.model.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import tyt.product.controller.request.CreateCategoryRequest;
 import tyt.product.controller.request.UpdateCategoryRequest;
@@ -24,14 +25,21 @@ public interface CategoryMapper {
      * @param categoryEntity The CategoryEntity object to convert.
      * @return The converted CategoryDTO object.
      */
-    CategoryDTO toDTO(CategoryEntity categoryEntity);
 
+    @Mapping(source = "categoryEntity.id", target = "id")
+    @Mapping(source = "categoryEntity.isActive", target = "isActive")
+    CategoryDTO toDTO(CategoryEntity categoryEntity);
     /**
      * Converts a CategoryDTO object to a CategoryEntity object.
      *
      * @param categoryDTO The CategoryDTO object to convert.
      * @return The converted CategoryEntity object.
      */
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "products", ignore = true)
     CategoryEntity toEntity(CategoryDTO categoryDTO);
 
     /**
@@ -40,6 +48,8 @@ public interface CategoryMapper {
      * @param createCategoryRequest The CreateCategoryRequest object to convert.
      * @return The converted CategoryDTO object.
      */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "isActive", ignore = true)
     CategoryDTO createRequestToDto(CreateCategoryRequest createCategoryRequest);
 
     /**
@@ -49,5 +59,6 @@ public interface CategoryMapper {
      * @return The converted CategoryDTO object.
      */
 
+    @Mapping(target = "isActive", ignore = true)
     CategoryDTO updateRequestToDto(UpdateCategoryRequest updateCategoryRequest);
 }

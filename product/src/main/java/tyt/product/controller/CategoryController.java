@@ -66,8 +66,8 @@ public class CategoryController {
      * @param id The id of the category to be fetched.
      * @return The details of the category.
      */
-    @GetMapping("/get")
-    public CategoryDTO getCategory(@Valid @RequestParam long id){
+    @GetMapping("/get/{id}")
+    public CategoryDTO getCategory(@PathVariable long id){
         return categoryService.getCategory(id);
     }
 

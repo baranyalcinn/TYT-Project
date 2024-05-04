@@ -37,7 +37,7 @@ public class CategoryDTO {
      * By default, it is set to true.
      */
     @JsonIgnore
-    private boolean isActive = true;
+    private boolean isActive;
 
 
     public boolean isActive() {

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
 import tyt.product.exception.Exceptions;
@@ -17,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -61,15 +60,26 @@ public class ProductControllerTest {
     /**
      * This test checks if the getProductById method of the ProductController class returns a not found response when the product is not found.
      */
-    @Test
-    public void getProductByIdReturnsNotFound() {
-        when(productService.getProduct(anyLong())).thenThrow(new Exceptions.NoSuchProductException("Product not found"));
+@Test
+void getProductByIdReturnsNotFound() {
+    // Arrange
+    Long nonExistentProductId = 999L; // ID that does not exist in the database
 
-        ResponseEntity<?> response = productController.getProductById(1L);
+    // Set up ProductService to throw NoSuchProductException
+    when(productService.getProductById(nonExistentProductId))
+    .thenThrow(new Exceptions.NoSuchProductException("Product not found"));
 
-        assertEquals("Product not found", response.getBody());
-        assertEquals(404, response.getStatusCode().value());
-    }
+    // Assert
+    Exception exception = assertThrows(Exceptions.NoSuchProductException.class, () -> {
+        // Act
+        productController.getProductById(nonExistentProductId);
+    });
+
+    String expectedMessage = "Product not found";
+    String actualMessage = exception.getMessage();
+
+    assertTrue(actualMessage.contains(expectedMessage));
+}
 
     /**
      * This test checks if the getAllProducts method of the ProductController class returns the correct list of products.

@@ -45,4 +45,6 @@ public class UpdateProductRequest {
      */
     @NotNull(message = "Category id is required.")
     long categoryId;
+
+
 }

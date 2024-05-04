@@ -12,6 +12,7 @@ import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for managing products.
@@ -106,8 +107,14 @@ public class ProductServiceImpl implements ProductService {
      * @return the retrieved product DTO
      */
 @Override
-public ProductDTO getProduct(long id) {
-    return productRepository.findById(id).map(productMapper::toDTO).orElseThrow(() -> new Exceptions.NoSuchProductException("Product with id " + id + " not found"));
+public ProductDTO getProductById(long id) {
+    Optional<ProductEntity> productEntity = productRepository.findById(id);
+
+    if (productEntity.isPresent()) {
+        return productMapper.toDTO(productEntity.get());
+    } else {
+        throw new Exceptions.NoSuchProductException("Product with id " + id + " not found");
+    }
 }
 
     /**
