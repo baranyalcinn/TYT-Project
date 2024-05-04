@@ -1,5 +1,6 @@
 package tyt.product.controller;
 
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class ProductController {
      * @return The product with the given id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable long id) {
+    public ResponseEntity<?> getProductById(@Valid @PathVariable long id) {
         try {
             ProductDTO productDTO = productService.getProduct(id);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
@@ -70,7 +71,7 @@ public class ProductController {
      */
 
     @PostMapping("/create")
-    public String createProduct(@RequestBody CreateProductRequest request) {
+    public String createProduct(@Valid @RequestBody CreateProductRequest request) {
         return productService.createProduct(ProductMapper.INSTANCE.createRequestToDto(request));
     }
 
@@ -81,7 +82,7 @@ public class ProductController {
      * @return A message indicating the result of the operation.
      */
     @PutMapping("/update")
-    public String updateProduct(@RequestBody UpdateProductRequest request) throws Exception {
+    public String updateProduct(@Valid @RequestBody UpdateProductRequest request) throws Exception {
         return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
     }
 
@@ -91,7 +92,7 @@ public class ProductController {
      * @param id The id of the product to be deleted.
      */
     @DeleteMapping("/{id}")
-    public String deleteProduct(@PathVariable long id) {
+    public String deleteProduct(@Valid @PathVariable long id) {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(id);
         productEntity.setActive(false); // Set isActive to false for soft delete

@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class ProductEntity extends BaseEntity implements Serializable {
 
     // Name of the product
+    @Column(unique = true)
     private String name;
 
     // Description of the product

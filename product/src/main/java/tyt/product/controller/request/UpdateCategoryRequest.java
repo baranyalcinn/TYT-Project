@@ -1,5 +1,7 @@
 package tyt.product.controller.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 
 /**
@@ -12,11 +14,13 @@ public class UpdateCategoryRequest {
     /**
      * The unique identifier of the category to be updated.
      */
+    @NotNull(message = "Category ID is required.")
     long id;
 
     /**
      * The new name for the category.
      */
+    @NotBlank(message = "Category name is required.")
     String name;
     
 }

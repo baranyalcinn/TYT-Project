@@ -23,15 +23,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
 
-    /**
-     * Converts a ProductEntity to a ProductDTO.
-     *
-     * @param productEntity the product entity to convert
-     * @return the converted product DTO
-     */
-    private ProductDTO toDTO(ProductEntity productEntity) {
-        return productMapper.toDTO(productEntity);
-    }
 
     /**
      * Converts a ProductDTO to a ProductEntity.
@@ -128,7 +119,7 @@ public ProductDTO getProduct(long id) {
     public List<ProductDTO> getAllProducts() {
         List<ProductEntity> productEntities = productRepository.findAll();
         return productEntities.stream()
-                .map(ProductMapper.INSTANCE::toDTO)
+                .map(productMapper::toDTO)
                 .toList();
     }
 
@@ -151,7 +142,7 @@ public ProductDTO getProduct(long id) {
                 throw new Exceptions.NoSuchProductException("No products found for the given category");
             }
 
-            return productEntities.stream().map(ProductMapper.INSTANCE::toDTO).toList();
+            return productEntities.stream().map(productMapper::toDTO).toList();
         } catch (Exceptions.NoSuchCategoryException | Exceptions.NoSuchProductException e) {
 
 

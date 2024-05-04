@@ -1,8 +1,8 @@
 package tyt.product.controller.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Value;
 
 /**
  * This class represents a request to create a new category.
@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
  *
  * @author baranyalcinn
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Value
 public class CreateCategoryRequest {
 
     /**
      * The name of the category to be created.
      */
+    @NotBlank(message = "Category name cannot be blank")
+    @Size(min = 2, max = 30, message = "Category name must be between 2 and 30 characters")
     String name;
 
     /**
