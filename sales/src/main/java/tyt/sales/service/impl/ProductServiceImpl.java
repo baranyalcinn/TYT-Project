@@ -1,10 +1,11 @@
-package tyt.sales.service;
+package tyt.sales.service.impl;
 
 import org.springframework.stereotype.Service;
 import tyt.sales.database.ProductRepository;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.model.mapper.ProductMapper;
+import tyt.sales.service.ProductService;
 
 import java.util.stream.Collectors;
 

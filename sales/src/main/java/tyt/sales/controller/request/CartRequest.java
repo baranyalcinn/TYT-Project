@@ -2,7 +2,9 @@ package tyt.sales.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 import lombok.Value;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 /**
  * Represents a request to add a product to a cart.
@@ -14,11 +16,15 @@ public class CartRequest {
     /**
      * The ID of the product to be added to the cart.
      */
+
+    @NotBlank(message = "Product ID cannot be blank")
     Long productId;
 
     /**
      * The quantity of the product to be added to the cart.
      */
+
+    @Min(value = 1, message = "Quantity must be at least 1")
     int quantity;
 
     /**

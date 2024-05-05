@@ -1,11 +1,13 @@
 package tyt.sales.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
 import tyt.sales.controller.response.CartResponse;
 import tyt.sales.model.dto.CartDTO;
+import tyt.sales.rules.CartIsEmptyException;
 import tyt.sales.service.CartService;
 import tyt.sales.service.ProductService;
 
@@ -38,7 +40,7 @@ public class CartController {
      * @return A response entity containing a message and HTTP status.
      */
     @PostMapping("/add")
-    public ResponseEntity<CartResponse> addToCart(@RequestBody CartRequest cartRequest) {
+    public ResponseEntity<CartResponse> addToCart(@Valid @RequestBody CartRequest cartRequest) {
         var product = productService.findById(cartRequest.getProductId());
         var response = product != null ?
                 new CartResponse(cartService.addToCart(product, cartRequest.getQuantity()), HttpStatus.OK.value()) :
@@ -54,8 +56,9 @@ public class CartController {
     @PostMapping("/checkout")
     public ResponseEntity<CartResponse> checkout() {
         try {
+            if (cartService.getCart().isEmpty()) throw new CartIsEmptyException("Cart is empty, cannot checkout.");
             return new ResponseEntity<>(new CartResponse(cartService.checkout(), HttpStatus.OK.value()), HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (CartIsEmptyException e) {
             return new ResponseEntity<>(new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
     }
