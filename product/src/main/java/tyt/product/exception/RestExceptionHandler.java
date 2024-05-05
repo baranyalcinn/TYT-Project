@@ -28,11 +28,11 @@ public class RestExceptionHandler {
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(Exceptions.NoSuchProductException.class)
-    public ResponseEntity<ErrorDetails> handleProductNotFoundException(Exceptions.NoSuchProductException ex) {
+    public ResponseEntity<Exceptions.ErrorDetails> handleProductNotFoundException(Exceptions.NoSuchProductException ex) {
         Date timestamp = new Date();
         String message = "Product Not Found";
         String details = ex.getMessage();
-        ErrorDetails errorDetails = new ErrorDetails(timestamp, message, details, HttpStatus.NOT_FOUND);
+        Exceptions.ErrorDetails errorDetails = new Exceptions.ErrorDetails(timestamp, message, details, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
@@ -45,11 +45,11 @@ public class RestExceptionHandler {
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(Exceptions.CategoryExistsException.class)
-    public ResponseEntity<ErrorDetails> handleCategoryExistsException(Exceptions.CategoryExistsException ex) {
+    public ResponseEntity<Exceptions.ErrorDetails> handleCategoryExistsException(Exceptions.CategoryExistsException ex) {
         Date timestamp = new Date();
         String message = "Category Already Exists";
         String details = ex.getMessage();
-        ErrorDetails errorDetails = new ErrorDetails(timestamp, message, details, HttpStatus.CONFLICT);
+        Exceptions.ErrorDetails errorDetails = new Exceptions.ErrorDetails(timestamp, message, details, HttpStatus.CONFLICT);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
@@ -62,11 +62,11 @@ public class RestExceptionHandler {
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(Exceptions.NoSuchCategoryException.class)
-    public ResponseEntity<ErrorDetails> handleCategoryNotFoundException(Exceptions.NoSuchCategoryException ex) {
+    public ResponseEntity<Exceptions.ErrorDetails> handleCategoryNotFoundException(Exceptions.NoSuchCategoryException ex) {
         Date timestamp = new Date();
         String message = "Category Not Found";
         String details = ex.getMessage();
-        ErrorDetails errorDetails = new ErrorDetails(timestamp, message, details, HttpStatus.NOT_FOUND);
+        Exceptions.ErrorDetails errorDetails = new Exceptions.ErrorDetails(timestamp, message, details, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
@@ -79,11 +79,11 @@ public class RestExceptionHandler {
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(Exceptions.ProductExistException.class)
-    public ResponseEntity<ErrorDetails> handleProductExistException(Exceptions.ProductExistException ex) {
+    public ResponseEntity<Exceptions.ErrorDetails> handleProductExistException(Exceptions.ProductExistException ex) {
         Date timestamp = new Date();
         String message = "Product Already Exists";
         String details = ex.getMessage();
-        ErrorDetails errorDetails = new ErrorDetails(timestamp, message, details, HttpStatus.CONFLICT);
+        Exceptions.ErrorDetails errorDetails = new Exceptions.ErrorDetails(timestamp, message, details, HttpStatus.CONFLICT);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 

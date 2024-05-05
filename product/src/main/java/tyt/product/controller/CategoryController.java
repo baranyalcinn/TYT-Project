@@ -8,8 +8,8 @@ import tyt.product.model.dto.CategoryDTO;
 import tyt.product.model.mapper.CategoryMapper;
 import tyt.product.service.CategoryService;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * CategoryController is a REST controller that handles HTTP requests related to Category.
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/category")
 public class CategoryController {
     private final CategoryService categoryService;
+
+    private final CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
 
     /**
      * Constructor for CategoryController.
@@ -35,7 +37,7 @@ public class CategoryController {
      */
     @PostMapping("/create")
     public String createCategory(@Valid @RequestBody CreateCategoryRequest request){
-        return categoryService.createCategory(CategoryMapper.INSTANCE.createRequestToDto(request));
+        return categoryService.createCategory(categoryMapper.createRequestToDto(request));
     }
 
 
@@ -46,7 +48,7 @@ public class CategoryController {
      */
     @PutMapping("/update")
     public String updateCategory(@Valid @RequestBody UpdateCategoryRequest request){
-        return categoryService.updateCategory(CategoryMapper.INSTANCE.updateRequestToDto(request));
+        return categoryService.updateCategory(categoryMapper.updateRequestToDto(request));
     }
 
     /**
@@ -77,9 +79,7 @@ public class CategoryController {
      */
     @GetMapping("/all")
     public List<CategoryDTO> getAllCategories(){
-        return categoryService.getAllCategories().stream()
-                .filter(CategoryDTO::isActive)
-                .collect(Collectors.toList());
+        return new ArrayList<>(categoryService.getAllCategories());
     }
 
 }

@@ -83,7 +83,7 @@ public class ProductController {
      */
     @PutMapping("/update")
     public String updateProduct(@Valid @RequestBody UpdateProductRequest request) throws Exception {
-        return productService.updateProduct(ProductMapper.INSTANCE.updateRequestToDto(request));
+        return productService.updateProduct(productMapper.updateRequestToDto(request));
     }
 
     /**
@@ -97,7 +97,7 @@ public class ProductController {
         productEntity.setId(id);
         productEntity.setActive(false); // Set isActive to false for soft delete
 
-        ProductDTO productDTO = ProductMapper.INSTANCE.toDTO(productEntity);
+        ProductDTO productDTO = productMapper.toDTO(productEntity);
         return productService.deleteProduct(productDTO);
     }
 
