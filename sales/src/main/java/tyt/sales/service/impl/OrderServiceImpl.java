@@ -1,6 +1,7 @@
 package tyt.sales.service.impl;
 
 import org.springframework.stereotype.Service;
+import tyt.sales.database.OfferRepository;
 import tyt.sales.database.OrderRepository;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.OrderDTO;
@@ -18,6 +19,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
+    private final OfferRepository offerRepository;
     private final OrderRepository orderRepository;
 
     /**
@@ -25,7 +27,8 @@ public class OrderServiceImpl implements OrderService {
      *
      * @param orderRepository the repository to be used for fetching and storing Order data
      */
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OfferRepository offerRepository, OrderRepository orderRepository) {
+        this.offerRepository = offerRepository;
         this.orderRepository = orderRepository;
     }
 
@@ -52,4 +55,6 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderMapper::fromEntity)
                 .orElse(null);
     }
+
+
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import tyt.sales.model.offer.OfferEntity;
 
 import java.io.Serializable;
 
@@ -31,11 +32,7 @@ public class CartEntity extends BaseEntity implements Serializable {
      */
     private int quantity;
 
-    /**
-     * The total price of the products in the cart.
-     * This field is not persisted in the database.
-     */
-    @Transient
+
     private double totalPrice;
 
     /**
@@ -52,11 +49,13 @@ public class CartEntity extends BaseEntity implements Serializable {
     @Transient
     private double productPrice;
 
+
     /**
-     * Calculates and returns the total price of the products in the cart.
-     * @return the total price of the products in the cart.
+     * The campaign applied to the cart.
+     * It is a many-to-one relationship with the CampaignEntity.
      */
-    public double getTotalPrice() {
-        return product.getPrice() * quantity;
-    }
+    @ManyToOne
+    private OfferEntity appliedOffer;
+
+
 }

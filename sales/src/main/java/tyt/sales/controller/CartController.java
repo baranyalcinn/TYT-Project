@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
 import tyt.sales.controller.response.CartResponse;
+import tyt.sales.model.dto.OfferApplyDTO;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.rules.CartIsEmptyException;
 import tyt.sales.service.CartService;
@@ -99,9 +100,19 @@ public class CartController {
             String result = cartService.removeAllItemsFromCart();
             CartResponse cartResponse = new CartResponse(result, HttpStatus.OK.value());
             return new ResponseEntity<>(cartResponse, HttpStatus.OK);
-    } catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             CartResponse cartResponse = new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
             return new ResponseEntity<>(cartResponse, HttpStatus.BAD_REQUEST);
+        }
     }
+
+    /**
+     * Endpoint for applying a campaign to the cart.
+     * @return A response entity containing a message and HTTP status.
+     */
+    @PostMapping("/apply-campaign")
+    public ResponseEntity<Void> applyCampaign(@RequestBody OfferApplyDTO offerApplyDTO) {
+        cartService.applyCampaign(offerApplyDTO.getCartId(), offerApplyDTO.getOfferId());
+        return ResponseEntity.ok().build();
 }
 }

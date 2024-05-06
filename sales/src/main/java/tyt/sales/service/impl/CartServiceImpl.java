@@ -3,14 +3,12 @@ package tyt.sales.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import tyt.sales.database.CartRepository;
-import tyt.sales.database.OrderProductRepository;
-import tyt.sales.database.OrderRepository;
-import tyt.sales.database.ProductRepository;
+import tyt.sales.database.*;
 import tyt.sales.model.CartEntity;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
+import tyt.sales.model.offer.OfferEntity;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
@@ -18,6 +16,7 @@ import tyt.sales.model.mapper.CartMapper;
 import tyt.sales.model.mapper.OrderMapper;
 import tyt.sales.model.mapper.ProductMapper;
 import tyt.sales.rules.InsufficientStockException;
+import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
 
 import java.time.LocalDateTime;
@@ -40,6 +39,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final OrderProductRepository orderProductRepository;
+    private final OfferRepository offerRepository;
 
     private final CartMapper cartMapper = CartMapper.INSTANCE;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
@@ -54,13 +54,12 @@ public class CartServiceImpl implements CartService {
      * @param cartRepository         the repository for cart items
      * @param orderProductRepository the repository for order products
      */
-    public CartServiceImpl(OrderRepository orderRepository,
-                           ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository) {
+    public CartServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository, OfferRepository offerRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
         this.orderProductRepository = orderProductRepository;
-
+        this.offerRepository = offerRepository;
     }
 
     /**
@@ -110,19 +109,6 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * Gets all items in the cart.
-     *
-     * @return a list of cart items
-     */
-    @Override
-    public List<CartDTO> getCart() {
-        List<CartEntity> cart = cartRepository.findAll();
-        Map<Long, ProductEntity> productMap = getProductMap(cart);
-        assignProductInfoToCartItems(cart, productMap);
-        return cartMapper.fromEntities(cart);
-    }
-
-    /**
      * Checks out the cart, creating an order and emptying the cart.
      *
      * @return a message indicating the checkout was successful
@@ -137,6 +123,85 @@ public class CartServiceImpl implements CartService {
         orderRepository.save(order);
         cartRepository.deleteAll();
         return "Checkout successful, a new cart created";
+    }
+    /**
+     * Gets all items in the cart.
+     *
+     * @return a list of cart items
+     */
+    // CartServiceImpl.java
+    @Override
+    public List<CartDTO> getCart() {
+        List<CartEntity> cart = cartRepository.findAll();
+
+        // Obtain product information
+        List<Long> productIds = cart.stream()
+                .map(cartItem -> cartItem.getProduct().getId())
+                .collect(Collectors.toList());
+        Map<Long, ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(ProductEntity::getId, Function.identity()));
+
+
+        // Update cart items with product info and calculate total for each item
+        cart.forEach(cartItem -> {
+            ProductEntity product = productMap.get(cartItem.getProduct().getId());
+            cartItem.setProductName(product.getName());
+            cartItem.setProductPrice(product.getPrice());
+
+            if (cartItem.getAppliedOffer() == null) {
+                cartItem.setTotalPrice(product.getPrice() * cartItem.getQuantity()); // Calculate total for each item
+            } else {
+                applyCampaignAndUpdateTotalPrice(cartItem.getId(), cartItem.getAppliedOffer().getId());
+            }
+
+        });
+
+        return cartMapper.fromEntities(cart);
+    }
+
+
+    public void applyCampaign(Long cartId, Long campaignId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
+
+        OfferEntity campaign = offerRepository.findById(campaignId)
+                .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id " + campaignId));
+
+        // Apply the campaign
+        cart.setAppliedOffer(campaign);
+
+        // Calculate discount and total efficiently
+        double originalPrice = cart.getProduct().getPrice() * cart.getQuantity();
+        double discount = 0.0;
+
+        if (campaign != null) {
+            switch (campaign.getOfferType()) {
+                case TEN_PERCENT_DISCOUNT:
+                    discount = originalPrice * 0.1;
+                    break;
+                case BUY_THREE_PAY_TWO:
+                    if (cart.getQuantity() >= 3) {
+                        int bundlesOfThree = cart.getQuantity() / 3;
+                        int remainder = cart.getQuantity() % 3;
+                        double priceForThreeAsTwo = bundlesOfThree * 2 * cart.getProduct().getPrice();
+                        double priceForRemainder = remainder * cart.getProduct().getPrice();
+                        discount = priceForThreeAsTwo + priceForRemainder - originalPrice;
+                    }
+                    break;
+            }
+        }
+
+        cart.setTotalPrice(originalPrice - discount);
+        cartRepository.save(cart);
+    }
+
+    private void applyCampaignAndUpdateTotalPrice(Long cartId, Long campaignId) {
+        applyCampaign(cartId, campaignId);
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
+        double totalPrice = cart.getTotalPrice();
+        cart.setTotalPrice(totalPrice);
+        cartRepository.save(cart);
     }
 
     /**
@@ -183,18 +248,18 @@ private OrderEntity createOrder(List<CartEntity> cart) {
     return order;
 }
 
+
 /**
  * Calculates the total price of a list of cart items.
  *
  * @param cart the list of CartEntity objects to calculate the total price of
- * @return the total price of all cart items
+ * @return the total price of the cart items
  */
 private double calculateTotalPrice(List<CartEntity> cart) {
     return cart.stream()
-            .mapToDouble(cartItem -> cartItem.getProduct().getPrice() * cartItem.getQuantity())
+            .mapToDouble(CartEntity::getTotalPrice)
             .sum();
 }
-
 /**
  * Creates a list of OrderProductEntity objects from a list of cart items and an order.
  *
@@ -226,32 +291,6 @@ private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity o
     return orderProductRepository.save(orderProduct);
 }
 
-/**
- * Creates a map of product IDs to ProductEntity objects from a list of cart items.
- *
- * @param cart the list of CartEntity objects to create the map from
- * @return the map of product IDs to ProductEntity objects
- */
-private Map<Long, ProductEntity> getProductMap(List<CartEntity> cart) {
-    List<Long> productIds = cart.stream()
-            .map(cartItem -> cartItem.getProduct().getId())
-            .collect(Collectors.toList());
-    return productRepository.findAllById(productIds).stream()
-            .collect(Collectors.toMap(ProductEntity::getId, Function.identity()));
-}
 
-/**
- * Assigns product information to a list of cart items using a map of product IDs to ProductEntity objects.
- *
- * @param cart the list of CartEntity objects to assign the product information to
- * @param productMap the map of product IDs to ProductEntity objects to get the product information from
- */
-private void assignProductInfoToCartItems(List<CartEntity> cart, Map<Long, ProductEntity> productMap) {
-    cart.forEach(cartItem -> {
-        ProductEntity product = productMap.get(cartItem.getProduct().getId());
-        cartItem.setProductName(product.getName());
-        cartItem.setProductPrice(product.getPrice());
-    });
-}
 }
 

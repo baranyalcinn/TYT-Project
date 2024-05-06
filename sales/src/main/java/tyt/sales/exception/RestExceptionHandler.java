@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import tyt.sales.rules.CartIsEmptyException;
 import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ProductNotFoundException;
+import tyt.sales.rules.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -84,5 +85,21 @@ public class RestExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+
+    /**
+     * This method handles the ResourceNotFoundException.
+     * It creates an ErrorDetails object with the current date, a message indicating the resource was not found, and the original exception message.
+     * It then returns a ResponseEntity with the ErrorDetails object and a HTTP status of NOT_FOUND.
+     *
+     * @param ex The ResourceNotFoundException that was thrown.
+     * @return A ResponseEntity containing the ErrorDetails and a HTTP status of NOT_FOUND.
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), "Resource Not Found",
+                ex.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 }

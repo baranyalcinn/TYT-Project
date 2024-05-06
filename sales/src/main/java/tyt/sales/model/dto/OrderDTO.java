@@ -35,4 +35,6 @@ public class OrderDTO {
     // Unique number for the order
     private String orderNumber;
 
+    private OfferDTO offer;
+
 }

@@ -1,6 +1,10 @@
 package tyt.sales.model.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import tyt.sales.model.offer.OfferEntity;
 
 
 /**
@@ -31,6 +35,8 @@ public class CartDTO {
 
     private Double productPrice;
 
+    // CartDTO.java
+    private OfferEntity appliedOffer;
 
 
 }

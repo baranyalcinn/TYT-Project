@@ -1,12 +1,10 @@
 package tyt.sales.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import tyt.sales.model.offer.OfferEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -52,4 +50,20 @@ public class OrderEntity extends BaseEntity implements Serializable {
 
     @Column(unique = true)
     private UUID orderNumber = UUID.randomUUID();
+
+    /**
+     * This field represents the list of campaigns associated with the order.
+     * The @ManyToMany annotation indicates that an order can be associated with multiple campaigns.
+     * The @JoinTable annotation specifies the name of the join table to be used for mapping.
+     * The joinColumns attribute specifies the foreign key column in the join table that references the order.
+     * The inverseJoinColumns attribute specifies the foreign key column in the join table that references the campaign.
+     */
+    @ManyToOne
+    @JoinTable(
+            name = "order_campaign",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "offer_id"))
+    private OfferEntity offer;
+
+
 }

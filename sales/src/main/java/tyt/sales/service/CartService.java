@@ -1,6 +1,5 @@
 package tyt.sales.service;
 
-import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
@@ -36,7 +35,6 @@ public interface CartService {
      * Removes a specific item from the cart.
      *
      * @param productId The ID of the product to be removed.
-     * @return
      */
     String removeItemFromCart(Long productId);
 
@@ -53,4 +51,12 @@ public interface CartService {
      * @return A string message indicating the result of the operation.
      */
     String checkout();
+
+    /**
+     * Applies a campaign to the cart.
+     *
+     * @param cartId     The ID of the cart to apply the campaign to.
+     * @param campaignId The ID of the campaign to apply.
+     */
+    void applyCampaign(Long cartId, Long campaignId);
 }

@@ -33,6 +33,7 @@ public interface OrderMapper {
      */
     @Mapping(source = "orderNumber", target = "orderNumber", qualifiedByName = "uuidToString")
     @Mapping(source = "orderProducts", target = "orderProducts", qualifiedByName = "orderProductListToOrderProductDTOList")
+    @Mapping(source = "offer", target = "offer")
     OrderDTO fromEntity(OrderEntity orderEntity);
 
 
@@ -70,6 +71,8 @@ public interface OrderMapper {
      * @param orderDTO The OrderDTO object to be converted.
      * @return The converted OrderEntity object.
      */
+
+    @Mapping(source = "offer", target = "offer")
     OrderEntity orderDtoToOrderEntity(OrderDTO orderDTO);
 
     /**
