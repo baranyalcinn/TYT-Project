@@ -2,6 +2,7 @@ package tyt.sales.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,7 +55,7 @@ public class CartEntity extends BaseEntity implements Serializable {
      * The campaign applied to the cart.
      * It is a many-to-one relationship with the CampaignEntity.
      */
-    @ManyToOne
+    @OneToOne
     private OfferEntity appliedOffer;
 
 

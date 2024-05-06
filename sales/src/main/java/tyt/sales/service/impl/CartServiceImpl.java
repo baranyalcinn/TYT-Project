@@ -8,13 +8,13 @@ import tyt.sales.model.CartEntity;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
-import tyt.sales.model.offer.OfferEntity;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.model.mapper.CartMapper;
 import tyt.sales.model.mapper.OrderMapper;
 import tyt.sales.model.mapper.ProductMapper;
+import tyt.sales.model.offer.OfferEntity;
 import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
@@ -164,18 +164,18 @@ public class CartServiceImpl implements CartService {
         CartEntity cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
 
-        OfferEntity campaign = offerRepository.findById(campaignId)
+        OfferEntity offer = offerRepository.findById(campaignId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id " + campaignId));
 
-        // Apply the campaign
-        cart.setAppliedOffer(campaign);
+        // Apply the offer
+        cart.setAppliedOffer(offer);
 
         // Calculate discount and total efficiently
         double originalPrice = cart.getProduct().getPrice() * cart.getQuantity();
         double discount = 0.0;
 
-        if (campaign != null) {
-            switch (campaign.getOfferType()) {
+        if (offer != null) {
+            switch (offer.getOfferType()) {
                 case TEN_PERCENT_DISCOUNT:
                     discount = originalPrice * 0.1;
                     break;
@@ -195,8 +195,8 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
     }
 
-    private void applyCampaignAndUpdateTotalPrice(Long cartId, Long campaignId) {
-        applyCampaign(cartId, campaignId);
+    private void applyCampaignAndUpdateTotalPrice(Long cartId, Long offerId) {
+        applyCampaign(cartId, offerId);
         CartEntity cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
         double totalPrice = cart.getTotalPrice();
@@ -245,6 +245,13 @@ private OrderEntity createOrder(List<CartEntity> cart) {
     LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     order.setOrderDate(localDateTime);
     order.setOrderProducts(createOrderProducts(cart, order));
+
+    cart.forEach(cartItem -> {
+        if (cartItem.getAppliedOffer() != null) {
+            order.setOffer(cartItem.getAppliedOffer());
+        }
+    });
+
     return order;
 }
 

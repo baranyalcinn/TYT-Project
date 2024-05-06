@@ -58,7 +58,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
      * The joinColumns attribute specifies the foreign key column in the join table that references the order.
      * The inverseJoinColumns attribute specifies the foreign key column in the join table that references the campaign.
      */
-    @ManyToOne
+    @OneToOne
     @JoinTable(
             name = "order_campaign",
             joinColumns = @JoinColumn(name = "order_id"),

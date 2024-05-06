@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class OfferDTO {
     private long id;
     private String name;
-    private String campaignType;
+    private String offerType;
 
 
 }
