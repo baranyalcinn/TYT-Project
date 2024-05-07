@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import tyt.sales.model.dto.OfferDTO;
-import tyt.sales.model.offer.OfferEntity;
+import tyt.sales.model.OfferEntity;
 
 @Mapper
 public interface OfferMapper {

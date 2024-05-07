@@ -3,7 +3,7 @@ package tyt.sales.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import tyt.sales.database.OfferRepository;
-import tyt.sales.model.offer.OfferEntity;
+import tyt.sales.model.OfferEntity;
 import tyt.sales.service.OfferService;
 
 @Service

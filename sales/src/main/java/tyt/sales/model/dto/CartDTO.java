@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.offer.OfferEntity;
+import tyt.sales.model.OfferEntity;
 
 
 /**

@@ -14,7 +14,7 @@ import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.model.mapper.CartMapper;
 import tyt.sales.model.mapper.OrderMapper;
 import tyt.sales.model.mapper.ProductMapper;
-import tyt.sales.model.offer.OfferEntity;
+import tyt.sales.model.OfferEntity;
 import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;

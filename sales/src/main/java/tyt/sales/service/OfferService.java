@@ -1,6 +1,6 @@
 package tyt.sales.service;
 
-import tyt.sales.model.offer.OfferEntity;
+import tyt.sales.model.OfferEntity;
 
 public interface OfferService {
 

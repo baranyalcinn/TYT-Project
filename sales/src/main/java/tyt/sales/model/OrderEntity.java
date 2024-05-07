@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.offer.OfferEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

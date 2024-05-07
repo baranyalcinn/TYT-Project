@@ -1,4 +1,4 @@
-package tyt.sales.model.offer;
+package tyt.sales.model;
 
 import lombok.Getter;
 

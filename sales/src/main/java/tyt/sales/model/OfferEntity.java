@@ -1,4 +1,4 @@
-package tyt.sales.model.offer;
+package tyt.sales.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import tyt.sales.model.BaseEntity;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
