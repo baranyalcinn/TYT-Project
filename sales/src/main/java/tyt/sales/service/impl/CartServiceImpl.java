@@ -1,21 +1,18 @@
 package tyt.sales.service.impl;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.Locked;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import tyt.sales.repository.*;
-import tyt.sales.model.CartEntity;
-import tyt.sales.model.OrderEntity;
-import tyt.sales.model.OrderProductEntity;
-import tyt.sales.model.ProductEntity;
+import tyt.sales.model.*;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.model.mapper.CartMapper;
 import tyt.sales.model.mapper.OrderMapper;
 import tyt.sales.model.mapper.ProductMapper;
-import tyt.sales.model.OfferEntity;
+import tyt.sales.repository.*;
 import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
@@ -33,7 +30,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Log4j2
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
 
@@ -46,7 +43,6 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper = CartMapper.INSTANCE;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
-
 
 
     /**
@@ -108,8 +104,13 @@ public class CartServiceImpl implements CartService {
         log.info("Checking out the following cart: {}", cartDTOs);
         OrderEntity order = createOrder(cart);
         orderRepository.save(order);
-        cartRepository.deleteAll();
-        return "Checkout successful, a new cart created";
+        clearCart();
+        return "Checkout successful, the same cart will be used for the next order";
+    }
+
+    private void clearCart() {
+        List<CartEntity> cart = cartRepository.findAll();
+        cartRepository.deleteAll(cart);
     }
     /**
      * Gets all items in the cart.
@@ -274,6 +275,7 @@ private List<OrderProductEntity> createOrderProducts(List<CartEntity> cart, Orde
  * @param order the OrderEntity object to associate the OrderProductEntity object with
  * @return the newly created OrderProductEntity object
  */
+@Locked
 private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
     ProductEntity product = cartItem.getProduct();
     product.setStock(product.getStock() - cartItem.getQuantity());

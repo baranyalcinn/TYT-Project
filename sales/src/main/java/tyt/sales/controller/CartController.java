@@ -1,5 +1,6 @@
 package tyt.sales.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
 import tyt.sales.controller.response.CartResponse;
+import tyt.sales.model.CartEntity;
 import tyt.sales.model.dto.OfferApplyDTO;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.rules.CartIsEmptyException;
@@ -22,11 +24,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/cart")
 @AllArgsConstructor
+@SessionAttributes("cart")
 public class CartController {
 
     private final ProductService productService;
     private final CartService cartService;
 
+    @ModelAttribute("cart")
+    public CartEntity cart(HttpSession session) {
+        CartEntity cart = (CartEntity) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new CartEntity();
+            session.setAttribute("cart", cart);
+        }
+        return cart;
+    }
 
     /**
      * Endpoint for adding a product to the cart.

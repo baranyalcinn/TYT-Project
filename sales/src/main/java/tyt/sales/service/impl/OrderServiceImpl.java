@@ -2,11 +2,10 @@ package tyt.sales.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tyt.sales.repository.OfferRepository;
-import tyt.sales.repository.OrderRepository;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.mapper.OrderMapper;
+import tyt.sales.repository.OrderRepository;
 import tyt.sales.service.OrderService;
 
 import java.util.List;
@@ -21,7 +20,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
-    private final OfferRepository offerRepository;
     private final OrderRepository orderRepository;
 
 

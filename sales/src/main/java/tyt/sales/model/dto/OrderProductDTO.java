@@ -1,5 +1,6 @@
 package tyt.sales.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,13 +19,18 @@ import lombok.NoArgsConstructor;
 public class OrderProductDTO {
 
     // Unique identifier for the OrderProduct
+    @JsonIgnore
     private Long id;
 
     // Identifier for the Order associated with the OrderProduct
+    @JsonIgnore
     private Long orderId;
 
     // Identifier for the Product associated with the OrderProduct
+    @JsonIgnore
     private Long productId;
+
+    private String productName;
 
     // Quantity of the product in the order
     private int quantity;

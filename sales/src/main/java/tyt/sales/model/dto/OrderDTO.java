@@ -23,18 +23,19 @@ public class OrderDTO {
     // Unique identifier for the order
     private Long id;
 
-    // List of products in the order
-    private List<OrderProductDTO> orderProducts;
-
-    // Total cost of the order
-    private double total;
-
     // Date when the order was placed
     private LocalDateTime orderDate;
 
     // Unique number for the order
     private String orderNumber;
 
+    // List of products in the order
+    private List<OrderProductDTO> orderProducts;
+
     private OfferDTO offer;
+
+    // Total cost of the order
+    private double total;
+
 
 }

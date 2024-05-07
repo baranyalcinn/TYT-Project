@@ -46,7 +46,6 @@ public class OrderEntity extends BaseEntity implements Serializable {
      * This field represents the unique identifier for the order.
      * It is initialized with a random UUID.
      */
-
     @Column(unique = true)
     private UUID orderNumber = UUID.randomUUID();
 
