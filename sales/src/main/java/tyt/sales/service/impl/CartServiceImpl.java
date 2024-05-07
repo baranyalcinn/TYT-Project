@@ -117,7 +117,6 @@ public class CartServiceImpl implements CartService {
      *
      * @return a list of cart items
      */
-    // CartServiceImpl.java
     @Override
     public List<CartDTO> getCart() {
         List<CartEntity> cart = cartRepository.findAll();
@@ -234,11 +233,9 @@ private OrderEntity createOrder(List<CartEntity> cart) {
     order.setOrderDate(localDateTime);
     order.setOrderProducts(createOrderProducts(cart, order));
 
-    cart.forEach(cartItem -> {
-        if (cartItem.getAppliedOffer() != null) {
-            order.setOffer(cartItem.getAppliedOffer());
-        }
-    });
+   cart.stream()
+    .filter(cartItem -> cartItem.getAppliedOffer() != null)
+    .forEach(cartItem -> order.setOffer(cartItem.getAppliedOffer()));
 
     return order;
 }
