@@ -1,9 +1,10 @@
 package tyt.sales.service.impl;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import tyt.sales.database.*;
+import tyt.sales.repository.*;
 import tyt.sales.model.CartEntity;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.OrderProductEntity;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Log4j2
+@AllArgsConstructor
 public class CartServiceImpl implements CartService {
 
 
@@ -46,21 +48,6 @@ public class CartServiceImpl implements CartService {
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
 
-    /**
-     * Constructor for CartServiceImpl.
-     *
-     * @param orderRepository        the repository for orders
-     * @param productRepository      the repository for products
-     * @param cartRepository         the repository for cart items
-     * @param orderProductRepository the repository for order products
-     */
-    public CartServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, CartRepository cartRepository, OrderProductRepository orderProductRepository, OfferRepository offerRepository) {
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.cartRepository = cartRepository;
-        this.orderProductRepository = orderProductRepository;
-        this.offerRepository = offerRepository;
-    }
 
     /**
      * Adds a product to the cart.

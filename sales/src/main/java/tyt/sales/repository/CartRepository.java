@@ -1,4 +1,4 @@
-package tyt.sales.database;
+package tyt.sales.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

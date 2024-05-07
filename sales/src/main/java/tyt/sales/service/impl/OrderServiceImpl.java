@@ -1,8 +1,9 @@
 package tyt.sales.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tyt.sales.database.OfferRepository;
-import tyt.sales.database.OrderRepository;
+import tyt.sales.repository.OfferRepository;
+import tyt.sales.repository.OrderRepository;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.mapper.OrderMapper;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * Service class for handling operations related to Orders.
  */
 @Service
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
@@ -22,15 +24,6 @@ public class OrderServiceImpl implements OrderService {
     private final OfferRepository offerRepository;
     private final OrderRepository orderRepository;
 
-    /**
-     * Constructor for OrderServiceImpl.
-     *
-     * @param orderRepository the repository to be used for fetching and storing Order data
-     */
-    public OrderServiceImpl(OfferRepository offerRepository, OrderRepository orderRepository) {
-        this.offerRepository = offerRepository;
-        this.orderRepository = orderRepository;
-    }
 
     /**
      * Fetches all orders from the database and converts them to DTOs.

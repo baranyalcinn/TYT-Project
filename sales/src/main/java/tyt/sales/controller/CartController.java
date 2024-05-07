@@ -1,6 +1,7 @@
 package tyt.sales.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +21,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/cart")
+@AllArgsConstructor
 public class CartController {
 
     private final ProductService productService;
     private final CartService cartService;
 
-    /**
-     * Constructor for the CartController.
-     * @param productService The service for managing products.
-     * @param cartService The service for managing the shopping cart.
-     */
-    public CartController(ProductService productService, CartService cartService) {
-        this.productService = productService;
-        this.cartService = cartService;
-    }
 
     /**
      * Endpoint for adding a product to the cart.

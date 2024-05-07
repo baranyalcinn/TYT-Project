@@ -1,7 +1,8 @@
 package tyt.sales.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import tyt.sales.database.ProductRepository;
+import tyt.sales.repository.ProductRepository;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.model.mapper.ProductMapper;
@@ -13,19 +14,12 @@ import java.util.stream.Collectors;
  * Service class for managing products.
  */
 @Service
+@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
 
-    /**
-     * Constructor for ProductServiceImpl.
-     *
-     * @param productRepository the repository to be used for product data access
-     */
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     /**
      * Fetches all products from the repository, maps them to DTOs and returns them.

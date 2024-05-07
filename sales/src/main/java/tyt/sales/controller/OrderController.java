@@ -1,5 +1,6 @@
 package tyt.sales.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,18 +16,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/order")
+@AllArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    /**
-     * Constructor for OrderController.
-     *
-     * @param orderService The service to be used for order operations.
-     */
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     /**
      * This endpoint returns all orders.
