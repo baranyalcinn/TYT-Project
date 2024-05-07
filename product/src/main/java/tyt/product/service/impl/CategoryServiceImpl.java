@@ -1,10 +1,11 @@
 package tyt.product.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.product.controller.response.CategoryResponse;
-import tyt.product.database.CategoryRepository;
+import tyt.product.repository.CategoryRepository;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Log4j2
+@AllArgsConstructor
 public class CategoryServiceImpl  implements CategoryService {
 
     // Repository for Category related database operations
@@ -44,14 +46,6 @@ public class CategoryServiceImpl  implements CategoryService {
      */
     private CategoryEntity toEntity(CategoryDTO categoryDTO) {
         return categoryMapper.toEntity(categoryDTO);
-    }
-
-    /**
-     * Constructor for CategoryServiceImpl.
-     * @param categoryRepository The repository to be used for database operations.
-     */
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
     }
 
     /**

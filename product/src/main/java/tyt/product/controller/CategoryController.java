@@ -1,6 +1,7 @@
 package tyt.product.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateCategoryRequest;
 import tyt.product.controller.request.UpdateCategoryRequest;
@@ -17,18 +18,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/category")
+@AllArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
 
     private final CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
-
-    /**
-     * Constructor for CategoryController.
-     * @param categoryService The service to be used for category operations.
-     */
-    public  CategoryController(CategoryService categoryService){
-        this.categoryService= categoryService;
-    }
 
     /**
      * Endpoint to create a new category.

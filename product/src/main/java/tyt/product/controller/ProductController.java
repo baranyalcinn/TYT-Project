@@ -1,6 +1,7 @@
 package tyt.product.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +22,11 @@ import java.util.List;
 @Log4j2
 @RestController
 @RequestMapping("/product")
+@AllArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
-    /**
-     * Constructor for the ProductController.
-     *
-     * @param productService The service that will be used to handle business logic.
-     */
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     /**
      * Get a specific product by its id.

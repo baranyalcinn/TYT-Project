@@ -1,9 +1,10 @@
 package tyt.product.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import tyt.product.database.ProductRepository;
+import tyt.product.repository.ProductRepository;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
@@ -18,6 +19,7 @@ import java.util.Optional;
  * Service class for managing products.
  */
 @Service
+@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger log = LogManager.getLogger(ProductServiceImpl.class);
@@ -35,14 +37,6 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toEntity(productDTO);
     }
 
-    /**
-     * Constructor for the ProductServiceImpl.
-     *
-     * @param productRepository the product repository to use
-     */
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     /**
      * Creates a new product.

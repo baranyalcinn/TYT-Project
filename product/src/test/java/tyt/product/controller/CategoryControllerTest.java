@@ -8,7 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import tyt.product.database.CategoryRepository;
+import tyt.product.repository.CategoryRepository;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
 import tyt.product.service.CategoryService;
