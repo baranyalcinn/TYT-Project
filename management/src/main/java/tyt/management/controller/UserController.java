@@ -43,18 +43,15 @@
         @PostMapping("/create")
         public ResponseEntity<String> createUser(@Valid @RequestBody CreateUserRequest request) {
             try {
-                // Validate roles before calling the service
                 validateRoles(request.getRoles());
 
                 String createdUser = userService.createUser(UserMapper.INSTANCE.createRequestToDto(request));
                 return ResponseEntity.ok(createdUser);  // Success: Return 200 OK
 
             } catch (MissingRequiredRoleException ex) {
-                // Handle MissingRequiredRoleException
                 return ResponseEntity.badRequest().body("At least one of the Cashier, Manager, Admin roles must be selected");
 
             } catch (Exception ex) {
-                // Log the unexpected exception for debugging
                 log.error("Error creating user: ", ex);
                 return ResponseEntity.badRequest().body("User could not be created."); // Generic error message
             }
@@ -80,7 +77,6 @@
 
         @ExceptionHandler(ConstraintViolationException.class)
         public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
-            // Get the first violation message
             String message = ex.getConstraintViolations().iterator().next().getMessage();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
@@ -93,7 +89,6 @@
         }
 
         private boolean isValidRole(Set<Role> roles) {
-            // Since you store String names in your enum, we'll compare against those
             return roles.stream().anyMatch(
                     role -> role.getName().equals("CASHIER") ||
                             role.getName().equals("MANAGER") ||

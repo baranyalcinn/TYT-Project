@@ -1,9 +1,7 @@
-package tyt.management.database;
+package tyt.management.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import tyt.management.model.UserEntity;
-
-import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 

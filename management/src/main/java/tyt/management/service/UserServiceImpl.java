@@ -1,8 +1,9 @@
 package tyt.management.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import tyt.management.database.UserRepository;
+import tyt.management.repository.UserRepository;
 import tyt.management.model.UserEntity;
 import tyt.management.model.dto.UserDTO;
 import tyt.management.model.mapper.UserMapper;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final BCryptPasswordEncoder passwordEncoder;
@@ -19,11 +21,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper = UserMapper.INSTANCE;
 
-
-    public UserServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public String createUser(UserDTO userDTO) {
