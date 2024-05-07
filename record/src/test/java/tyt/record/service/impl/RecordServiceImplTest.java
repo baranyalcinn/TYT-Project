@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tyt.record.controller.response.RecordResponse;
-import tyt.record.database.OrderRepository;
+import tyt.record.repository.OrderRepository;
 import tyt.record.model.OrderEntity;
 import tyt.record.model.PdfGenerator;
 

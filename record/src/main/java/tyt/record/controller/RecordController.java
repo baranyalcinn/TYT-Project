@@ -1,6 +1,7 @@
 package tyt.record.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,19 +22,11 @@ import java.io.IOException;
 @Log4j2
 @RestController
 @RequestMapping("/record")
+@AllArgsConstructor
 public class RecordController {
 
     // The RecordService instance used to perform operations related to records.
     private final RecordService recordService;
-
-    /**
-     * This constructor is used to inject the RecordService dependency into the controller.
-     * @param recordService The RecordService instance to be used by the controller.
-     */
-    @Autowired
-    public RecordController(RecordService recordService) {
-        this.recordService = recordService;
-    }
 
     /**
      * This method is a POST endpoint for creating a record for a specific order.

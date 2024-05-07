@@ -1,11 +1,12 @@
 package tyt.record.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.record.controller.response.RecordResponse;
-import tyt.record.database.OrderRepository;
+import tyt.record.repository.OrderRepository;
 import tyt.record.model.OrderEntity;
 import tyt.record.model.PdfGenerator;
 import tyt.record.model.dto.OrderDTO;
@@ -22,22 +23,12 @@ import java.util.Optional;
 @Service
 @Primary
 @Log4j2
+@AllArgsConstructor
 public class RecordServiceImpl implements RecordService {
 
     private final OrderRepository orderRepository;
     private final PdfGenerator pdfGenerator;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
-
-    /**
-     * Constructor for RecordServiceImpl.
-     *
-     * @param orderRepository   Repository for accessing order data.
-     * @param pdfGenerator      Utility for generating PDFs.
-     */
-    public RecordServiceImpl(OrderRepository orderRepository, PdfGenerator pdfGenerator) {
-        this.orderRepository = orderRepository;
-        this.pdfGenerator = pdfGenerator;
-    }
 
     /**
      * Creates a record for a given order.
