@@ -42,4 +42,9 @@ public class OrderDTO {
      * Unique number associated with the order.
      */
     private String orderNumber;
+
+    /**
+     * Offer associated with the order.
+     */
+    private String offer;
 }

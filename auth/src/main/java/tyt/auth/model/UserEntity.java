@@ -18,11 +18,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 public class UserEntity extends BaseEntity{
 
-    //todo: add @GeneratedValue
-    //todo: add Serialization
-    //todo: BaseEntity created, all entites extends BaseEntity
-    //todo: createdAt, updatedAt, createdBy, updatedBy, deletedAt, deletedBy will be add
-    @Setter
+
     @Id
     private Long id;
     @NotBlank(message = "Name is mandatory")

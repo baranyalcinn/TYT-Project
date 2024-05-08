@@ -1,8 +1,6 @@
 package tyt.record.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -48,5 +46,20 @@ public class OrderEntity extends BaseEntity implements Serializable {
      * It is initialized with a random UUID.
      */
     private UUID orderNumber = UUID.randomUUID();
+
+    /**
+     * This field represents the OfferEntity associated with the OrderEntity.
+     * The @OneToOne annotation indicates that an OrderEntity can have only one OfferEntity.
+     * The @JoinTable annotation specifies the name of the join table to be used for mapping.
+     * The joinColumns attribute specifies the column in the join table that references the OrderEntity.
+     * The inverseJoinColumns attribute specifies the column in the join table that references the OfferEntity.
+     */
+
+    @OneToOne
+    @JoinTable(
+            name = "order_campaign",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "offer_id"))
+    private OfferEntity offer;
 
 }

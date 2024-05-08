@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import tyt.record.model.OfferEntity;
 import tyt.record.model.OrderEntity;
 import tyt.record.model.dto.OrderDTO;
 
@@ -32,6 +33,7 @@ public interface OrderMapper {
      */
     @Mapping(source = "orderNumber", target = "orderNumber", qualifiedByName = "uuidToString")
     @Mapping(source = "orderProducts", target = "orderProducts")
+    @Mapping(source = "offer", target = "offer", qualifiedByName = "offerEntityToString")
     OrderDTO toDto(OrderEntity orderEntity);
 
     /**
@@ -45,4 +47,9 @@ public interface OrderMapper {
     default String map(UUID value) {
         return value != null ? value.toString() : null;
     }
+
+   @Named("offerEntityToString")
+default String map(OfferEntity value) {
+    return value != null ? value.getName() : null;
+}
 }

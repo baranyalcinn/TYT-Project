@@ -60,8 +60,7 @@ public class PdfGenerator {
     private String generateHtmlContent(OrderDTO order,LocalDateTime now,Date date) {
         StringBuilder htmlBuilder = new StringBuilder();
 
-        htmlBuilder.append("<!DOCTYPE html>");
-        htmlBuilder.append("<html lang=\"tr\">");
+        htmlBuilder.append("<!DOCTYPE html>").append("<html lang=\"tr\">");
         htmlBuilder.append("<head>");
         htmlBuilder.append("<meta charset=\"UTF-8\">");
         htmlBuilder.append("<title>Order Slip</title>");
@@ -114,7 +113,8 @@ public class PdfGenerator {
         }
         htmlBuilder.append("</table>");
         htmlBuilder.append("<p style=\"font-size: 15px;\">Order Total: ").append(order.getTotal()).append("</p>");
-
+        if (order.getOffer() != null)
+            htmlBuilder.append("<p style=\"font-size: 15px;\">Applied Offer: ").append(order.getOffer()).append("</p>");
         htmlBuilder.append("</div>");
         htmlBuilder.append("</body>");
         htmlBuilder.append("</html>");
