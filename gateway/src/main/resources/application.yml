@@ -1,0 +1,24 @@
+server:
+  port: 8086
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: recordRoute
+          uri: http://localhost:8083
+          predicates:
+            - Path=/record/{id}
+          filters:
+            - RewritePath=/record/(?<segment>.*), /record/create/$\{segment}
+
+        - id: userRoute
+          uri: http://localhost:8080
+          predicates:
+            - Path=/user/**
+
+        - id: authRoute
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**

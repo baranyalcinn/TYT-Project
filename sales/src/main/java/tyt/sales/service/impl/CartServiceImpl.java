@@ -4,7 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.Locked;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import reactor.core.publisher.Mono;
 import tyt.sales.model.*;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
@@ -17,6 +21,7 @@ import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -34,15 +39,19 @@ import java.util.stream.Collectors;
 public class CartServiceImpl implements CartService {
 
 
+    private final WebClient webClient;
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final OrderProductRepository orderProductRepository;
     private final OfferRepository offerRepository;
 
+
     private final CartMapper cartMapper = CartMapper.INSTANCE;
     private final ProductMapper productMapper = ProductMapper.INSTANCE;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+
 
 
     /**
@@ -98,14 +107,22 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     @Transactional
-    public String checkout() {
+    public String checkout() throws IOException {
         List<CartEntity> cart = cartRepository.findAll();
         List<CartDTO> cartDTOs = cartMapper.fromEntities(cart);
         log.info("Checking out the following cart: {}", cartDTOs);
         OrderEntity order = createOrder(cart);
-        orderRepository.save(order);
+        String orderId = String.valueOf(orderRepository.save(order).getId());
+        String recordServiceUrl =String.format("/record/create/%s", orderId);
+        webClient.post()
+                .uri(recordServiceUrl)
+                .retrieve()
+                .bodyToMono(String.class)
+                .onErrorResume(WebClientException.class, e -> Mono.just("Record creation failed"))
+                .subscribe();
+
         clearCart();
-        return "Checkout successful, the same cart will be used for the next order";
+        return "Checkout successful. Order ID: " + order.getId();
     }
 
     private void clearCart() {

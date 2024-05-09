@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
 import tyt.sales.controller.response.CartResponse;
 import tyt.sales.model.CartEntity;
-import tyt.sales.model.dto.OfferApplyDTO;
 import tyt.sales.model.dto.CartDTO;
+import tyt.sales.model.dto.OfferApplyDTO;
 import tyt.sales.rules.CartIsEmptyException;
 import tyt.sales.service.CartService;
 import tyt.sales.service.ProductService;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -66,6 +67,8 @@ public class CartController {
             return new ResponseEntity<>(new CartResponse(cartService.checkout(), HttpStatus.OK.value()), HttpStatus.OK);
         } catch (CartIsEmptyException e) {
             return new ResponseEntity<>(new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -113,11 +116,12 @@ public class CartController {
 
     /**
      * Endpoint for applying a campaign to the cart.
+     *
      * @return A response entity containing a message and HTTP status.
      */
     @PostMapping("/apply-campaign")
-    public ResponseEntity<Void> applyCampaign(@RequestBody OfferApplyDTO offerApplyDTO) {
+    public ResponseEntity<String> applyCampaign(@RequestBody OfferApplyDTO offerApplyDTO) {
         cartService.applyCampaign(offerApplyDTO.getCartId(), offerApplyDTO.getOfferId());
-        return ResponseEntity.ok().build();
-}
+        return ResponseEntity.ok().body("Campaign applied successfully");
+    }
 }

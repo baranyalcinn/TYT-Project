@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tyt.sales.model.OrderEntity;
 
+import java.io.Flushable;
+
 /**
  * This is a Spring Data JPA repository for OrderEntity objects.
  * It provides methods to perform CRUD operations on the 'orders' table in the database.

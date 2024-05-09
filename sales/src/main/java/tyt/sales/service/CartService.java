@@ -4,6 +4,7 @@ import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -50,7 +51,7 @@ public interface CartService {
      *
      * @return A string message indicating the result of the operation.
      */
-    String checkout();
+    String checkout() throws IOException;
 
     /**
      * Applies a campaign to the cart.
