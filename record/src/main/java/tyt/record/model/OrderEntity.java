@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * This class represents an Order entity in the database.
@@ -45,7 +44,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
      * This field represents the unique identifier for the order.
      * It is initialized with a random UUID.
      */
-    private UUID orderNumber = UUID.randomUUID();
+    private String orderNumber;
 
     /**
      * This field represents the OfferEntity associated with the OrderEntity.
