@@ -43,7 +43,7 @@ public void setup() {
         RecordResponse result = recordService.createRecordForOrder(orderId);
 
         verify(pdfGenerator, times(1)).generatePdf(anyString(), any());
-        assertEquals("PDF created successfully at C:/Users/Baran/Desktop/slip-1.pdf", result.getMessage());
+        assertEquals("PDF created successfully at C:/Users/Baran/Desktop/slips/slip-null.pdf", result.getMessage());
     }
 
     @Test

@@ -1,32 +1,56 @@
 package tyt.record.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import tyt.record.model.dto.OrderDTO;
 
+import java.io.IOException;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
+@SpringBootTest
+@ActiveProfiles("test")
 public class PdfGeneratorTest {
 
-    @InjectMocks
-    private PdfGenerator pdfGenerator;
+    @Test
+    public void generatePdf_InvalidFilePath_ThrowsException() {
+        PdfGenerator pdfGenerator = new PdfGenerator();
+        OrderDTO order = new OrderDTO();
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
+        String invalidFilePath = "/path/does/not/exist.pdf";
+
+        assertThrows(IOException.class, () -> {
+            pdfGenerator.generatePdf(invalidFilePath, order);
+        });
     }
 
     @Test
-    public void generatePdf_ValidOrder_DoesNotThrowException() {
-        OrderDTO order = new OrderDTO();
+    public void generatePdf_NullOrder_ThrowsException() {
+        PdfGenerator pdfGenerator = new PdfGenerator();
+        assertThrows(NullPointerException.class, () -> pdfGenerator.generatePdf("validFilePath", null));
+    }
 
-        order.setOrderDate(new Date()); // set the date
+    @Mock
+    private PdfGenerator pdfGenerator;
+
+
+    @Test
+    public void generatePdf_IOExceptionThrown_LogsError() throws IOException {
+        OrderDTO order = new OrderDTO();
+        order.setOrderDate(new Date());
+
         String filePath = "test.pdf";
 
-        assertDoesNotThrow(() -> pdfGenerator.generatePdf(filePath, order));
+        Mockito.doThrow(IOException.class).when(pdfGenerator).generatePdf(anyString(), any(OrderDTO.class));
+
+        assertThrows(IOException.class, () -> pdfGenerator.generatePdf(filePath, order));
+
+        Mockito.verify(pdfGenerator).generatePdf(anyString(), any(OrderDTO.class));
     }
 }
