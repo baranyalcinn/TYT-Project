@@ -12,11 +12,15 @@
     </style>
 </head>
 <body>
-<div style="display: flex; justify-content: space-between;">
-    <img th:src="${barcodeImageUrl}" alt="Order Number Barcode">
-    <div style="text-align: right;">
-        <p style="font-size: 15px; margin: 0;"><span th:text="${formattedNow}"></span></p>
-        <p style="font-size: 15px; margin: 0;"><span th:text="${nowDate}"></span></p>
+<div style="display: table; width: 100%;">
+    <div style="display: table-row;">
+        <div style="display: table-cell; width: 50%;">
+            <img th:src="${barcodeImageUrl}" alt="Order Number Barcode" width="230px" height="36px">
+        </div>
+        <div style="display: table-cell; text-align: right;">
+            <p style="font-size: 15px; margin: 0;"><span th:text="${formattedNow}"></span></p>
+            <p style="font-size: 15px; margin: 0;"><span th:text="${nowDate}"></span></p>
+        </div>
     </div>
 </div>
 
@@ -24,12 +28,20 @@
 <p style="font-size: 15px;">Order Number: <span th:text="${order.orderNumber}"></span></p>
 
 <table>
-    <tr><th>Product</th><th>Quantity</th><th>Total</th></tr>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
     <tr th:each="orderProduct : ${order.orderProducts}">
         <td th:text="${orderProduct.product.name}"></td>
         <td th:text="${orderProduct.quantity}"></td>
         <td th:text="${#numbers.formatDecimal(orderProduct.product.price * orderProduct.quantity, 1, 2)}"></td>
     </tr>
+    </tbody>
 </table>
 
 <p style="font-size: 15px;">Total: <span th:text="${#numbers.formatDecimal(order.total, 1, 2)}"></span></p>
