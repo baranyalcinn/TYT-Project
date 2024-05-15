@@ -25,9 +25,7 @@ public class PdfGeneratorTest {
 
         String invalidFilePath = "/path/does/not/exist.pdf";
 
-        assertThrows(IOException.class, () -> {
-            pdfGenerator.generatePdf(invalidFilePath, order);
-        });
+        assertThrows(IOException.class, () -> pdfGenerator.generatePdf(invalidFilePath, order));
     }
 
     @Test
