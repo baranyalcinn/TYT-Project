@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details</title>
+    <style>
+        body, p { font-family: Arial, sans-serif; font-size: 13px; }
+        div { overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; font-size: inherit; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div style="display: flex; justify-content: space-between;">
+    <img th:src="${barcodeImageUrl}" alt="Order Number Barcode">
+    <div style="text-align: right;">
+        <p style="font-size: 15px; margin: 0;"><span th:text="${formattedNow}"></span></p>
+        <p style="font-size: 15px; margin: 0;"><span th:text="${nowDate}"></span></p>
+    </div>
+</div>
+
+<p style="font-size: 15px;">Order Date: <span th:text="${formattedDate}"></span></p>
+<p style="font-size: 15px;">Order Number: <span th:text="${order.orderNumber}"></span></p>
+
+<table>
+    <tr><th>Product</th><th>Quantity</th><th>Total</th></tr>
+    <tr th:each="orderProduct : ${order.orderProducts}">
+        <td th:text="${orderProduct.product.name}"></td>
+        <td th:text="${orderProduct.quantity}"></td>
+        <td th:text="${#numbers.formatDecimal(orderProduct.product.price * orderProduct.quantity, 1, 2)}"></td>
+    </tr>
+</table>
+
+<p style="font-size: 15px;">Total: <span th:text="${#numbers.formatDecimal(order.total, 1, 2)}"></span></p>
+<p style="font-size: 15px;" th:if="${order.offer != null}">Offer: <span th:text="${order.offer}"></span></p>
+</body>
+</html>

@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.record.controller.response.RecordResponse;
-import tyt.record.repository.OrderRepository;
 import tyt.record.model.OrderEntity;
 import tyt.record.model.PdfGenerator;
 import tyt.record.model.dto.OrderDTO;
 import tyt.record.model.mapper.OrderMapper;
+import tyt.record.repository.OrderRepository;
 import tyt.record.service.RecordService;
 
 import java.io.IOException;
@@ -42,8 +42,8 @@ public class RecordServiceImpl implements RecordService {
             OrderEntity order = orderOptional.get();
             OrderDTO orderDto = orderMapper.toDto(order);
             try {
-                pdfGenerator.generatePdf("C:/Users/Baran/Desktop/slip-" + orderId + ".pdf", orderDto);
-                return new RecordResponse("PDF created successfully at C:/Users/Baran/Desktop/slip-" + orderId + ".pdf", HttpStatus.OK);
+                pdfGenerator.generatePdf("C:/Users/Baran/Desktop/slips/slip-" + orderDto.getOrderNumber() + ".pdf", orderDto);
+                return new RecordResponse("PDF created successfully at C:/Users/Baran/Desktop/slips/slip-" + orderDto.getOrderNumber() + ".pdf", HttpStatus.OK);
             } catch (IOException e) {
                 return new RecordResponse("Error creating PDF", HttpStatus.INTERNAL_SERVER_ERROR);
             }
