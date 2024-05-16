@@ -7,7 +7,6 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
-
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import lombok.extern.log4j.Log4j2;
@@ -121,6 +120,7 @@ public class PdfGenerator {
         context.setVariable("barcodeImageUrl", barcodeImageUrl);
         context.setVariable("qrCodeImageUrl", qrCodeImageUrl);
 
+
         return templateEngine.process(TEMPLATE_NAME, context);
     }
 
@@ -154,4 +154,5 @@ public class PdfGenerator {
         ImageIO.write(qrCodeImage, "png", tempFile);
         return tempFile.toURI().toURL().toString();
     }
+
 }

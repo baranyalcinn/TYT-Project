@@ -9,8 +9,8 @@ spring:
       ddl-auto: update
   jmx:
     enabled: true
-  data:
-    redis:
-      host: localhost
+
+  thymeleaf:
+    mode: HTML
 server:
   port: 8083
