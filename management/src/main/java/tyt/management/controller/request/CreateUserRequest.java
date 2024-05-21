@@ -1,7 +1,7 @@
 package tyt.management.controller.request;
 
 import lombok.Value;
-import tyt.management.model.role.Role;
+import tyt.management.model.Role;
 
 import java.util.Set;
 

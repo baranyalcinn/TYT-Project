@@ -9,8 +9,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="product" />
-        <module name="auth" />
         <module name="management" />
+        <module name="auth" />
         <module name="sales" />
         <module name="gateway" />
         <module name="record" />

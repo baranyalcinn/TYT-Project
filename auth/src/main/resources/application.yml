@@ -7,7 +7,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  jmx:
-    enabled: true
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:aVeryStrongSecretKeyForJWT}
+      expiration: 8640000
 server:
-  port: 8082
+  port: 8087

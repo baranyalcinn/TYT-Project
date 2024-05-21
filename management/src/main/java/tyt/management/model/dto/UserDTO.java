@@ -3,10 +3,9 @@ package tyt.management.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tyt.management.model.role.Role;
+import tyt.management.model.Role;
 
 import java.util.Set;
 

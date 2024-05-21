@@ -1,7 +1,6 @@
 package tyt.management.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -9,8 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
-import tyt.management.model.role.Role;
-import tyt.management.util.MissingRequiredRoleException;
 
 import java.io.Serializable;
 import java.util.Set;

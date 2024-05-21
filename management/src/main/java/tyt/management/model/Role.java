@@ -1,4 +1,4 @@
-package tyt.management.model.role;
+package tyt.management.model;
 
 import lombok.Getter;
 

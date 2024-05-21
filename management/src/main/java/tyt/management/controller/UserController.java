@@ -10,9 +10,9 @@
     import org.springframework.web.bind.annotation.*;
     import tyt.management.controller.request.CreateUserRequest;
     import tyt.management.controller.request.UpdateUserRequest;
+    import tyt.management.model.Role;
     import tyt.management.model.dto.UserDTO;
     import tyt.management.model.mapper.UserMapper;
-    import tyt.management.model.role.Role;
     import tyt.management.service.UserService;
     import tyt.management.util.MissingRequiredRoleException;
 
