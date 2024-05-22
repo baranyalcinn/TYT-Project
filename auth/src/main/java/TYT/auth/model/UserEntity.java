@@ -6,8 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @SQLRestriction("is_active = true")
-public class UserEntity extends BaseEntity implements Serializable {
+public class UserEntity extends BaseEntity implements UserDetails {
 
     private String name;
     private String surname;
@@ -35,4 +40,38 @@ public class UserEntity extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        String prefix = "ROLE_";
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(prefix + role.name()));
+        }
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isActive;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

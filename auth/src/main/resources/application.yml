@@ -9,7 +9,7 @@ spring:
       ddl-auto: update
   security:
     jwt:
-      secret-key: ${JWT_SECRET_KEY:aVeryStrongSecretKeyForJWT}
+      secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=
       expiration: 8640000
 server:
   port: 8087

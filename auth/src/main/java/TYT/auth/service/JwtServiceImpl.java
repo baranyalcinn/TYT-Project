@@ -6,7 +6,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -26,20 +25,19 @@ public class JwtServiceImpl {
     public String generateToken(UserEntity user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
-        claims.put("email", user.getEmail());
         claims.put("roles", user.getRoles());
-        return createToken(claims, user.getName());
+        return createToken(claims, user.getEmail());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token, String email) {
+        final String userEmail = extractUserEmail(token);
+        return (userEmail.equals(email) && !isTokenExpired(token));
     }
 
-    private String createToken(Map<String, Object> claims, String username) {
+    private String createToken(Map<String, Object> claims, String userEmail) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(userEmail)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -64,7 +62,7 @@ public class JwtServiceImpl {
                 .getExpiration();
     }
 
-    public String extractUsername(String token) {
+    public String extractUserEmail(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
