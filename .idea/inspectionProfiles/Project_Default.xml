@@ -120,16 +120,19 @@
         <list>
           <option value="record" />
           <option value="record" />
+          <option value="auth" />
         </list>
       </option>
       <option name="ignoredPackages">
         <list>
           <option value="org.springframework:spring-web:6.1.4" />
           <option value="com.itextpdf:itextpdf:5.5.13.3" />
+          <option value="com.fasterxml.woodstox:woodstox-core:6.2.1" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
         </list>

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: record-service
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: postgres
@@ -6,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   jmx:
     enabled: true
 
@@ -14,3 +16,7 @@ spring:
     mode: HTML
 server:
   port: 8083
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: auth-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: postgres
@@ -6,10 +9,15 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   security:
     jwt:
       secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=
       expiration: 8640000
 server:
   port: 8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

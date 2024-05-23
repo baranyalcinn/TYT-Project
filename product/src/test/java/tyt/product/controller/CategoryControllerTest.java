@@ -8,9 +8,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import tyt.product.repository.CategoryRepository;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
+import tyt.product.repository.CategoryRepository;
 import tyt.product.service.CategoryService;
 
 import java.util.Arrays;
@@ -92,7 +92,7 @@ public class CategoryControllerTest {
     @Test
     public void getCategoryReturnsSuccess() throws Exception {
         when(categoryService.getCategory(anyLong())).thenReturn(new CategoryDTO());
-        mockMvc.perform(get("/category/get?id=1"))
+        mockMvc.perform(get("/category/get/{id}", 1))
                 .andExpect(status().isOk());
     }
 

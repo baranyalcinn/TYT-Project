@@ -3,7 +3,6 @@ package TYT.auth.controller;
 import TYT.auth.model.UserEntity;
 import TYT.auth.model.dto.AuthRequest;
 import TYT.auth.service.JwtServiceImpl;
-import TYT.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

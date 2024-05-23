@@ -1,27 +1,44 @@
 server:
   port: 8086
 
-#
 spring:
   application:
-    name: gateway
-
+    name: gateway-service
+  main:
+    web-application-type: reactive
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
-        - id: recordRoute
-          uri: http://localhost:8083
-          predicates:
-            - Path=/record/**
-          filters:
-            - RewritePath=/record/(?<segment>.*), /record/create/$\{segment}
-
-        - id: userRoute
-          uri: http://localhost:8080
-          predicates:
-            - Path=/user/**
-
-        - id: authRoute
-          uri: http://localhost:8081
+        - id: auth-service-route
+          uri: lb://auth-service
           predicates:
             - Path=/auth/**
+
+        - id: management-service-route
+          uri: lb://management-service
+          predicates:
+            - Path=/management/**
+
+        - id: product-service-route
+          uri: lb://product-service
+          predicates:
+            - Path=/product/**
+
+        - id: record-service-route
+          uri: lb://record-service
+          predicates:
+            - Path=/record/**
+
+        - id: sales-service-route
+          uri: lb://sales-service
+          predicates:
+            - Path=/sales/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
