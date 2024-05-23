@@ -26,6 +26,7 @@ spring:
         - id: product-service-route
           uri: lb://product-service
           predicates:
+            - Path=/category/**
             - Path=/product/**
 
         - id: record-service-route

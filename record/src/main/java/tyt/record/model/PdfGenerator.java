@@ -71,12 +71,12 @@ public class PdfGenerator {
      */
     public void generatePdf(String filePath, OrderDTO order) throws IOException {
 
-        if (filePath == null || filePath.trim().isEmpty()) {
-            throw new IllegalArgumentException("File path cannot be null or empty");
+        if (order == null) {
+            throw new NullPointerException("Order cannot be null");
         }
 
         File file = new File(filePath);
-        if (!file.exists() || !file.canWrite()) {
+        if (!file.canWrite()) {
             throw new IOException("Cannot write to file: " + filePath);
         }
 
@@ -145,7 +145,7 @@ public class PdfGenerator {
     private String generateQrCodeImage(String text) throws IOException, WriterException {
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN, 2);  // Add some quiet zone around the QR code
+        hints.put(EncodeHintType.MARGIN, 2);
 
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200, hints);
         BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
