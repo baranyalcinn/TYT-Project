@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.record.controller.response.RecordResponse;
-import tyt.record.model.OrderEntity;
 import tyt.record.model.PdfGenerator;
 import tyt.record.model.dto.OrderDTO;
 import tyt.record.model.mapper.OrderMapper;
@@ -14,7 +13,6 @@ import tyt.record.repository.OrderRepository;
 import tyt.record.service.RecordService;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Service class for handling records related to orders and products.
@@ -37,18 +35,18 @@ public class RecordServiceImpl implements RecordService {
      * @return The file path of the generated PDF, or an error message if the order was not found or the PDF could not be created.
      */
     public RecordResponse createRecordForOrder(Long orderId) {
-        Optional<OrderEntity> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            OrderEntity order = orderOptional.get();
-            OrderDTO orderDto = orderMapper.toDto(order);
-            try {
-                pdfGenerator.generatePdf("C:/Users/Baran/Desktop/slips/slip-" + orderDto.getOrderNumber() + ".pdf", orderDto);
-                return new RecordResponse("PDF created successfully at C:/Users/Baran/Desktop/slips/slip-" + orderDto.getOrderNumber() + ".pdf", HttpStatus.OK);
-            } catch (IOException e) {
-                return new RecordResponse("Error creating PDF", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new RecordResponse("Order not found", HttpStatus.NOT_FOUND);
-        }
+        return orderRepository.findById(orderId)
+                .map(order -> {
+                    try {
+                        OrderDTO orderDto = orderMapper.toDto(order);
+                        String filePath = String.format("C:/Users/Baran/Desktop/slips/slip-%s.pdf", orderDto.getOrderNumber());
+                        pdfGenerator.generatePdf(filePath, orderDto);
+                        return new RecordResponse("PDF created successfully at " + filePath, HttpStatus.OK);
+                    } catch (IOException e) {
+                        log.error("Error creating PDF for order {}", orderId, e);
+                        return new RecordResponse("Error creating PDF", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                })
+                .orElse(new RecordResponse("Order not found", HttpStatus.NOT_FOUND));
     }
 }
