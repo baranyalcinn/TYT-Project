@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 /**
  * Represents a shopping cart entity in the system.
  * This class extends BaseEntity and implements Serializable interface.
