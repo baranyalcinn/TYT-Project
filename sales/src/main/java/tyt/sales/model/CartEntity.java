@@ -1,9 +1,6 @@
 package tyt.sales.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,7 +19,7 @@ public class CartEntity extends BaseEntity{
      * The product entity associated with the cart.
      * It is a many-to-one relationship with the ProductEntity.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private ProductEntity product;
 
     /**
