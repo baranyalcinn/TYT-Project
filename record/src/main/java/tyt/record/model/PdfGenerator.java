@@ -10,6 +10,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -18,10 +19,11 @@ import tyt.record.model.dto.OrderDTO;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,6 +37,7 @@ import java.util.Map;
  */
 @Log4j2
 @Component
+@Async
 public class PdfGenerator {
 
     private static final String TEMPLATE_PREFIX = "templates/";
@@ -75,12 +78,9 @@ public class PdfGenerator {
             throw new NullPointerException("Order cannot be null");
         }
 
-        File file = new File(filePath);
-        if (!file.canWrite()) {
-            throw new IOException("Cannot write to file: " + filePath);
-        }
+        Path pdfFilePath = Path.of(filePath);
 
-        try (FileOutputStream outputStream = new FileOutputStream(filePath);
+        try (OutputStream outputStream = Files.newOutputStream(pdfFilePath);
              PdfWriter writer = new PdfWriter(outputStream)) {
 
             LocalDateTime now = LocalDateTime.now();
@@ -88,9 +88,8 @@ public class PdfGenerator {
 
             String htmlContent = generateHtmlContent(order, now, date);
             HtmlConverter.convertToPdf(htmlContent, writer);
-        } catch (FileNotFoundException e) {
-            log.error("File not found", e);
         } catch (WriterException e) {
+            log.error("Error while generating PDF", e);
             throw new RuntimeException(e);
         }
     }
@@ -135,11 +134,7 @@ public class PdfGenerator {
         BitMatrix bitMatrix = barcodeWriter.encode(text, BarcodeFormat.CODE_128, 100, 32);
         BufferedImage barcodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
-        File tempFile = File.createTempFile("barcode-", ".png");
-        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-            ImageIO.write(barcodeImage, "png", outputStream);
-        }
-        return tempFile.toURI().toURL().toString();
+        return generateDataUrl(barcodeImage);
     }
 
     private String generateQrCodeImage(String text) throws IOException, WriterException {
@@ -150,9 +145,14 @@ public class PdfGenerator {
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200, hints);
         BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
-        File tempFile = File.createTempFile("qrcode-", ".png");
-        ImageIO.write(qrCodeImage, "png", tempFile);
-        return tempFile.toURI().toURL().toString();
+        return generateDataUrl(qrCodeImage);
+    }
+
+    private String generateDataUrl(BufferedImage image) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", baos);
+            return "data:image/" + "png" + ";base64," + java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
+        }
     }
 
 }
