@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name = "order_product")
 @Entity
-public class OrderProductEntity extends BaseEntity implements Serializable {
+public class OrderProductEntity extends BaseEntity {
 
     /**
      * Represents the order to which the product belongs.

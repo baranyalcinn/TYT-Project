@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Entity
-public class CartEntity extends BaseEntity implements Serializable {
+public class CartEntity extends BaseEntity{
 
     /**
      * The product entity associated with the cart.

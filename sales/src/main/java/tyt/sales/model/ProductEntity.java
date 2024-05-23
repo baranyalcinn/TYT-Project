@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "products")
 @Data
 @NoArgsConstructor
-public class ProductEntity extends BaseEntity implements Serializable {
+public class ProductEntity extends BaseEntity{
 
     // Name of the product
     private String name;

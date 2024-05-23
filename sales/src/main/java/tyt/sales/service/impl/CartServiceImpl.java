@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.Locked;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -21,7 +20,6 @@ import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -107,7 +105,7 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     @Transactional
-    public String checkout() throws IOException {
+    public String checkout() {
         List<CartEntity> cart = cartRepository.findAll();
         List<CartDTO> cartDTOs = cartMapper.fromEntities(cart);
         log.info("Checking out the following cart: {}", cartDTOs);

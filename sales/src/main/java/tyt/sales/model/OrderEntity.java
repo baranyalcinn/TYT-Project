@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "orders")
 @Entity
-public class OrderEntity extends BaseEntity implements Serializable {
+public class OrderEntity extends BaseEntity{
 
     /**
      * This field represents a list of OrderProductEntity objects associated with the order.
