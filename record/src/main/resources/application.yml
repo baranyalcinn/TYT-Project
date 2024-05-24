@@ -11,7 +11,6 @@ spring:
       ddl-auto: none
   jmx:
     enabled: true
-
   thymeleaf:
     mode: HTML
     cache: true

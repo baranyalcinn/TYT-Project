@@ -1,7 +1,6 @@
 spring:
   application:
     name: product-service
-
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: postgres
@@ -14,13 +13,11 @@ spring:
     enabled: true
 server:
   port: 8081
-
 logging:
   level:
     tyt.product: INFO
   file:
     name: logs/product.log
-
 eureka:
   client:
     serviceUrl:

@@ -1,54 +1,21 @@
-server:
-  port: 8086
-
 spring:
   application:
     name: gateway-service
-  main:
-    web-application-type: reactive
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth-service-route
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth/**
+          lowerCaseServiceId: true
 
-        - id: management-service-route
-          uri: lb://management-service
-          predicates:
-            - Path=/management/**
-
-        - id: product-service-route
-          uri: lb://product-service
-          predicates:
-            - Path=/category/**
-            - Path=/product/**
-
-        - id: record-service-route
-          uri: lb://record-service
-          predicates:
-            - Path=/record/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthorizationFilter
-              args:
-                roles: [ "MANAGER" ]
-
-        - id: sales-service-route
-          uri: lb://sales-service
-          predicates:
-            - Path=/sales/**
-
+server:
+  port: 8086
+  jetty:
+    max-http-response-header-size: 16384
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
 security:
   jwt:
     secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=

@@ -1,7 +1,6 @@
 spring:
   application:
     name: management-service
-
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: postgres
@@ -14,13 +13,11 @@ spring:
     enabled: true
 server:
   port: 8080
-
 logging:
   level:
     tyt.management: INFO
   file:
     name: logs/management.log
-
 eureka:
   client:
     service-url:

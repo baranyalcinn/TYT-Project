@@ -27,12 +27,11 @@ import java.util.List;
 @Component
 public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuthorizationFilter.Config> {
 
-    private final String secretKey;
-
+    private final SecretKey signingKey;
 
     public JwtAuthorizationFilter(@Value("${security.jwt.secret-key}") String secretKey) {
         super(Config.class);
-        this.secretKey = secretKey;
+        this.signingKey = new SecretKeySpec(Base64.getDecoder().decode(secretKey), "HmacSHA256");
     }
 
     @Override
@@ -41,56 +40,46 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
             ServerHttpRequest request = exchange.getRequest();
             String requestPath = request.getPath().toString();
 
+            // Early exit if authentication is not required for this path
             if (!isAuthRequired(requestPath)) {
                 return chain.filter(exchange);
             }
 
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
-                return this.onError(exchange);
+                return onError(exchange);
             }
 
             String jwtToken = authorizationHeader.substring(7);
             try {
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(getSigningKey())
+                        .setSigningKey(signingKey)
                         .build()
                         .parseClaimsJws(jwtToken)
                         .getBody();
 
+                // Early exit if the user doesn't have the required roles
                 if (!hasRequiredRole(claims, config.getRoles())) {
-                    return this.onError(exchange);
+                    return onError(exchange);
                 }
 
-                List<String> userRoles = new ArrayList<>();
-                if (claims.get("roles") instanceof List<?> rolesClaim) {
-                    for (Object role : rolesClaim) {
-                        if (role instanceof String) {
-                            userRoles.add((String) role);
-                        }
-                    }
-                }
+                // Extract user roles
+                List<String> userRoles = extractRolesFromClaims(claims);
 
-                String userRolesString = String.join(",", userRoles);
-
+                // Set user information in request headers
                 ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
                         .header("userId", String.valueOf(claims.get("id")))
-                        .header("userRoles", userRolesString)
+                        .header("userRoles", String.join(",", userRoles))
                         .build();
 
+                // Continue with the filter chain
                 return chain.filter(exchange.mutate().request(modifiedRequest).build());
 
-            }  catch (Exception e) {
-                log.error("JWT validation failed: {}", e.getMessage()); // Log the error
+            } catch (Exception e) {
+                log.error("JWT validation failed: {}", e.getMessage());
                 return onError(exchange, "Invalid or missing authorization token");
             }
         };
-    }
-
-    private Mono<Void> onError(ServerWebExchange exchange, String invalidOrMissingAuthorizationToken) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return response.setComplete();
     }
 
     private boolean isAuthRequired(String requestPath) {
@@ -110,9 +99,12 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
         return response.setComplete();
     }
 
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
-        return new SecretKeySpec(keyBytes, 0, keyBytes.length, "HmacSHA256");
+    private Mono<Void> onError(ServerWebExchange exchange, String s) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        // Optionally set a message in the response body
+        // return response.writeWith(Mono.just(response.bufferFactory().wrap(message.getBytes())));
+        return response.setComplete();
     }
 
     private boolean hasRequiredRole(Claims claims, List<String> requiredRoles) {
@@ -120,21 +112,26 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
             return true;
         }
 
+        List<String> roles = extractRolesFromClaims(claims);
+        return roles.stream().anyMatch(requiredRoles::contains);
+    }
+
+    private List<String> extractRolesFromClaims(Claims claims) {
+        List<String> userRoles = new ArrayList<>();
         Object rolesClaim = claims.get("roles");
         if (rolesClaim instanceof List<?> roles) {
             for (Object role : roles) {
-                if (role instanceof String && requiredRoles.contains(role)) {
-                    return true;
+                if (role instanceof String) {
+                    userRoles.add((String) role);
                 }
             }
         }
-        return false; // No matching role found
+        return userRoles;
     }
 
     @Setter
     @Getter
     public static class Config {
         private List<String> roles;
-
     }
 }
