@@ -33,6 +33,11 @@ spring:
           uri: lb://record-service
           predicates:
             - Path=/record/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthorizationFilter
+              args:
+                roles: [ "MANAGER" ]
 
         - id: sales-service-route
           uri: lb://sales-service
@@ -43,3 +48,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+security:
+  jwt:
+    secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=

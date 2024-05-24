@@ -33,8 +33,10 @@ public class RecordController {
      * @param id The ID of the order for which a record is to be created.
      * @return A string message indicating the result of the operation.
      */
-  @PostMapping("/create/{id}")
-public RecordResponse createRecordForOrder(@Valid @PathVariable Long id) throws IOException {
+
+
+    @PostMapping("/create/{id}")
+    public RecordResponse createRecordForOrder(@Valid @PathVariable Long id) throws IOException {
     log.info("Creating record for order with id: {}", id);
     return recordService.createRecordForOrder(id);
 }
