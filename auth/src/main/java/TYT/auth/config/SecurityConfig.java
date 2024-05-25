@@ -27,8 +27,6 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST_URL = {
             "/auth/login",
-            "/product/all",
-            "/product/{id}"
     };
 
     @Autowired

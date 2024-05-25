@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * This class is used to test the ProductController class.
  * It uses Mockito to mock the ProductService class and inject it into the ProductController instance.
  */
-public class ProductControllerTest {
+class ProductControllerTest {
 
     @InjectMocks
     private ProductController productController;
@@ -36,7 +36,7 @@ public class ProductControllerTest {
      * It initializes the mocks.
      */
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -44,7 +44,7 @@ public class ProductControllerTest {
      * This test checks if the getProductById method of the ProductController class returns the correct product.
      */
     @Test
-    public void getProductsByCategoryReturnsProducts() {
+    void getProductsByCategoryReturnsProducts() {
         CategoryEntity category = new CategoryEntity();
         category.setId(1L);
         category.setName("Test Category");
@@ -85,7 +85,7 @@ void getProductByIdReturnsNotFound() {
      * This test checks if the getAllProducts method of the ProductController class returns the correct list of products.
      */
     @Test
-    public void getAllProductsReturnsProductList() {
+    void getAllProductsReturnsProductList() {
         List<ProductDTO> products = Collections.singletonList(new ProductDTO());
         when(productService.getAllProducts()).thenReturn(products);
 
@@ -98,7 +98,7 @@ void getProductByIdReturnsNotFound() {
      * This test checks if the createProduct method of the ProductController class returns the correct message after creating a product.
      */
     @Test
-    public void createProductReturnsMessage() {
+    void createProductReturnsMessage() {
         when(productService.createProduct(any())).thenReturn("Product created");
 
         CreateProductRequest createProductRequest = new CreateProductRequest("name", "description", 1.0, 1, 1L, "category");
@@ -111,7 +111,7 @@ void getProductByIdReturnsNotFound() {
      * This test checks if the updateProduct method of the ProductController class returns the correct message after updating a product.
      */
     @Test
-    public void updateProductReturnsMessage() throws Exception {
+    void updateProductReturnsMessage() throws Exception {
         when(productService.updateProduct(any())).thenReturn("Product updated");
 
         UpdateProductRequest updateProductRequest = new UpdateProductRequest(1L, "name", "description", 1.0, 1, 1L);
@@ -124,7 +124,7 @@ void getProductByIdReturnsNotFound() {
      * This test checks if the deleteProduct method of the ProductController class calls the deleteProduct method of the ProductService class.
      */
    @Test
-public void deleteProductCallsService() {
+   void deleteProductCallsService() {
     when(productService.deleteProduct(any())).thenReturn(null);
 
     productController.deleteProduct(1L);

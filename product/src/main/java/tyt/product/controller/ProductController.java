@@ -26,7 +26,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductMapper productMapper = ProductMapper.INSTANCE;
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
     /**
      * Get a specific product by its id.

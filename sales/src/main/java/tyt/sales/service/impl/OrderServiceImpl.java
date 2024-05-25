@@ -9,7 +9,6 @@ import tyt.sales.repository.OrderRepository;
 import tyt.sales.service.OrderService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service class for handling operations related to Orders.
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+    private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
     private final OrderRepository orderRepository;
 
@@ -32,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrders() {
         List<OrderEntity> orders = orderRepository.findAll();
         return orders.stream().map(orderMapper::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
     /**
      * Fetches an order by its ID from the database and converts it to a DTO.

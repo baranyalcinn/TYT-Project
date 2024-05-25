@@ -4,16 +4,18 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import tyt.product.repository.ProductRepository;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
+import tyt.product.repository.ProductRepository;
 import tyt.product.service.ProductService;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.System.*;
 
 /**
  * Service class for managing products.
@@ -24,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger log = LogManager.getLogger(ProductServiceImpl.class);
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper = ProductMapper.INSTANCE;
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
 
     /**
@@ -147,7 +149,7 @@ public ProductDTO getProductById(long id) {
         } catch (Exceptions.NoSuchCategoryException | Exceptions.NoSuchProductException e) {
 
 
-            System.err.println(e.getMessage());
+            err.println(e.getMessage());
             throw e;
         }
     }

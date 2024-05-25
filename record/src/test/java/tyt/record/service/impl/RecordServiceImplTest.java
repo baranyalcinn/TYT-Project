@@ -6,9 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tyt.record.controller.response.RecordResponse;
-import tyt.record.repository.OrderRepository;
 import tyt.record.model.OrderEntity;
 import tyt.record.model.PdfGenerator;
+import tyt.record.repository.OrderRepository;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class RecordServiceImplTest {
+class RecordServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
@@ -35,7 +35,7 @@ public void setup() {
 }
 
     @Test
-    public void createRecordForOrder_OrderExists_PdfCreated() throws IOException {
+    void createRecordForOrder_OrderExists_PdfCreated() throws IOException {
         Long orderId = 1L;
         OrderEntity order = new OrderEntity();
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
@@ -47,7 +47,7 @@ public void setup() {
     }
 
     @Test
-    public void createRecordForOrder_OrderDoesNotExist_ReturnsErrorMessage() {
+    void createRecordForOrder_OrderDoesNotExist_ReturnsErrorMessage() {
         Long orderId = 10000L;
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
@@ -57,7 +57,7 @@ public void setup() {
     }
 
     @Test
-    public void createRecordForOrder_PdfCreationFails_ReturnsErrorMessage() throws IOException {
+    void createRecordForOrder_PdfCreationFails_ReturnsErrorMessage() throws IOException {
         Long orderId = 1L;
         OrderEntity order = new OrderEntity();
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));

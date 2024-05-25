@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * This class contains unit tests for the CategoryController class.
  */
-public class CategoryControllerTest {
+class CategoryControllerTest {
 
     @InjectMocks
     private CategoryController categoryController;
@@ -43,7 +43,7 @@ public class CategoryControllerTest {
      * This method sets up the necessary mocks and objects before each test.
      */
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
 
@@ -57,7 +57,7 @@ public class CategoryControllerTest {
      * This test checks if the create category endpoint returns a success status.
      */
     @Test
-    public void createCategoryReturnsSuccess() throws Exception {
+    void createCategoryReturnsSuccess() throws Exception {
         when(categoryService.createCategory(any())).thenReturn("Category created successfully");
         mockMvc.perform(post("/category/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +69,7 @@ public class CategoryControllerTest {
      * This test checks if the update category endpoint returns a success status.
      */
     @Test
-    public void updateCategoryReturnsSuccess() throws Exception {
+    void updateCategoryReturnsSuccess() throws Exception {
         when(categoryService.updateCategory(any())).thenReturn("Category updated successfully");
         mockMvc.perform(put("/category/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -81,7 +81,7 @@ public class CategoryControllerTest {
      * This test checks if the delete category endpoint returns a success status.
      */
     @Test
-    public void deleteCategoryReturnsSuccess() throws Exception {
+    void deleteCategoryReturnsSuccess() throws Exception {
         mockMvc.perform(delete("/category/1"))
                 .andExpect(status().isOk());
     }
@@ -90,7 +90,7 @@ public class CategoryControllerTest {
      * This test checks if the get category endpoint returns a success status.
      */
     @Test
-    public void getCategoryReturnsSuccess() throws Exception {
+    void getCategoryReturnsSuccess() throws Exception {
         when(categoryService.getCategory(anyLong())).thenReturn(new CategoryDTO());
         mockMvc.perform(get("/category/get/{id}", 1))
                 .andExpect(status().isOk());
@@ -100,7 +100,7 @@ public class CategoryControllerTest {
      * This test checks if the get all categories endpoint returns a success status.
      */
     @Test
-    public void getAllCategoriesReturnsSuccess() throws Exception {
+    void getAllCategoriesReturnsSuccess() throws Exception {
         List<CategoryDTO> categories = Arrays.asList(new CategoryDTO(), new CategoryDTO());
         when(categoryService.getAllCategories()).thenReturn(categories);
         mockMvc.perform(get("/category/all"))

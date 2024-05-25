@@ -1,6 +1,7 @@
 package TYT.auth.service;
 
 import TYT.auth.model.UserEntity;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -10,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl {
@@ -23,25 +23,19 @@ public class JwtServiceImpl {
     private long expiration;
 
     public String generateToken(UserEntity user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
-        claims.put("roles", user.getRoles());
-        return createToken(claims, user.getEmail());
-    }
-
-    public Boolean validateToken(String token, String email) {
-        final String userEmail = extractUserEmail(token);
-        return (userEmail.equals(email) && !isTokenExpired(token));
-    }
-
-    private String createToken(Map<String, Object> claims, String userEmail) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userEmail)
+                .claim("id", user.getId())
+                .claim("roles", user.getRoles())
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Boolean validateToken(String token, String email) {
+        final String userEmail = extractClaim(token, Claims::getSubject);
+        return (userEmail.equals(email) && !isTokenExpired(token));
     }
 
     private Key getSignKey() {
@@ -50,24 +44,19 @@ public class JwtServiceImpl {
     }
 
     private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
+        return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
     public String extractUserEmail(String token) {
-        return Jwts.parserBuilder()
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+        return claimsResolver.apply(claims);
     }
 }

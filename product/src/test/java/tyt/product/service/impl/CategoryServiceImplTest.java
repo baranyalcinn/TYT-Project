@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * It uses the Spring Boot Test framework and Mockito for mocking dependencies.
  */
 @SpringBootTest
-public class CategoryServiceImplTest {
+class CategoryServiceImplTest {
 
     // Mocked CategoryRepository instance
     @Mock
@@ -54,7 +54,7 @@ public class CategoryServiceImplTest {
      * It should throw a CategoryExistsException.
      */
     @Test
-    public void createCategoryWithExistingName() {
+    void createCategoryWithExistingName() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setName("Electronics");
 
@@ -75,7 +75,7 @@ public class CategoryServiceImplTest {
      * It should throw a NoSuchCategoryException.
      */
     @Test
-    public void updateNonExistingCategory() {
+    void updateNonExistingCategory() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(1L);
         categoryDTO.setName("Electronics");
@@ -90,7 +90,7 @@ public class CategoryServiceImplTest {
      * It should throw a NoSuchCategoryException.
      */
     @Test
-    public void deleteNonExistingCategory() {
+    void deleteNonExistingCategory() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(1L);
 
@@ -103,7 +103,7 @@ public class CategoryServiceImplTest {
      * It should throw a NoSuchCategoryException.
      */
     @Test
-    public void getNonExistingCategory() {
+    void getNonExistingCategory() {
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(Exceptions.NoSuchCategoryException.class, () -> categoryService.getCategory(1L));
     }
@@ -113,7 +113,7 @@ public class CategoryServiceImplTest {
      * It should not throw any exception and return a success message.
      */
     @Test
-    public void updateCategorySuccessfully() {
+    void updateCategorySuccessfully() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(1L);
         categoryDTO.setName("Electronics");
@@ -133,7 +133,7 @@ public class CategoryServiceImplTest {
      * It should not throw any exception and return a success message.
      */
     @Test
-    public void createCategorySuccessfully() {
+    void createCategorySuccessfully() {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setId(1L);
         categoryEntity.setName("Electronics");
@@ -159,7 +159,7 @@ public class CategoryServiceImplTest {
      * It should not throw any exception.
      */
     @Test
-    public void getCategorySuccessfully() {
+    void getCategorySuccessfully() {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setId(1L);
         categoryEntity.setName("Electronics");
@@ -175,7 +175,7 @@ public class CategoryServiceImplTest {
      * It should not throw any exception.
      */
     @Test
-    public void deleteExistingCategory() {
+    void deleteExistingCategory() {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(1L);
 

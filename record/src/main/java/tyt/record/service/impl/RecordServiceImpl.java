@@ -26,7 +26,7 @@ public class RecordServiceImpl implements RecordService {
 
     private final OrderRepository orderRepository;
     private final PdfGenerator pdfGenerator;
-    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+    private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
     /**
      * Creates a record for a given order.

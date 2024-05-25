@@ -4,7 +4,6 @@ import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * ProductService is an interface that defines the contract for product-related operations.
@@ -53,7 +52,6 @@ public interface ProductService {
      */
     List<ProductDTO> getAllProducts();
 
-//    Optional<ProductDTO> getProductById();
 
     /**
      * Retrieves all products by category.

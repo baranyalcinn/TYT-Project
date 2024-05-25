@@ -3,14 +3,13 @@ package tyt.management.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import tyt.management.repository.UserRepository;
 import tyt.management.model.UserEntity;
 import tyt.management.model.dto.UserDTO;
 import tyt.management.model.mapper.UserMapper;
+import tyt.management.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper = UserMapper.INSTANCE;
+    private static final UserMapper userMapper = UserMapper.INSTANCE;
 
 
     @Override
@@ -32,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String updateUser(UserDTO userDTO) {
-        UserEntity entity = userRepository.findById(userDTO.getId()).orElseThrow(() -> new RuntimeException("User not found with id: " + userDTO.getId()));
+        UserEntity entity = userRepository.findById(userDTO.getId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userDTO.getId()));
         entity.setName(userDTO.getName());
         entity.setSurname(userDTO.getSurname());
         entity.setEmail(userDTO.getEmail());
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

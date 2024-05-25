@@ -13,6 +13,8 @@ spring:
     enabled: true
 server:
   port: 8082
+  servlet:
+    context-path: /sales-service
 eureka:
   client:
     service-url:

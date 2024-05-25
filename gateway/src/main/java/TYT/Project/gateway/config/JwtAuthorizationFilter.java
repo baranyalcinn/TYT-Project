@@ -2,10 +2,13 @@ package TYT.Project.gateway.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -19,15 +22,16 @@ import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 @Log4j2
 @Component
+@RefreshScope
 public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuthorizationFilter.Config> {
 
     private final SecretKey signingKey;
+    private final String[] excludedPaths = {"/auth/login", "/product-service/product/all", "/product-service/product/{id}"};
 
     public JwtAuthorizationFilter(@Value("${security.jwt.secret-key}") String secretKey) {
         super(Config.class);
@@ -40,51 +44,42 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
             ServerHttpRequest request = exchange.getRequest();
             String requestPath = request.getPath().toString();
 
-            // Early exit if authentication is not required for this path
-            if (!isAuthRequired(requestPath)) {
-                return chain.filter(exchange);
-            }
-
-            String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
-                return onError(exchange);
-            }
-
-            String jwtToken = authorizationHeader.substring(7);
-            try {
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(signingKey)
-                        .build()
-                        .parseClaimsJws(jwtToken)
-                        .getBody();
-
-                // Early exit if the user doesn't have the required roles
-                if (!hasRequiredRole(claims, config.getRoles())) {
+            if (isAuthRequired(requestPath)) {
+                String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+                if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
                     return onError(exchange);
                 }
 
-                // Extract user roles
-                List<String> userRoles = extractRolesFromClaims(claims);
+                try {
+                    Claims claims = extractClaimsFromToken(authorizationHeader.substring(7));
 
-                // Set user information in request headers
-                ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                        .header("userId", String.valueOf(claims.get("id")))
-                        .header("userRoles", String.join(",", userRoles))
-                        .build();
+                    if (!hasRequiredRole(claims, config.getRoles())) {
+                        return onForbidden(exchange);
+                    }
 
-                // Continue with the filter chain
-                return chain.filter(exchange.mutate().request(modifiedRequest).build());
+                    List<String> userRoles = extractRolesFromClaims(claims);
+                    ServerHttpRequest modifiedRequest = addUserInfoToHeader(exchange, claims, userRoles);
 
-            } catch (Exception e) {
-                log.error("JWT validation failed: {}", e.getMessage());
-                return onError(exchange, "Invalid or missing authorization token");
+                    return chain.filter(exchange.mutate().request(modifiedRequest).build());
+
+                } catch (Exception e) {
+                    log.error("JWT validation failed: {}", e.getMessage());
+                    return onError(exchange, "Invalid or missing authorization token");
+                }
             }
+            return chain.filter(exchange);
         };
     }
 
-    private boolean isAuthRequired(String requestPath) {
-        String[] excludedPaths = {"/auth/login", "/product/all", "/product/{id}"};
+    private Claims extractClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(signingKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
+    private boolean isAuthRequired(String requestPath) {
         for (String path : excludedPaths) {
             if (requestPath.startsWith(path)) {
                 return false;
@@ -99,11 +94,15 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
         return response.setComplete();
     }
 
+    private Mono<Void> onForbidden(ServerWebExchange exchange) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.FORBIDDEN);
+        return response.setComplete();
+    }
+
     private Mono<Void> onError(ServerWebExchange exchange, String s) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        // Optionally set a message in the response body
-        // return response.writeWith(Mono.just(response.bufferFactory().wrap(message.getBytes())));
         return response.setComplete();
     }
 
@@ -117,20 +116,22 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
     }
 
     private List<String> extractRolesFromClaims(Claims claims) {
-        List<String> userRoles = new ArrayList<>();
-        Object rolesClaim = claims.get("roles");
-        if (rolesClaim instanceof List<?> roles) {
-            for (Object role : roles) {
-                if (role instanceof String) {
-                    userRoles.add((String) role);
-                }
-            }
-        }
-        return userRoles;
+        return ((List<?>) claims.get("roles")).stream()
+                .map(Object::toString)
+                .toList();
+    }
+
+    private ServerHttpRequest addUserInfoToHeader(ServerWebExchange exchange, Claims claims, List<String> userRoles) {
+        return exchange.getRequest().mutate()
+                .header("userId", String.valueOf(claims.get("id")))
+                .header("userRoles", String.join(",", userRoles))
+                .build();
     }
 
     @Setter
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Config {
         private List<String> roles;
     }

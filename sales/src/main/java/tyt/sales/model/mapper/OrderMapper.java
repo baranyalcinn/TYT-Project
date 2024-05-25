@@ -5,17 +5,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import tyt.sales.repository.OrderRepository;
-import tyt.sales.repository.ProductRepository;
 import tyt.sales.model.OrderEntity;
 import tyt.sales.model.OrderProductEntity;
 import tyt.sales.model.ProductEntity;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.OrderProductDTO;
+import tyt.sales.repository.OrderRepository;
+import tyt.sales.repository.ProductRepository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * This interface provides mapping methods between OrderEntity and OrderDTO objects.
@@ -54,7 +53,7 @@ public interface OrderMapper {
      */
     @Named("orderProductListToOrderProductDTOList")
     default List<OrderProductDTO> orderProductListToOrderProductDTOList(List<OrderProductEntity> orderProducts) {
-        return orderProducts != null ? orderProducts.stream().map(this::orderProductEntityToOrderProductDTO).collect(Collectors.toList()) : null;
+        return orderProducts != null ? orderProducts.stream().map(this::orderProductEntityToOrderProductDTO).toList() : null;
     }
 
     /**

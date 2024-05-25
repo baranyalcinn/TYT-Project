@@ -44,8 +44,7 @@ public class PdfGenerator {
     private static final String TEMPLATE_SUFFIX = ".html";
     private static final String TEMPLATE_NAME = "order";
 
-    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat NOW_DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH.mm");
 
     private final TemplateEngine templateEngine;
@@ -102,9 +101,12 @@ public class PdfGenerator {
      * @throws IOException If an error occurs while generating the QR code image.
      */
     private String generateHtmlContent(OrderDTO order, LocalDateTime now, Date date) throws IOException, WriterException {
-        String formattedDate = DATE_FORMATTER.format(order.getOrderDate());
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+         SimpleDateFormat nowDateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        String formattedDate = dateFormatter.format(order.getOrderDate());
         String formattedNow = now.format(TIME_FORMATTER);
-        String nowDate = NOW_DATE_FORMATTER.format(date);
+        String nowDate = nowDateFormatter.format(date);
         String barcodeImageUrl = generateBarcodeImage(order.getOrderNumber());
 
 
@@ -112,7 +114,7 @@ public class PdfGenerator {
         String qrCodeImageUrl = generateQrCodeImage(qrCodeContent);
 
         Context context = new Context();
-        context.setVariable("order", order);
+        context.setVariable(TEMPLATE_NAME, order);
         context.setVariable("formattedDate", formattedDate);
         context.setVariable("formattedNow", formattedNow);
         context.setVariable("nowDate", nowDate);

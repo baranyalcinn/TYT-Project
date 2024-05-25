@@ -206,7 +206,7 @@ class ProductServiceImplTest {
      * The test asserts that the category is not null.
      */
     @Test
-    public void getProductsByCategoryById() {
+    void getProductsByCategoryById() {
         CategoryEntity category = new CategoryEntity();
         category.setId(1L);
         category.setName("Test Category");

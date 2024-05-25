@@ -1,7 +1,6 @@
 package tyt.management.model.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import tyt.management.controller.request.CreateUserRequest;
 import tyt.management.controller.request.UpdateUserRequest;

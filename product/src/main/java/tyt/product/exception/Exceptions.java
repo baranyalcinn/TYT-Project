@@ -1,10 +1,10 @@
 package tyt.product.exception;
 
-import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
@@ -12,6 +12,8 @@ import java.util.Date;
  * This class contains all the custom exceptions and error details used in the product module.
  */
 public class Exceptions {
+    private Exceptions() {
+    }
 
     /**
      * This class represents the details of an error.

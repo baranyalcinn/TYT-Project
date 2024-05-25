@@ -16,10 +16,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class PdfGeneratorTest {
+class PdfGeneratorTest {
 
     @Test
-    public void generatePdf_InvalidFilePath_ThrowsException() {
+    void generatePdf_InvalidFilePath_ThrowsException() {
         PdfGenerator pdfGenerator = new PdfGenerator();
         OrderDTO order = new OrderDTO();
 
@@ -29,7 +29,7 @@ public class PdfGeneratorTest {
     }
 
     @Test
-    public void generatePdf_NullOrder_ThrowsException() {
+    void generatePdf_NullOrder_ThrowsException() {
         PdfGenerator pdfGenerator = new PdfGenerator();
         assertThrows(NullPointerException.class, () -> pdfGenerator.generatePdf("validFilePath", null));
     }
@@ -39,7 +39,7 @@ public class PdfGeneratorTest {
 
 
     @Test
-    public void generatePdf_IOExceptionThrown_LogsError() throws IOException {
+    void generatePdf_IOExceptionThrown_LogsError() throws IOException {
         OrderDTO order = new OrderDTO();
         order.setOrderDate(new Date());
 

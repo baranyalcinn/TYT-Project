@@ -46,9 +46,9 @@ public class CartServiceImpl implements CartService {
     private final OfferRepository offerRepository;
 
 
-    private final CartMapper cartMapper = CartMapper.INSTANCE;
-    private final ProductMapper productMapper = ProductMapper.INSTANCE;
-    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
+    private static final CartMapper cartMapper = CartMapper.INSTANCE;
+    private static final ProductMapper productMapper = ProductMapper.INSTANCE;
+    private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
 
 
@@ -139,7 +139,7 @@ public class CartServiceImpl implements CartService {
         // Obtain product information
         List<Long> productIds = cart.stream()
                 .map(cartItem -> cartItem.getProduct().getId())
-                .collect(Collectors.toList());
+                .toList();
         Map<Long, ProductEntity> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(ProductEntity::getId, Function.identity()));
 
@@ -277,7 +277,7 @@ private double calculateTotalPrice(List<CartEntity> cart) {
 private List<OrderProductEntity> createOrderProducts(List<CartEntity> cart, OrderEntity order) {
     return cart.stream()
             .map(cartItem -> createOrderProduct(cartItem, order))
-            .collect(Collectors.toList());
+            .toList();
 }
 
 /**

@@ -28,7 +28,7 @@ public class CategoryServiceImpl  implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     // Mapper for converting between CategoryEntity and CategoryDTO
-    private final CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
+    private static final CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
 
     /**
      * Converts a CategoryEntity to a CategoryDTO.
@@ -135,7 +135,7 @@ public class CategoryServiceImpl  implements CategoryService {
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(this::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }
