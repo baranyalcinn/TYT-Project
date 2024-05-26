@@ -35,7 +35,7 @@ public class ProductController {
      * @return The product with the given id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable long id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable long id) {
         ProductDTO productDTO = productService.getProductById(id);
         if (productDTO != null) {
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
@@ -76,7 +76,7 @@ public class ProductController {
      * @return A message indicating the result of the operation.
      */
     @PutMapping("/update")
-    public String updateProduct(@Valid @RequestBody UpdateProductRequest request) throws Exception {
+    public String updateProduct(@Valid @RequestBody UpdateProductRequest request) {
         return productService.updateProduct(productMapper.updateRequestToDto(request));
     }
 

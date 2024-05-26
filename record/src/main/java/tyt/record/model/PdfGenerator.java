@@ -89,7 +89,7 @@ public class PdfGenerator {
             HtmlConverter.convertToPdf(htmlContent, writer);
         } catch (WriterException e) {
             log.error("Error while generating PDF", e);
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

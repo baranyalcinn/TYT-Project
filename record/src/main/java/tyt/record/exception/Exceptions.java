@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.Date;
 
 public class Exceptions {
+
+    private Exceptions() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -27,4 +32,6 @@ public class Exceptions {
             super(message);
         }
     }
+
+
 }

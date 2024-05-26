@@ -15,7 +15,7 @@ import tyt.product.service.ProductService;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.System.*;
+import static java.lang.System.err;
 
 /**
  * Service class for managing products.

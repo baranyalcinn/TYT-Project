@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUser(UserDTO userDTO) {
         UserEntity entity = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userDTO.getId()));
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userDTO.getId()));
         entity.setName(userDTO.getName());
         entity.setSurname(userDTO.getSurname());
         entity.setEmail(userDTO.getEmail());
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUser(Long id) {
-        return userMapper.toDTO(userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id: " + id)));
+        return userMapper.toDTO(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id)));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setActive(false);
             userRepository.save(userEntity);
         } else {
-            throw new RuntimeException("User not found with id: " + userDTO.getId());
+            throw new IllegalArgumentException("User not found with id: " + userDTO.getId());
         }
     }
 

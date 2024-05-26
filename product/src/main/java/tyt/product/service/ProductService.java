@@ -27,7 +27,7 @@ public interface ProductService {
      * @return a string message indicating the result of the operation.
      * @throws Exception if an error occurs during the update operation.
      */
-    String updateProduct(ProductDTO productDTO) throws Exception;
+    String updateProduct(ProductDTO productDTO) throws IllegalArgumentException;
 
     /**
      * Deletes a product.
