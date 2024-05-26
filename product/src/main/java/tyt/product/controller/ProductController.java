@@ -41,7 +41,7 @@ public class ProductController {
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+        }
     }
 
 

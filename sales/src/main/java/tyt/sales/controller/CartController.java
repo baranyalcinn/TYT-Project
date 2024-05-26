@@ -68,7 +68,7 @@ public class CartController {
         } catch (CartIsEmptyException e) {
             return new ResponseEntity<>(new CartResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
