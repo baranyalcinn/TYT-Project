@@ -1,8 +1,11 @@
 package tyt.product.service.impl;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
@@ -14,8 +17,6 @@ import tyt.product.service.ProductService;
 
 import java.util.List;
 import java.util.Optional;
-
-import static java.lang.System.err;
 
 /**
  * Service class for managing products.
@@ -126,6 +127,11 @@ public ProductDTO getProductById(long id) {
                 .toList();
     }
 
+    @Override
+    public Page<ProductDTO> getProducts(Pageable pageable) {
+        Page<ProductEntity> productEntities = productRepository.findAll(pageable);
+        return productEntities.map(productMapper::toDTO);
+    }
 
     /**
      * Retrieves all products by category.
@@ -133,24 +139,16 @@ public ProductDTO getProductById(long id) {
      * @return a list of product data transfer objects of all products.
      */
     @Override
-    public List<ProductDTO> getProductsByCategory(CategoryEntity category) {
-        try {
-            if (category == null) {
-                throw new Exceptions.NoSuchCategoryException("Category cannot be null");
-            }
+    public List<ProductDTO> getProductsByCategory(@NotNull CategoryEntity category) {
+        List<ProductEntity> productEntities = productRepository.findByCategory(category);
 
-            List<ProductEntity> productEntities = productRepository.findByCategory(category);
-
-            if (productEntities.isEmpty()) {
-                throw new Exceptions.NoSuchProductException("No products found for the given category");
-            }
-
-            return productEntities.stream().map(productMapper::toDTO).toList();
-        } catch (Exceptions.NoSuchCategoryException | Exceptions.NoSuchProductException e) {
-
-
-            err.println(e.getMessage());
-            throw e;
+        if (productEntities.isEmpty()) {
+            throw new Exceptions.NoSuchProductException("No products found for the given category");
         }
+
+        return productEntities.stream().map(productMapper::toDTO).toList();
     }
+
+
+
 }

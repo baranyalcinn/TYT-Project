@@ -3,11 +3,15 @@ package tyt.product.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
+import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
@@ -27,7 +31,7 @@ public class ProductController {
 
     private final ProductService productService;
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
-
+    private static final int PAGE_SIZE = 10;
     /**
      * Get a specific product by its id.
      *
@@ -93,6 +97,22 @@ public class ProductController {
 
         ProductDTO productDTO = productMapper.toDTO(productEntity);
         return productService.deleteProduct(productDTO);
+    }
+
+
+    @GetMapping("/paginated")
+    public Page<ProductDTO> getPaginatedProducts(
+            @RequestParam(defaultValue = "0") int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        return productService.getProducts(pageable);
+    }
+
+
+    @GetMapping("/byCategory/{categoryId}")
+    public List<ProductDTO> getProductsByCategory(@PathVariable long categoryId) {
+        CategoryEntity category = new CategoryEntity();
+        category.setId(categoryId);
+        return productService.getProductsByCategory(category);
     }
 
 }

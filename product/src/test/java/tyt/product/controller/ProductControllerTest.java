@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
 import tyt.product.exception.Exceptions;
@@ -130,5 +134,20 @@ void getProductByIdReturnsNotFound() {
     productController.deleteProduct(1L);
 
     verify(productService, times(1)).deleteProduct(any());
-}
+    }
+//
+//    //create test for pageable get all products
+//    @Test
+//    void getProductsReturnsPage() {
+//        // Arrange
+//        Pageable pageable = PageRequest.of(0, 10);
+//        Page<ProductDTO> page = new PageImpl<>(Collections.singletonList(new ProductDTO()));
+//        when(productService.getProducts(pageable)).thenReturn(page);
+//
+//        // Act
+//        Page<ProductDTO> response = productController.getProducts(pageable);
+//
+//        // Assert
+//        assertEquals(page, response);
+//    }
 }

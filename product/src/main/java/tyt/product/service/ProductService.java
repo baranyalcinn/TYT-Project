@@ -1,5 +1,7 @@
 package tyt.product.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 
@@ -52,6 +54,13 @@ public interface ProductService {
      */
     List<ProductDTO> getAllProducts();
 
+/**
+     * Retrieves all products.
+     *
+     * @return a list of product data transfer objects of all products.
+     */
+
+    Page<ProductDTO> getProducts(Pageable pageable);
 
     /**
      * Retrieves all products by category.
