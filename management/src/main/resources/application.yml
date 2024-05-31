@@ -14,7 +14,7 @@ spring:
 server:
   port: 8080
   servlet:
-   context-path: /management-service
+    context-path: /management-service
 logging:
   level:
     tyt.management: INFO

@@ -12,13 +12,6 @@ import org.hibernate.annotations.SQLRestriction;
 import java.io.Serializable;
 import java.util.Set;
 
-/**
- * UserEntity class extends BaseEntity and implements Serializable.
- * It represents the "users" table in the database.
- * It includes fields for name, surname, email, password, isActive status and roles.
- * It uses Lombok annotations for automatic generation of getters, setters, equals, hashcode and no-args constructor methods.
- * It uses JPA annotations for ORM mapping.
- */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
@@ -27,26 +20,21 @@ import java.util.Set;
 @SQLRestriction("is_active = true")
 public class UserEntity extends BaseEntity implements Serializable {
 
-    // Represents the name of the user
     @NotEmpty(message = "Name is required")
     private String name;
 
-    // Represents the surname of the user
     @NotEmpty(message = "Surname is required")
     private String surname;
 
-    // Represents the email of the user
     @NotEmpty(message = "Email is required")
 
     @Column(unique = true)
     @Email
     private String email;
 
-    // Represents the password of the user
     @NotEmpty(message = "Password is required")
     private String password;
 
-    // Represents the active status of the user. By default, it is set to true.
     @Column(nullable = false)
     private boolean isActive = true;
 

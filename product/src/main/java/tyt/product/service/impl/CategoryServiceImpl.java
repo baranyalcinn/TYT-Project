@@ -5,16 +5,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.product.controller.response.CategoryResponse;
-import tyt.product.repository.CategoryRepository;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.CategoryDTO;
 import tyt.product.model.mapper.CategoryMapper;
+import tyt.product.repository.CategoryRepository;
 import tyt.product.service.CategoryService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service class for Category related operations.
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 @AllArgsConstructor
-public class CategoryServiceImpl  implements CategoryService {
+public class CategoryServiceImpl implements CategoryService {
 
     // Repository for Category related database operations
     private final CategoryRepository categoryRepository;
@@ -32,6 +31,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Converts a CategoryEntity to a CategoryDTO.
+     *
      * @param categoryEntity The CategoryEntity to be converted.
      * @return The converted CategoryDTO.
      */
@@ -41,6 +41,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Converts a CategoryDTO to a CategoryEntity.
+     *
      * @param categoryDTO The CategoryDTO to be converted.
      * @return The converted CategoryEntity.
      */
@@ -50,6 +51,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Creates a new category.
+     *
      * @param categoryDTO The data transfer object containing the details of the category to be created.
      * @return The ID of the created category.
      * @throws Exceptions.CategoryExistsException if a category with the same name already exists.
@@ -74,6 +76,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Updates an existing category.
+     *
      * @param categoryDTO The data transfer object containing the updated details of the category.
      * @return The ID of the updated category.
      * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
@@ -94,8 +97,10 @@ public class CategoryServiceImpl  implements CategoryService {
         CategoryResponse categoryResponse = new CategoryResponse("Category updated successfully with ID: " + categoryEntity.getId(), HttpStatus.OK.value());
         return categoryResponse.getMessage();
     }
+
     /**
      * Deletes a category by setting its active status to false.
+     *
      * @param categoryDTO The data transfer object containing the details of the category to be deleted.
      * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
      */
@@ -116,6 +121,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Retrieves a category by its ID.
+     *
      * @param id The ID of the category to be retrieved.
      * @return The data transfer object of the retrieved category.
      * @throws Exceptions.NoSuchCategoryException if no category with the given ID exists.
@@ -129,6 +135,7 @@ public class CategoryServiceImpl  implements CategoryService {
 
     /**
      * Retrieves all active categories.
+     *
      * @return A list of data transfer objects of all active categories.
      */
     @Override

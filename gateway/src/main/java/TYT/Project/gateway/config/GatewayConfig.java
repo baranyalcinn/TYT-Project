@@ -7,11 +7,29 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * This class is responsible for configuring the gateway routes for the microservices.
+ * It uses Spring Cloud Gateway for routing and load balancing.
+ */
 @Configuration
 public class GatewayConfig {
 
+    
+    /**
+     * This method defines the routes for the microservices.
+     * It uses a RouteLocatorBuilder to build the routes.
+     * Each route is defined with a path, a filter, and a URI.
+     * The path is the pattern that the incoming request should match.
+     * The filter is applied to the request before it is routed.
+     * The URI is the address of the microservice to which the request should be routed.
+     * The URI uses the "lb" scheme for load balancing.
+     *
+     * @param builder a RouteLocatorBuilder used to build the routes
+     * @param filter a JwtAuthorizationFilter used to apply authorization rules to the routes
+     * @return a RouteLocator containing the routes
+     */
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder, JwtAuthorizationFilter filter) {
+    public RouteLocator microserviceRouter(RouteLocatorBuilder builder, JwtAuthorizationFilter filter) {
         return builder.routes()
                 .route("auth-service-route", r -> r.path("/auth/**")
                         .filters(f -> f.filter(filter.apply(new JwtAuthorizationFilter.Config())))

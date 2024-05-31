@@ -26,15 +26,11 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
-                // Set the security context repository to NoOpServerSecurityContextRepository.
-                // This means that the security context will not be stored in a session.
+
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                // Disable CSRF protection. This is not recommended for production applications.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // Enable HTTP Basic authentication.
                 .httpBasic(Customizer.withDefaults());
 
-        // Build and return the SecurityWebFilterChain.
         return http.build();
     }
 }

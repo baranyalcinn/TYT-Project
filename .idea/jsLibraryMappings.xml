@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$/record" libraries="{bootstrap}" />
+    <file url="file://$PROJECT_DIR$" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/auth" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/eureka" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/gateway" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/management" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/product" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/record" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/sales" libraries="{Node.js Core}" />
   </component>
 </project>

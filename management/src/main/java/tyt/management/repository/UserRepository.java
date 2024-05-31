@@ -5,5 +5,4 @@ import tyt.management.model.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-
 }
