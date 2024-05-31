@@ -2,7 +2,7 @@ package TYT.auth.controller;
 
 import TYT.auth.model.UserEntity;
 import TYT.auth.model.dto.AuthRequest;
-import TYT.auth.service.JwtServiceImpl;
+import TYT.auth.service.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationProvider authenticationManager;
-    private final JwtServiceImpl jwtServiceImpl;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody AuthRequest request) {
@@ -30,7 +30,7 @@ public class AuthController {
         );
 
         if (authentication.isAuthenticated()) {
-            String token = jwtServiceImpl.generateToken((UserEntity) authentication.getPrincipal());
+            String token = jwtService.generateToken((UserEntity) authentication.getPrincipal());
             return ResponseEntity.ok(token);
         }
 
