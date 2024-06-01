@@ -35,8 +35,8 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
     private static final String USER_ROLES_HEADER = "userRoles";
 
     private final SecretKey signingKey;
-    private final Set<String> excludedPaths = Set.of("/auth/login", "/product-service/product/all",
-            "/product-service/product/{id}", "/product-service/paginated");
+    Set<String> excludedPaths = Set.of("/auth/login", "/product-service/product/all",
+            "/product-service/product/{id}", "/product-service/product/paginated");
 
     public JwtAuthorizationFilter(@Value("${security.jwt.secret-key}") String secretKey) {
         super(Config.class);
@@ -72,11 +72,12 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
                     return onError(exchange, "Invalid or expired token");
                 }
             }
+
             return chain.filter(exchange);
         };
     }
 
-    private Claims extractClaimsFromToken(String token) {
+    protected Claims extractClaimsFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()
@@ -91,7 +92,7 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
     private Mono<Void> onError(ServerWebExchange exchange, String message) {
         log.error(message);
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
+        return Mono.error(new RuntimeException(message));
     }
 
     private boolean hasRequiredRole(Claims claims, List<String> requiredRoles) {
