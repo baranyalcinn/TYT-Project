@@ -72,7 +72,7 @@ public class JwtService {
      * @param token The JWT to check.
      * @return True if the token is expired, false otherwise.
      */
-    private Boolean isTokenExpired(String token) {
+    Boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
@@ -93,7 +93,7 @@ public class JwtService {
      * @param claimsResolver The claims resolver to use for extraction.
      * @return The extracted claim.
      */
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    protected <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
