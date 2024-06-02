@@ -34,7 +34,7 @@ class UserRepositoryTest {
     void shouldSaveUser() {
         when(userRepository.save(any(UserEntity.class))).thenReturn(user);
         UserEntity savedUser = userRepository.save(user);
-        assertEquals(savedUser.getName(), "baran");
+        assertEquals("baran", savedUser.getName());
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
@@ -43,7 +43,7 @@ class UserRepositoryTest {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         Optional<UserEntity> returnedUser = userRepository.findById(1L);
         assertTrue(returnedUser.isPresent());
-        assertEquals(returnedUser.get().getName(), "baran");
+        assertEquals("baran", returnedUser.get().getName());
     }
 
     @Test

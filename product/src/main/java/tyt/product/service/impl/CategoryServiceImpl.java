@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity savedEntity = categoryRepository.save(toEntity(categoryDTO));
         if (savedEntity.getId() == null) {
             log.error("Saved category ID is null");
-            throw new RuntimeException("Saved category ID is null");
+            throw new IllegalArgumentException("Saved category ID is null");
         }
 
         CategoryResponse categoryResponse = new CategoryResponse("Category created successfully with ID: " + savedEntity.getId(), HttpStatus.CREATED.value());
