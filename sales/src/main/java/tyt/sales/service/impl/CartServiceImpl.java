@@ -51,7 +51,6 @@ public class CartServiceImpl implements CartService {
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
 
-
     /**
      * Adds a product to the cart.
      *
@@ -66,6 +65,7 @@ public class CartServiceImpl implements CartService {
         validateStock(productEntity, quantity);
         CartEntity cartItem = getCartItem(product, productEntity, quantity);
         cartRepository.save(cartItem);
+        log.info("Product added to cart: {}", product.getName());
         return "Product added to cart: " + productMapper.fromEntity(productEntity).getName();
     }
 
@@ -111,7 +111,7 @@ public class CartServiceImpl implements CartService {
         log.info("Checking out the following cart: {}", cartDTOs);
         OrderEntity order = createOrder(cart);
         String orderId = String.valueOf(orderRepository.save(order).getId());
-        String recordServiceUrl =String.format("/record/create/%s", orderId);
+        String recordServiceUrl = String.format("/record/create/%s", orderId);
         webClient.post()
                 .uri(recordServiceUrl)
                 .retrieve()
@@ -120,6 +120,7 @@ public class CartServiceImpl implements CartService {
                 .subscribe();
 
         clearCart();
+        log.info("Checkout successful. Order ID: {}", order.getId());
         return "Checkout successful. Order ID: " + order.getId();
     }
 
@@ -127,6 +128,7 @@ public class CartServiceImpl implements CartService {
         List<CartEntity> cart = cartRepository.findAll();
         cartRepository.deleteAll(cart);
     }
+
     /**
      * Gets all items in the cart.
      *
@@ -169,10 +171,8 @@ public class CartServiceImpl implements CartService {
         OfferEntity offer = offerRepository.findById(campaignId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id " + campaignId));
 
-        // Apply the offer
         cart.setAppliedOffer(offer);
 
-        // Calculate discount and total efficiently
         double originalPrice = cart.getProduct().getPrice() * cart.getQuantity();
         double discount = 0.0;
 
@@ -194,6 +194,7 @@ public class CartServiceImpl implements CartService {
         }
 
         cart.setTotalPrice(originalPrice - discount);
+        log.info("Campaign {} applied to cart item: {}", cart.getAppliedOffer(), cart);
         cartRepository.save(cart);
     }
 
@@ -207,97 +208,101 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
- * Validates if the stock of a product is sufficient for the requested quantity.
- *
- * @param productEntity the ProductEntity object to check the stock of
- * @param quantity the quantity to check against the product's stock
- * @throws InsufficientStockException if the product's stock is less than the requested quantity
- */
-private void validateStock(ProductEntity productEntity, Integer quantity) {
-    if (productEntity.getStock() < quantity) {
-        throw new InsufficientStockException(productEntity.getName());
+     * Validates if the stock of a product is sufficient for the requested quantity.
+     *
+     * @param productEntity the ProductEntity object to check the stock of
+     * @param quantity      the quantity to check against the product's stock
+     * @throws InsufficientStockException if the product's stock is less than the requested quantity
+     */
+    private void validateStock(ProductEntity productEntity, Integer quantity) {
+        if (productEntity.getStock() < quantity) {
+            log.error("Insufficient stock for product: {}", productEntity.getName());
+            throw new InsufficientStockException(productEntity.getName());
+        }
     }
-}
-
-/**
- * Retrieves a cart item for a given product and quantity. If the cart item does not exist, a new one is created.
- *
- * @param product the ProductDTO object containing the ID of the product
- * @param productEntity the ProductEntity object of the product
- * @param quantity the quantity of the product to add to the cart
- * @return the CartEntity object representing the cart item
- */
-private CartEntity getCartItem(ProductDTO product, ProductEntity productEntity, Integer quantity) {
-    Optional<CartEntity> existingCartItem = cartRepository.findByProductId(product.getId());
-    CartEntity cartItem = existingCartItem.orElseGet(() -> cartMapper.toEntity(product, productEntity));
-    cartItem.setQuantity(cartItem.getQuantity() + quantity);
-    return cartItem;
-}
 
     /**
- * Creates a new order from a list of cart items.
- *
- * @param cart the list of CartEntity objects to create the order from
- * @return the newly created OrderEntity object
- */
+     * Retrieves a cart item for a given product and quantity. If the cart item does not exist, a new one is created.
+     *
+     * @param product       the ProductDTO object containing the ID of the product
+     * @param productEntity the ProductEntity object of the product
+     * @param quantity      the quantity of the product to add to the cart
+     * @return the CartEntity object representing the cart item
+     */
+    private CartEntity getCartItem(ProductDTO product, ProductEntity productEntity, Integer quantity) {
+        Optional<CartEntity> existingCartItem = cartRepository.findByProductId(product.getId());
+        CartEntity cartItem = existingCartItem.orElseGet(() -> cartMapper.toEntity(product, productEntity));
+        cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        return cartItem;
+    }
 
-private OrderEntity createOrder(List<CartEntity> cart) {
-    OrderEntity order = new OrderEntity();
-    order.setTotal(calculateTotalPrice(cart));
-    LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-    order.setOrderDate(localDateTime);
-    order.setOrderProducts(createOrderProducts(cart, order));
+    /**
+     * Creates a new order from a list of cart items.
+     *
+     * @param cart the list of CartEntity objects to create the order from
+     * @return the newly created OrderEntity object
+     */
 
-   cart.stream()
-    .filter(cartItem -> cartItem.getAppliedOffer() != null)
-    .forEach(cartItem -> order.setOffer(cartItem.getAppliedOffer()));
+    private OrderEntity createOrder(List<CartEntity> cart) {
+        OrderEntity order = new OrderEntity();
+        order.setTotal(calculateTotalPrice(cart));
+        LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        order.setOrderDate(localDateTime);
+        order.setOrderProducts(createOrderProducts(cart, order));
 
-    return order;
-}
+        cart.stream()
+                .filter(cartItem -> cartItem.getAppliedOffer() != null)
+                .forEach(cartItem -> order.setOffer(cartItem.getAppliedOffer()));
+
+        log.info("Order created: {}", order);
+        return order;
+    }
 
 
-/**
- * Calculates the total price of a list of cart items.
- *
- * @param cart the list of CartEntity objects to calculate the total price of
- * @return the total price of the cart items
- */
-private double calculateTotalPrice(List<CartEntity> cart) {
-    return cart.stream()
-            .mapToDouble(CartEntity::getTotalPrice)
-            .sum();
-}
-/**
- * Creates a list of OrderProductEntity objects from a list of cart items and an order.
- *
- * @param cart the list of CartEntity objects to create the OrderProductEntity objects from
- * @param order the OrderEntity object to associate the OrderProductEntity objects with
- * @return the list of newly created OrderProductEntity objects
- */
-private List<OrderProductEntity> createOrderProducts(List<CartEntity> cart, OrderEntity order) {
-    return cart.stream()
-            .map(cartItem -> createOrderProduct(cartItem, order))
-            .toList();
-}
+    /**
+     * Calculates the total price of a list of cart items.
+     *
+     * @param cart the list of CartEntity objects to calculate the total price of
+     * @return the total price of the cart items
+     */
+    private double calculateTotalPrice(List<CartEntity> cart) {
+        return cart.stream()
+                .mapToDouble(CartEntity::getTotalPrice)
+                .sum();
+    }
 
-/**
- * Creates a new OrderProductEntity object from a cart item and an order.
- *
- * @param cartItem the CartEntity object to create the OrderProductEntity object from
- * @param order the OrderEntity object to associate the OrderProductEntity object with
- * @return the newly created OrderProductEntity object
- */
-@Locked
-private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
-    ProductEntity product = cartItem.getProduct();
-    product.setStock(product.getStock() - cartItem.getQuantity());
-    productRepository.save(product);
-    OrderProductEntity orderProduct = new OrderProductEntity();
-    orderProduct.setOrder(order);
-    orderProduct.setProduct(product);
-    orderProduct.setQuantity(cartItem.getQuantity());
-    return orderProductRepository.save(orderProduct);
-}
+    /**
+     * Creates a list of OrderProductEntity objects from a list of cart items and an order.
+     *
+     * @param cart  the list of CartEntity objects to create the OrderProductEntity objects from
+     * @param order the OrderEntity object to associate the OrderProductEntity objects with
+     * @return the list of newly created OrderProductEntity objects
+     */
+    private List<OrderProductEntity> createOrderProducts(List<CartEntity> cart, OrderEntity order) {
+        return cart.stream()
+                .map(cartItem -> createOrderProduct(cartItem, order))
+                .toList();
+    }
+
+    /**
+     * Creates a new OrderProductEntity object from a cart item and an order.
+     *
+     * @param cartItem the CartEntity object to create the OrderProductEntity object from
+     * @param order    the OrderEntity object to associate the OrderProductEntity object with
+     * @return the newly created OrderProductEntity object
+     */
+    @Locked
+    private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
+        ProductEntity product = cartItem.getProduct();
+        product.setStock(product.getStock() - cartItem.getQuantity());
+        productRepository.save(product);
+        OrderProductEntity orderProduct = new OrderProductEntity();
+        orderProduct.setOrder(order);
+        orderProduct.setProduct(product);
+        orderProduct.setQuantity(cartItem.getQuantity());
+        log.info("Order product created: {}", orderProduct);
+        return orderProductRepository.save(orderProduct);
+    }
 
 
 }

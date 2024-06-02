@@ -9,48 +9,37 @@ import lombok.NoArgsConstructor;
  * Represents a shopping cart entity in the system.
  * This class extends BaseEntity and implements Serializable interface.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Data
 @Entity
-public class CartEntity extends BaseEntity{
+public class CartEntity extends BaseEntity {
 
-    /**
-     * The product entity associated with the cart.
-     * It is a many-to-one relationship with the ProductEntity.
-     */
     @ManyToOne(fetch = FetchType.EAGER)
     private ProductEntity product;
 
-    /**
-     * The quantity of the product in the cart.
-     */
     private int quantity;
-
 
     private double totalPrice;
 
-    /**
-     * The name of the product in the cart.
-     * This field is not persisted in the database.
-     */
     @Transient
     private String productName;
 
-    /**
-     * The price of the product in the cart.
-     * This field is not persisted in the database.
-     */
     @Transient
     private double productPrice;
 
-
-    /**
-     * The campaign applied to the cart.
-     * It is a many-to-one relationship with the CampaignEntity.
-     */
     @OneToOne
     private OfferEntity appliedOffer;
 
-
+    @Override
+    public String toString() {
+        return "CartEntity{" +
+                "product=" + (product != null ? product.getId() : null) +
+                ", quantity=" + quantity +
+                ", totalPrice=" + totalPrice +
+                ", productName='" + productName + '\'' +
+                ", productPrice=" + productPrice +
+                ", appliedOffer=" + (appliedOffer != null ? appliedOffer.getId() : null) +
+                '}';
+    }
 }

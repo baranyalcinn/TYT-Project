@@ -43,4 +43,13 @@ public class OrderProductEntity extends BaseEntity {
      * Represents the quantity of the product in the order.
      */
     private int quantity;
+
+    @Override
+    public String toString() {
+        return "OrderProductEntity{" +
+                "order=" + (order != null ? order.getId() : null) +
+                ", product=" + (product != null ? product.getId() : null) +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

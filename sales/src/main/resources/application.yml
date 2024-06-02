@@ -19,3 +19,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+logging:
+  level:
+    tyt.sales: INFO
+  file:
+    name: logs/sales.log

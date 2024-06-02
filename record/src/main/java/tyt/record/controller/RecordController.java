@@ -37,7 +37,7 @@ public class RecordController {
 
     @PostMapping("/create/{id}")
     public RecordResponse createRecordForOrder(@Valid @PathVariable Long id) throws IOException {
-    log.info("Creating record for order with id: {}", id);
+    log.info("Request to create record for order with id: {}", id);
     return recordService.createRecordForOrder(id);
 }
 

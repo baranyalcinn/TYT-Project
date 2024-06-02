@@ -47,6 +47,9 @@ public class RecordServiceImpl implements RecordService {
                         return new RecordResponse("Error creating PDF", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 })
-                .orElse(new RecordResponse("Order not found", HttpStatus.NOT_FOUND));
+                .orElseGet(() -> {
+                    log.error("Order with id {} not found", orderId);
+                    return new RecordResponse("Order not found", HttpStatus.NOT_FOUND);
+                });
     }
 }
