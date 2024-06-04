@@ -3,11 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/TYT.iml" filepath="$PROJECT_DIR$/.idea/TYT.iml" />
-      <module fileurl="file://$PROJECT_DIR$/auth/auth.iml" filepath="$PROJECT_DIR$/auth/auth.iml" />
-      <module fileurl="file://$PROJECT_DIR$/management/management.iml" filepath="$PROJECT_DIR$/management/management.iml" />
-      <module fileurl="file://$PROJECT_DIR$/product/product.iml" filepath="$PROJECT_DIR$/product/product.iml" />
-      <module fileurl="file://$PROJECT_DIR$/record/record.iml" filepath="$PROJECT_DIR$/record/record.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sales/sales.iml" filepath="$PROJECT_DIR$/sales/sales.iml" />
     </modules>
   </component>
 </project>

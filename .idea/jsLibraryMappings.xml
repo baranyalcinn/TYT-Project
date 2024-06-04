@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/auth" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/eureka" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/gateway" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/management" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/product" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/record" libraries="{HTML, Node.js Core}" />
-    <file url="file://$PROJECT_DIR$/sales" libraries="{HTML, Node.js Core}" />
+    <file url="file://$PROJECT_DIR$" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/auth" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/eureka" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/gateway" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/management" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/product" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/record" libraries="{HTML}" />
+    <file url="file://$PROJECT_DIR$/sales" libraries="{HTML}" />
   </component>
 </project>
