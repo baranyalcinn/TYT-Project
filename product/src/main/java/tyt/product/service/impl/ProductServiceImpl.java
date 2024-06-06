@@ -89,13 +89,10 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public String deleteProduct(ProductDTO productDTO) {
-
         ProductEntity productEntity = productRepository.findById(productDTO.getId()).orElseThrow(() -> new Exceptions.NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
-
         productEntity.setActive(false);
         log.info("Product deactivated successfully. ID: {}", productEntity.getId());
         productRepository.save(productEntity);
-
         return "Product with ID: " + productEntity.getId() + " was successfully deactivated.";
     }
 

@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
+import tyt.product.controller.response.ProductResponse;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
@@ -15,6 +17,7 @@ import tyt.product.service.ProductService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -63,7 +66,7 @@ class ProductControllerTest {
     @Test
     void getProductByIdReturnsNotFound() {
         // Arrange
-        Long nonExistentProductId = 999L; // ID that does not exist in the database
+        long nonExistentProductId = 999L; // ID that does not exist in the database
 
         // Set up ProductService to throw NoSuchProductException
         when(productService.getProductById(nonExistentProductId))
@@ -99,25 +102,28 @@ class ProductControllerTest {
      */
     @Test
     void createProductReturnsMessage() {
-        when(productService.createProduct(any())).thenReturn("Product created");
+        // Arrange
+        CreateProductRequest request = new CreateProductRequest("Product name", "Product description", 100.0, 10, 1L, "Category name");
+        when(productService.createProduct(any(ProductDTO.class))).thenReturn("Product created");
 
-        CreateProductRequest createProductRequest = new CreateProductRequest("name", "description", 1.0, 1, 1L, "category");
-        String response = productController.createProduct(createProductRequest);
+        // Act
+        ResponseEntity<ProductResponse> response = productController.createProduct(request);
 
-        assertEquals("Product created", response);
+        // Assert
+        assertEquals("Product created", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
-    /**
-     * This test checks if the updateProduct method of the ProductController class returns the correct message after updating a product.
-     */
     @Test
-    void updateProductReturnsMessage() throws Exception {
-        when(productService.updateProduct(any())).thenReturn("Product updated");
+    void updateProductReturnsMessage() {
+        // Arrange
+        UpdateProductRequest request = new UpdateProductRequest(1L, "Updated product name", "Updated product description", 200.0, 20, 2L);
+        when(productService.updateProduct(any(ProductDTO.class))).thenReturn("Product updated");
 
-        UpdateProductRequest updateProductRequest = new UpdateProductRequest(1L, "name", "description", 1.0, 1, 1L);
-        String response = productController.updateProduct(updateProductRequest);
+        // Act
+        ResponseEntity<ProductResponse> response = productController.updateProduct(request);
 
-        assertEquals("Product updated", response);
+        // Assert
+        assertEquals("Product updated", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     /**

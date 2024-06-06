@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
+import tyt.product.controller.response.ProductResponse;
 import tyt.product.model.CategoryEntity;
-import tyt.product.model.ProductEntity;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.service.ProductService;
@@ -32,6 +32,7 @@ public class ProductController {
     private final ProductService productService;
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
     private static final int PAGE_SIZE = 5;
+
     /**
      * Get a specific product by its id.
      *
@@ -67,10 +68,11 @@ public class ProductController {
      */
 
     @PostMapping("/create")
-    public String createProduct(@Valid @RequestBody CreateProductRequest request) {
-
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest request) {
         log.info("Creating product with name: {}", request.getName());
-        return productService.createProduct(productMapper.createRequestToDto(request));
+        String message = productService.createProduct(productMapper.createRequestToDto(request));
+        ProductResponse productResponse = new ProductResponse(message, HttpStatus.CREATED.value());
+        return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
     }
 
     /**
@@ -80,8 +82,10 @@ public class ProductController {
      * @return A message indicating the result of the operation.
      */
     @PutMapping("/update")
-    public String updateProduct(@Valid @RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(productMapper.updateRequestToDto(request));
+    public ResponseEntity<ProductResponse> updateProduct(@Valid @RequestBody UpdateProductRequest request) {
+        String message = productService.updateProduct(productMapper.updateRequestToDto(request));
+        ProductResponse productResponse = new ProductResponse(message, HttpStatus.OK.value());
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     /**
@@ -90,15 +94,12 @@ public class ProductController {
      * @param id The id of the product to be deleted.
      */
     @DeleteMapping("/{id}")
-    public String deleteProduct(@Valid @PathVariable long id) {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(id);
-        productEntity.setActive(false); // Set isActive to false for soft delete
-
-        ProductDTO productDTO = productMapper.toDTO(productEntity);
-        return productService.deleteProduct(productDTO);
+    public ResponseEntity<String> deleteProduct(@Valid @PathVariable long id) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(id);
+        String message = productService.deleteProduct(productDTO);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
-
 
     @GetMapping("/paginated")
     public Page<ProductDTO> getPaginatedProducts(
