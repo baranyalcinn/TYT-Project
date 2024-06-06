@@ -7,12 +7,7 @@ import tyt.sales.model.CartEntity;
 
 import java.util.Optional;
 
-/**
- * This interface represents the repository for the CartItemEntity.
- * It extends JpaRepository to provide standard data access operations.
- */
 public interface CartRepository extends JpaRepository<CartEntity, Long>{
-
 
     @Transactional
     @Modifying
