@@ -31,7 +31,7 @@ public class ProductController {
 
     private final ProductService productService;
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
     /**
      * Get a specific product by its id.
      *

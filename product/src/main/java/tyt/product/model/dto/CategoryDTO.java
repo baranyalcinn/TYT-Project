@@ -24,9 +24,4 @@ public class CategoryDTO {
 
     @JsonIgnore
     private boolean isActive;
-
-
-    public boolean isActive() {
-        return isActive;
-    }
 }

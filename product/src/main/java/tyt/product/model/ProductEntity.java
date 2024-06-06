@@ -6,15 +6,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.io.Serializable;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "products")
 @Data
 @NoArgsConstructor
 @SQLRestriction("is_active = true")
-public class ProductEntity extends BaseEntity implements Serializable {
+public class ProductEntity extends BaseEntity {
 
     @Column(unique = true)
     private String name;
@@ -26,7 +24,7 @@ public class ProductEntity extends BaseEntity implements Serializable {
     private int stock;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean isActive;
 
 
     @ManyToOne(fetch = FetchType.EAGER)

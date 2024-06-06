@@ -24,9 +24,6 @@ public class UserDTO {
     private Set<Role> roles;
 
 
-    public boolean isActive() {
-        return isActive;
-    }
 
 }
 

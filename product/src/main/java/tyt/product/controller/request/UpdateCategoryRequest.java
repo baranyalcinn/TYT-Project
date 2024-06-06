@@ -1,5 +1,6 @@
 package tyt.product.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
@@ -16,11 +17,13 @@ public class UpdateCategoryRequest {
      */
     @NotNull(message = "Category ID is required.")
     long id;
-
     /**
      * The new name for the category.
      */
     @NotBlank(message = "Category name is required.")
     String name;
-    
+
+    @JsonIgnore
+    boolean isActive;
+
 }

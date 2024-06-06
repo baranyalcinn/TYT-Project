@@ -5,10 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import tyt.product.controller.request.CreateProductRequest;
 import tyt.product.controller.request.UpdateProductRequest;
 import tyt.product.exception.Exceptions;
@@ -64,26 +60,26 @@ class ProductControllerTest {
     /**
      * This test checks if the getProductById method of the ProductController class returns a not found response when the product is not found.
      */
-@Test
-void getProductByIdReturnsNotFound() {
-    // Arrange
-    Long nonExistentProductId = 999L; // ID that does not exist in the database
+    @Test
+    void getProductByIdReturnsNotFound() {
+        // Arrange
+        Long nonExistentProductId = 999L; // ID that does not exist in the database
 
-    // Set up ProductService to throw NoSuchProductException
-    when(productService.getProductById(nonExistentProductId))
-    .thenThrow(new Exceptions.NoSuchProductException("Product not found"));
+        // Set up ProductService to throw NoSuchProductException
+        when(productService.getProductById(nonExistentProductId))
+                .thenThrow(new Exceptions.NoSuchProductException("Product not found"));
 
-    // Assert
-    Exception exception = assertThrows(Exceptions.NoSuchProductException.class, () -> {
-        // Act
-        productController.getProductById(nonExistentProductId);
-    });
+        // Assert
+        Exception exception = assertThrows(Exceptions.NoSuchProductException.class, () -> {
+            // Act
+            productController.getProductById(nonExistentProductId);
+        });
 
-    String expectedMessage = "Product not found";
-    String actualMessage = exception.getMessage();
+        String expectedMessage = "Product not found";
+        String actualMessage = exception.getMessage();
 
-    assertTrue(actualMessage.contains(expectedMessage));
-}
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
 
     /**
      * This test checks if the getAllProducts method of the ProductController class returns the correct list of products.
@@ -127,27 +123,12 @@ void getProductByIdReturnsNotFound() {
     /**
      * This test checks if the deleteProduct method of the ProductController class calls the deleteProduct method of the ProductService class.
      */
-   @Test
-   void deleteProductCallsService() {
-    when(productService.deleteProduct(any())).thenReturn(null);
+    @Test
+    void deleteProductCallsService() {
+        when(productService.deleteProduct(any())).thenReturn(null);
 
-    productController.deleteProduct(1L);
+        productController.deleteProduct(1L);
 
-    verify(productService, times(1)).deleteProduct(any());
+        verify(productService, times(1)).deleteProduct(any());
     }
-//
-//    //create test for pageable get all products
-//    @Test
-//    void getProductsReturnsPage() {
-//        // Arrange
-//        Pageable pageable = PageRequest.of(0, 10);
-//        Page<ProductDTO> page = new PageImpl<>(Collections.singletonList(new ProductDTO()));
-//        when(productService.getProducts(pageable)).thenReturn(page);
-//
-//        // Act
-//        Page<ProductDTO> response = productController.getProducts(pageable);
-//
-//        // Assert
-//        assertEquals(page, response);
-//    }
 }

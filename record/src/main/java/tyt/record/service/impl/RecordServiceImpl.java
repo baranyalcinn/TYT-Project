@@ -39,7 +39,8 @@ public class RecordServiceImpl implements RecordService {
                 .map(order -> {
                     try {
                         OrderDTO orderDto = orderMapper.toDto(order);
-                        String filePath = String.format("C:/Users/Baran/Desktop/slips/slip-%s.pdf", orderDto.getOrderNumber());
+                        String userHome = System.getProperty("user.home");
+                        String filePath = String.format("%s/Desktop/slips/slip-%s.pdf", userHome, orderDto.getOrderNumber());
                         pdfGenerator.generatePdf(filePath, orderDto);
                         return new RecordResponse("PDF created successfully at " + filePath, HttpStatus.OK);
                     } catch (IOException e) {

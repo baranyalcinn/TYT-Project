@@ -51,14 +51,15 @@ public class ProductServiceImpl implements ProductService {
     public String createProduct(ProductDTO productDTO) {
         List<ProductEntity> existingProducts = productRepository.findByName(productDTO.getName());
         if (existingProducts.isEmpty()) {
-        ProductEntity savedEntity = productRepository.save(toEntity(productDTO));
-        log.info("Product created successfully. ID: {}", savedEntity.getId());
-        return savedEntity.getId().toString();
+            ProductEntity productEntity = toEntity(productDTO);
+            productEntity.setActive(true); // Set active to true here
+            ProductEntity savedEntity = productRepository.save(productEntity);
+            log.info("Product created successfully. ID: {}", savedEntity.getId());
+            return savedEntity.getId().toString();
         } else {
             log.error("Product with name {} already exists", productDTO.getName());
             throw new Exceptions.ProductExistException("A product with the name " + productDTO.getName() + " already exists.");
         }
-
     }
 
     /**
@@ -97,22 +98,23 @@ public class ProductServiceImpl implements ProductService {
 
         return "Product with ID: " + productEntity.getId() + " was successfully deactivated.";
     }
+
     /**
      * Retrieves a product by its ID.
      *
      * @param id the ID of the product to retrieve
      * @return the retrieved product DTO
      */
-@Override
-public ProductDTO getProductById(long id) {
-    Optional<ProductEntity> productEntity = productRepository.findById(id);
+    @Override
+    public ProductDTO getProductById(long id) {
+        Optional<ProductEntity> productEntity = productRepository.findById(id);
 
-    if (productEntity.isPresent()) {
-        return productMapper.toDTO(productEntity.get());
-    } else {
-        throw new Exceptions.NoSuchProductException("Product with id " + id + " not found");
+        if (productEntity.isPresent()) {
+            return productMapper.toDTO(productEntity.get());
+        } else {
+            throw new Exceptions.NoSuchProductException("Product with id " + id + " not found");
+        }
     }
-}
 
     /**
      * Retrieves all products.
@@ -148,7 +150,6 @@ public ProductDTO getProductById(long id) {
 
         return productEntities.stream().map(productMapper::toDTO).toList();
     }
-
 
 
 }

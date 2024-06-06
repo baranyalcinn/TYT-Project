@@ -8,4 +8,6 @@ import tyt.product.model.CategoryEntity;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
     CategoryEntity findByName(String name);
+
+    CategoryEntity findByNameIgnoreCase(String name);
 }

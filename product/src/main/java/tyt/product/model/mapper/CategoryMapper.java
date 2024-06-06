@@ -27,7 +27,6 @@ public interface CategoryMapper {
      */
 
     @Mapping(source = "categoryEntity.id", target = "id")
-    @Mapping(source = "categoryEntity.isActive", target = "isActive")
     CategoryDTO toDTO(CategoryEntity categoryEntity);
     /**
      * Converts a CategoryDTO object to a CategoryEntity object.
@@ -35,6 +34,7 @@ public interface CategoryMapper {
      * @param categoryDTO The CategoryDTO object to convert.
      * @return The converted CategoryEntity object.
      */
+    @Mapping(source = "categoryDTO.id", target = "id")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -48,8 +48,6 @@ public interface CategoryMapper {
      * @param createCategoryRequest The CreateCategoryRequest object to convert.
      * @return The converted CategoryDTO object.
      */
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
     CategoryDTO createRequestToDto(CreateCategoryRequest createCategoryRequest);
 
     /**
@@ -58,7 +56,5 @@ public interface CategoryMapper {
      * @param updateCategoryRequest The UpdateCategoryRequest object to convert.
      * @return The converted CategoryDTO object.
      */
-
-    @Mapping(target = "isActive", ignore = true)
     CategoryDTO updateRequestToDto(UpdateCategoryRequest updateCategoryRequest);
 }

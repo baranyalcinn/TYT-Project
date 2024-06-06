@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.io.Serializable;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -15,18 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @SQLRestriction("is_active = true")
-public class CategoryEntity extends BaseEntity implements Serializable {
+public class CategoryEntity extends BaseEntity{
 
     private String name;
 
-    @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean isActive;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<ProductEntity> products;
 
-    public boolean getIsActive() {
-        return isActive;
-    }
 
 }

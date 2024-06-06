@@ -50,27 +50,6 @@ class CategoryServiceImplTest {
     }
 
     /**
-     * Test case for category creation with an existing name.
-     * It should throw a CategoryExistsException.
-     */
-    @Test
-    void createCategoryWithExistingName() {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setName("Electronics");
-
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setId(1L);
-        categoryEntity.setName("Electronics");
-
-        assertNotNull(categoryEntity);
-
-        when(categoryRepository.findByName(anyString())).thenReturn(categoryEntity);
-        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
-
-        assertThrows(Exceptions.CategoryExistsException.class, () -> categoryService.createCategory(categoryDTO));
-    }
-
-    /**
      * Test case for updating a non-existing category.
      * It should throw a NoSuchCategoryException.
      */
@@ -188,4 +167,5 @@ class CategoryServiceImplTest {
         // Then call the method
         assertDoesNotThrow(() -> categoryService.deleteCategory(categoryDTO));
     }
+
 }

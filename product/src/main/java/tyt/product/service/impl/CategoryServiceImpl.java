@@ -58,20 +58,22 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public String createCategory(CategoryDTO categoryDTO) {
-        CategoryEntity existingCategory = categoryRepository.findByName(categoryDTO.getName());
-        if (existingCategory != null) {
-            log.error("Category with name {} already exists", categoryDTO.getName());
+        Optional<CategoryEntity> existingCategory = Optional.ofNullable(categoryRepository.findByNameIgnoreCase(categoryDTO.getName()));
+        existingCategory.ifPresent(category -> {
+            log.error("Category with name '{}' already exists", categoryDTO.getName());
             throw new Exceptions.CategoryExistsException("Category with name " + categoryDTO.getName() + " already exists");
-        }
+        });
 
-        CategoryEntity savedEntity = categoryRepository.save(toEntity(categoryDTO));
-        if (savedEntity.getId() == null) {
-            log.error("Saved category ID is null");
-            throw new IllegalArgumentException("Saved category ID is null");
-        }
+        CategoryEntity categoryEntity = toEntity(categoryDTO);
+        categoryEntity.setActive(true);
 
-        CategoryResponse categoryResponse = new CategoryResponse("Category created successfully with ID: " + savedEntity.getId(), HttpStatus.CREATED.value());
-        return categoryResponse.getMessage();
+        CategoryEntity savedEntity = Optional.of(categoryRepository.save(categoryEntity))
+                .orElseThrow(() -> {
+                    log.error("Saved category ID is null");
+                    return new IllegalArgumentException("Saved category ID is null");
+                });
+
+        return String.format("Category created successfully with ID: %d", savedEntity.getId());
     }
 
     /**

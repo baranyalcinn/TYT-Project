@@ -74,5 +74,6 @@ class UserControllerTest {
     @Test
     void shouldDeleteUser() {
         userController.deleteUser(1L);
+
     }
 }

@@ -31,15 +31,11 @@ public class ProductDTO {
     @Min(value = 0, message = "Product stock cannot be less than 0")
     private int stock;
 
-    @JsonIgnore
-    private boolean isActive;
-
     private Long categoryId;
 
     private String categoryName;
 
+    @JsonIgnore
+    private boolean isActive;
 
-    public boolean isActive() {
-        return isActive;
-    }
 }
