@@ -39,6 +39,13 @@ public class CartServiceImpl implements CartService {
     private static final CartMapper cartMapper = CartMapper.INSTANCE;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
+    /**
+     * Adds a product to the cart.
+     *
+     * @param product  The product to add.
+     * @param quantity The quantity of the product to add.
+     * @return A message indicating the product was added.
+     */
     @Override
     @Transactional
     public String addToCart(ProductDTO product, Integer quantity) {
@@ -62,24 +69,45 @@ public class CartServiceImpl implements CartService {
         return "Product added to cart: " + product.getName();
     }
 
+    /**
+     * Creates an order.
+     *
+     * @param orderDTO The order to create.
+     */
     @Override
     public void createOrder(OrderDTO orderDTO) {
         OrderEntity orderEntity = orderMapper.orderDtoToOrderEntity(orderDTO);
         orderRepository.save(orderEntity);
     }
 
+    /**
+     * Removes all items from the cart.
+     *
+     * @return A message indicating all items were removed.
+     */
     @Override
     public String removeAllItemsFromCart() {
         cartRepository.deleteAll();
         return "All items removed from cart";
     }
 
+    /**
+     * Removes an item from the cart.
+     *
+     * @param productId The ID of the product to remove.
+     * @return A message indicating the product was removed.
+     */
     @Override
     public String removeItemFromCart(Long productId) {
         cartRepository.deleteCartItemEntityByProductId(productId);
         return "Product removed from cart";
     }
 
+    /**
+     * Checks out the cart, creating an order and clearing the cart.
+     *
+     * @return A message indicating the checkout was successful.
+     */
     @Override
     @Transactional
     public String checkout() {
@@ -108,6 +136,11 @@ public class CartServiceImpl implements CartService {
         cartRepository.deleteAll();
     }
 
+    /**
+     * Gets the current state of the cart.
+     *
+     * @return A list of cart items.
+     */
     @Override
     public List<CartDTO> getCart() {
         List<CartEntity> cartItems = cartRepository.findAll();
@@ -128,6 +161,12 @@ public class CartServiceImpl implements CartService {
         return cartMapper.fromEntities(cartItems);
     }
 
+    /**
+     * Applies a campaign to a cart.
+     *
+     * @param cartId     The ID of the cart.
+     * @param campaignId The ID of the campaign.
+     */
     public void applyCampaign(Long cartId, Long campaignId) {
         CartEntity cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
@@ -139,6 +178,11 @@ public class CartServiceImpl implements CartService {
         calculateAndSaveTotalPrice(cart);
     }
 
+    /**
+     * Calculates and saves the total price of a cart item.
+     *
+     * @param cartItem The cart item.
+     */
     private void calculateAndSaveTotalPrice(CartEntity cartItem) {
         double originalPrice = cartItem.getProduct().getPrice() * cartItem.getQuantity();
         double discount = calculateDiscount(cartItem, originalPrice);
@@ -147,6 +191,13 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cartItem);
     }
 
+    /**
+     * Calculates the discount for a cart item.
+     *
+     * @param cartItem      The cart item.
+     * @param originalPrice The original price of the cart item.
+     * @return The discount.
+     */
     private double calculateDiscount(CartEntity cartItem, double originalPrice) {
         OfferEntity offer = cartItem.getAppliedOffer();
         if (offer == null) {
@@ -167,6 +218,12 @@ public class CartServiceImpl implements CartService {
         }
     }
 
+    /**
+     * Validates the stock of a product.
+     *
+     * @param productEntity The product.
+     * @param quantity      The quantity to validate.
+     */
     private void validateStock(ProductEntity productEntity, Integer quantity) {
         if (productEntity.getStock() < quantity) {
             log.error("Insufficient stock for product: {}", productEntity.getName());
@@ -174,6 +231,12 @@ public class CartServiceImpl implements CartService {
         }
     }
 
+    /**
+     * Creates an order from a list of cart items.
+     *
+     * @param cartItems The cart items.
+     * @return The created order.
+     */
     private OrderEntity createOrder(List<CartEntity> cartItems) {
         OrderEntity order = new OrderEntity();
         order.setOrderDate(java.time.LocalDateTime.now());
@@ -199,6 +262,14 @@ public class CartServiceImpl implements CartService {
         return order;
     }
 
+
+    /**
+     * Creates an order product from a cart item and an order.
+     *
+     * @param cartItem The cart item.
+     * @param order    The order.
+     * @return The created order product.
+     */
     private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
         ProductEntity product = cartItem.getProduct();
         product.setStock(product.getStock() - cartItem.getQuantity());
