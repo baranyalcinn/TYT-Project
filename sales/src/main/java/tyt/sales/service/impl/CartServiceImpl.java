@@ -184,7 +184,7 @@ public class CartServiceImpl implements CartService {
         order.setTotal(totalPrice);
 
         List<OrderProductEntity> orderProducts = cartItems.stream()
-                .map(this::createOrderProduct)
+                .map(cartItem -> createOrderProduct(cartItem, order))
                 .toList();
         order.setOrderProducts(orderProducts);
 
@@ -199,7 +199,7 @@ public class CartServiceImpl implements CartService {
         return order;
     }
 
-    private OrderProductEntity createOrderProduct(CartEntity cartItem) {
+    private OrderProductEntity createOrderProduct(CartEntity cartItem, OrderEntity order) {
         ProductEntity product = cartItem.getProduct();
         product.setStock(product.getStock() - cartItem.getQuantity());
         productRepository.save(product);
@@ -207,6 +207,7 @@ public class CartServiceImpl implements CartService {
         OrderProductEntity orderProduct = new OrderProductEntity();
         orderProduct.setProduct(product);
         orderProduct.setQuantity(cartItem.getQuantity());
+        orderProduct.setOrder(order);
 
         log.info("Order product created: {}", orderProduct);
         return orderProductRepository.save(orderProduct);
