@@ -109,7 +109,6 @@ public class PdfGenerator {
         String nowDate = nowDateFormatter.format(date);
         String barcodeImageUrl = generateBarcodeImage(order.getOrderNumber());
 
-
         String qrCodeContent = "https://www.linkedin.com/in/baran-yalçın-521691242/";
         String qrCodeImageUrl = generateQrCodeImage(qrCodeContent);
 
@@ -120,7 +119,6 @@ public class PdfGenerator {
         context.setVariable("nowDate", nowDate);
         context.setVariable("barcodeImageUrl", barcodeImageUrl);
         context.setVariable("qrCodeImageUrl", qrCodeImageUrl);
-
 
         return templateEngine.process(TEMPLATE_NAME, context);
     }

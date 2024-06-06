@@ -18,7 +18,6 @@ public class OrderEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "order")
     private List<OrderProductEntity> orderProducts;
-
     private double total;
 
     private LocalDateTime orderDate;

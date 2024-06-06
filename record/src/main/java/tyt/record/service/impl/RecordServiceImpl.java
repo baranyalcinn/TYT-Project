@@ -24,23 +24,26 @@ import java.io.IOException;
 @AllArgsConstructor
 public class RecordServiceImpl implements RecordService {
 
+    private static final String FILE_PATH_FORMAT = "%s/Desktop/slips/slip-%s.pdf";
+    private static final OrderMapper ORDER_MAPPER = OrderMapper.INSTANCE;
+
     private final OrderRepository orderRepository;
     private final PdfGenerator pdfGenerator;
-    private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
     /**
      * Creates a record for a given order.
      *
      * @param orderId The ID of the order.
-     * @return The file path of the generated PDF, or an error message if the order was not found or the PDF could not be created.
+     * @return A RecordResponse containing the file path of the generated PDF and HTTP status,
+     *         or an error message if the order was not found or the PDF could not be created.
      */
+    @Override
     public RecordResponse createRecordForOrder(Long orderId) {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     try {
-                        OrderDTO orderDto = orderMapper.toDto(order);
-                        String userHome = System.getProperty("user.home");
-                        String filePath = String.format("%s/Desktop/slips/slip-%s.pdf", userHome, orderDto.getOrderNumber());
+                        OrderDTO orderDto = ORDER_MAPPER.toDto(order);
+                        String filePath = String.format(FILE_PATH_FORMAT, System.getProperty("user.home"), orderDto.getOrderNumber());
                         pdfGenerator.generatePdf(filePath, orderDto);
                         return new RecordResponse("PDF created successfully at " + filePath, HttpStatus.OK);
                     } catch (IOException e) {

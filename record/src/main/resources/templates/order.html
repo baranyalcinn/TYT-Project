@@ -134,9 +134,7 @@
         <span style="padding-left: 5px" th:text="${nowDate}"></span>
     </div>
     <div class="header">
-        <img class="logo"
-             th:src="'file:///C:/Users/Baran/Desktop/tyt - Project/record/src/main/resources/static/images/logo.jpg'"
-             alt="">
+     <img class="logo" th:src="@{classpath:/static/logo.jpg}" alt="">
         <h1>Order Details</h1>
         <div class="barcode-container">
             <img class="barcode" th:src="${barcodeImageUrl}" alt="Order Number Barcode">
