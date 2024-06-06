@@ -7,9 +7,6 @@ import tyt.sales.model.dto.ProductDTO;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * CartService is an interface that defines the operations that can be performed on a shopping cart.
- */
 public interface CartService {
 
     String addToCart(ProductDTO product, Integer quantity);
