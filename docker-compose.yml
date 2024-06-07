@@ -1,0 +1,58 @@
+version: "3.9"
+services:
+  eureka:
+    image: yalcinbaran/eureka:latest
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    image: yalcinbaran/auth:latest
+    ports:
+      - "8087:8087"
+    depends_on:
+      - eureka
+
+  management:
+    image: yalcinbaran/management:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka
+
+  product:
+    image: yalcinbaran/product:latest
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka
+
+  sales:
+    image: yalcinbaran/sales:latest
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka
+
+  record:
+    image: my-docker-registry/your-project/record:latest
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka
+
+  gateway:
+    image: my-docker-registry/your-project/gateway:latest
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka
+      - auth
+      - management
+      - product
+      - sales
+      - record
