@@ -27,12 +27,12 @@ class RecordServiceImplTest {
     @InjectMocks
     private RecordServiceImpl recordService;
 
-@BeforeEach
-public void setup() {
-    MockitoAnnotations.openMocks(this);
-    OrderEntity order = new OrderEntity();
-    when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
-}
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        OrderEntity order = new OrderEntity();
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
+    }
 
     @Test
     void createRecordForOrder_OrderExists_PdfCreated() throws IOException {
@@ -43,7 +43,8 @@ public void setup() {
         RecordResponse result = recordService.createRecordForOrder(orderId);
 
         verify(pdfGenerator, times(1)).generatePdf(anyString(), any());
-        assertEquals("PDF created successfully at C:/Users/Baran/Desktop/slips/slip-null.pdf", result.getMessage());
+        String expectedMessage = "PDF created successfully at " + System.getProperty("user.home") + "/Desktop/slips/slip-null.pdf";
+        assertEquals(expectedMessage, result.getMessage());
     }
 
     @Test
