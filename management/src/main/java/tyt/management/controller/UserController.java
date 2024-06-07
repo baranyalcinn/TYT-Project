@@ -1,6 +1,5 @@
 package tyt.management.controller;
 
-
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,9 @@ import tyt.management.util.MissingRequiredRoleException;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * UserController is a REST controller that handles user-related operations.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -27,6 +29,12 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Get a user by their ID.
+     *
+     * @param id the ID of the user
+     * @return the user with the given ID
+     */
     @GetMapping("/{id}")
     public UserDTO getUser(@PathVariable Long id) {
 
@@ -34,11 +42,22 @@ public class UserController {
         return userService.getUser(id);
     }
 
+    /**
+     * Get all active users.
+     *
+     * @return a list of all active users
+     */
     @GetMapping("/all")
     public List<UserDTO> getAllActiveUsers() {
         return userService.getAllUsers();
     }
 
+    /**
+     * Create a new user.
+     *
+     * @param request the request containing the user details
+     * @return a response entity with the result of the operation
+     */
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
@@ -56,6 +75,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Update an existing user.
+     *
+     * @param request the request containing the updated user details
+     * @return a string indicating the result of the operation
+     */
     @PutMapping("/update")
     public String updateUser(@RequestBody UpdateUserRequest request) {
 
@@ -63,22 +88,35 @@ public class UserController {
         return userService.updateUser(UserMapper.INSTANCE.updateRequestToDto(request));
     }
 
+    /**
+     * Delete a user by their ID.
+     *
+     * @param id the ID of the user
+     */
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(id);
-        userDTO.setActive(false);
-        userService.deleteUser(userDTO);
+        userService.deleteUser(id);
         log.info("Deleting user with id: {}", id);
     }
 
-
+    /**
+     * Validate the roles of a user.
+     *
+     * @param roles the roles of the user
+     * @throws MissingRequiredRoleException if the roles are not valid
+     */
     private void validateRoles(Set<Role> roles) {
         if (roles == null || roles.isEmpty() || !isValidRole(roles)) {
             throw new MissingRequiredRoleException();
         }
     }
 
+    /**
+     * Check if the roles are valid.
+     *
+     * @param roles the roles to check
+     * @return true if the roles are valid, false otherwise
+     */
     private boolean isValidRole(Set<Role> roles) {
         return roles.stream().anyMatch(
                 role -> role.getName().equals("CASHIER") ||
@@ -86,7 +124,12 @@ public class UserController {
                         role.getName().equals("ADMIN"));
     }
 
-
+    /**
+     * Handle constraint violation exceptions.
+     *
+     * @param ex the exception to handle
+     * @return a response entity with the result of the operation
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
         String message = ex.getConstraintViolations().iterator().next().getMessage();

@@ -80,7 +80,7 @@ class ProductServiceImplTest {
 
     /**
      * Test case for successful product creation.
-     * It mocks the behavior of productRepository.save and tests the createProduct method of the productService.
+     * It mocks the behavior of productRepository. Save and tests the createProduct method of the productService.
      * The test asserts that the returned product ID matches the expected ID.
      */
     @Test
@@ -94,25 +94,25 @@ class ProductServiceImplTest {
 
     /**
      * Test case for successful product update.
-     * It ensures a ProductEntity with the same ID exists, mocks the behavior of productRepository.save,
+     * It ensures a ProductEntity with the same ID exists, mocks the behavior of productRepository. Save,
      * and tests the updateProduct method of the productService.
      * The test asserts that no exception is thrown during the update process.
      */
     @Test
     void updateProductSuccessfully() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
+        ProductDTO testProductDTO = new ProductDTO();
+        testProductDTO.setId(1L);
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
+        ProductEntity testProductEntity = new ProductEntity();
+        testProductEntity.setId(1L);
+        testProductEntity.setName("Test Product");
 
         // Ensure a ProductEntity with the same ID exists
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productEntity));
-        // Mock the save method to return the productEntity
-        when(productRepository.save(any(ProductEntity.class))).thenReturn(productEntity);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(testProductEntity));
+        // Mock the save method to return the testProductEntity
+        when(productRepository.save(any(ProductEntity.class))).thenReturn(testProductEntity);
         // Then call the method
-        assertDoesNotThrow(() -> productService.updateProduct(productDTO));
+        assertDoesNotThrow(() -> productService.updateProduct(testProductDTO));
     }
 
     /**

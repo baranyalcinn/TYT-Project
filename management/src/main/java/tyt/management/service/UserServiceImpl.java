@@ -71,17 +71,16 @@ public class UserServiceImpl implements UserService {
     /**
      * Deletes a user by setting their active status to false.
      *
-     * @param userDTO Data Transfer Object containing the user's details.
      */
     @Override
-    public void deleteUser(UserDTO userDTO) {
-        Optional<UserEntity> userEntityOptional = userRepository.findById(userDTO.getId());
+    public void deleteUser(Long id) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
         if (userEntityOptional.isPresent()) {
             UserEntity userEntity = userEntityOptional.get();
             userEntity.setActive(false);
             userRepository.save(userEntity);
         } else {
-            throw new IllegalArgumentException("User not found with id: " + userDTO.getId());
+            throw new IllegalArgumentException("User not found with id: " + id);
         }
     }
 

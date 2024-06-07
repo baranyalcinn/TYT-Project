@@ -10,7 +10,7 @@ public interface UserService {
 
     String updateUser(UserDTO userDTO);
 
-    void deleteUser(UserDTO userDTO);
+    void deleteUser(Long id);
 
     UserDTO getUser(Long id);
 

@@ -82,9 +82,14 @@ class UserServiceImplTest {
         userEntity.setId(1L);
 
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userEntity));
+        UserEntity inactiveUserEntity = new UserEntity();
+        inactiveUserEntity.setId(1L);
+        inactiveUserEntity.setActive(false);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(inactiveUserEntity);
 
-        userService.deleteUser(userDTO);
+        userService.deleteUser(userDTO.getId());
 
+        verify(userRepository, times(1)).findById(userDTO.getId());
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
@@ -95,6 +100,6 @@ class UserServiceImplTest {
 
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(userDTO));
+        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(userDTO.getId()));
     }
 }
