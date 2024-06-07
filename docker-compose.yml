@@ -1,58 +1,94 @@
-version: "3.9"
 services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: tytDB
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d tytDB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   eureka:
     image: yalcinbaran/eureka:latest
     ports:
       - "8761:8761"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: [ "CMD", "curl", "-f", "http://eureka:8761/eureka/" ]
+      interval: 15s
+      timeout: 10s
+      retries: 20
 
   auth:
     image: yalcinbaran/auth:latest
     ports:
       - "8087:8087"
     depends_on:
-      - eureka
+      eureka:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   management:
     image: yalcinbaran/management:latest
     ports:
       - "8080:8080"
     depends_on:
-      - eureka
+      eureka:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   product:
     image: yalcinbaran/product:latest
     ports:
       - "8081:8081"
     depends_on:
-      - eureka
+      eureka:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   sales:
     image: yalcinbaran/sales:latest
     ports:
       - "8082:8082"
     depends_on:
-      - eureka
+      eureka:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   record:
-    image: my-docker-registry/your-project/record:latest
+    image: yalcinbaran/record:latest
     ports:
       - "8083:8083"
     depends_on:
-      - eureka
+      eureka:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   gateway:
-    image: my-docker-registry/your-project/gateway:latest
+    image: yalcinbaran/gateway:latest
     ports:
       - "8086:8086"
     depends_on:
-      - eureka
-      - auth
-      - management
-      - product
-      - sales
-      - record
+      eureka:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+      management:
+        condition: service_healthy
+      product:
+        condition: service_healthy
+      sales:
+        condition: service_healthy
+      record:
+        condition: service_healthy
+      db:
+        condition: service_healthy
