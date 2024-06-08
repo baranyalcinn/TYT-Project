@@ -11,6 +11,7 @@
             size: A4;
             margin: 0;
         }
+
         body {
             font-family: 'Roboto', sans-serif;
             font-size: 15px;
@@ -19,6 +20,7 @@
             margin: 0;
             padding: 20px;
         }
+
         .container {
             background-color: #282828;
             border-radius: 10px;
@@ -27,6 +29,7 @@
             max-width: 700px;
             margin: 0 auto;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -46,6 +49,7 @@
             padding-left: 10px;
             color: #f6f6f6;
         }
+
         .order-info {
             display: flex;
             justify-content: space-between;
@@ -64,6 +68,7 @@
             color: #eee;
             font-weight: 700;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -71,11 +76,13 @@
             border-radius: 8px;
             overflow: hidden;
         }
+
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #444;
         }
+
         th {
             background-color: #383838;
             font-weight: bold;
@@ -87,6 +94,7 @@
             align-items: center;
             margin-bottom: 20px;
         }
+
         .total {
             font-size: 18px;
             font-weight: bold;
@@ -98,9 +106,10 @@
             font-weight: bold;
             color: #f2aa4c;
         }
+
         .footer {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-top: 30px;
             border-top: 1px solid #444;
@@ -116,23 +125,16 @@
             max-width: 260px;
             height: 40px;
         }
+
         .barcode-container {
             display: flex;
             justify-content: flex-end;
             align-items: center;
         }
+
         .order-date {
             font-size: 15px;
             text-align: right;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-top: 30px;
-            border-top: 1px solid #444;
-            padding-top: 20px;
         }
     </style>
 </head>
@@ -143,7 +145,7 @@
         <span style="padding-left: 5px" th:text="${nowDate}"></span>
     </div>
     <div class="header">
-     <img class="logo" th:src="@{classpath:/static/logo.jpg}" alt="">
+        <img class="logo" th:src="@{classpath:/static/logo.jpg}" alt="Company Logo">
         <h1>Order Details</h1>
         <div class="barcode-container">
             <img class="barcode" th:src="${barcodeImageUrl}" alt="Order Number Barcode">
@@ -152,7 +154,7 @@
 
     <div class="order-info">
         <div class="order-details">
-            <strong>Order Date:</strong> <span th:text="${formattedDate}"></span> <br>
+            <strong>Order Date:</strong> <span th:text="${formattedDate}"></span><br>
             <strong>Order Number:</strong> <span th:text="${order.orderNumber}"></span>
         </div>
     </div>
