@@ -29,7 +29,7 @@ class UserServiceTest {
         UserEntity userEntity = new UserEntity();
         when(userRepository.findByEmail(anyString())).thenReturn(userEntity);
 
-        UserDetails result = userService.loadUserByUsername("test@test.com");
+        UserDetails result = userService.loadUserByUsername("baran@gmail.com");
 
         assertEquals(userEntity, result);
     }
@@ -38,6 +38,6 @@ class UserServiceTest {
     void loadUserByUsernameThrowsExceptionWhenUserDoesNotExist() {
         when(userRepository.findByEmail(anyString())).thenReturn(null);
 
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("test@test.com"));
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("baran@gmail.com"));
     }
 }
