@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import tyt.sales.model.*;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
@@ -119,13 +120,13 @@ public class CartServiceImpl implements CartService {
         OrderEntity order = createOrder(cartItems);
         orderRepository.save(order);
 
-        // Asynchronously send the request to the record service
-        webClient.post()
+        Mono<String> recordResponse = webClient.post()
                 .uri(String.format("/record/create/%s", order.getId()))
                 .retrieve()
                 .bodyToMono(String.class)
-                .onErrorReturn("Record creation failed")
-                .subscribe();
+                .onErrorReturn("Record creation failed");
+
+        recordResponse.subscribe();
 
         clearCart();
         log.info("Checkout successful. Order ID: {}", order.getId());

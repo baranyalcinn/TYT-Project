@@ -4,10 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import tyt.sales.model.*;
 import tyt.sales.model.dto.CartDTO;
+import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.repository.*;
 import tyt.sales.rules.InsufficientStockException;
@@ -47,6 +51,7 @@ class CartServiceImplTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+        when(webClient.post()).thenReturn(Mockito.mock(WebClient.RequestBodyUriSpec.class));
     }
 
     @Test
@@ -139,4 +144,115 @@ class CartServiceImplTest {
         assertEquals(1, result.get(0).getQuantity());
     }
 
+    @Test
+    void applyCampaign_cartNotFound_throwsException() {
+        Long cartId = 1L;
+        Long campaignId = 1L;
+
+        when(cartRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(cartId, campaignId));
+    }
+
+    @Test
+    void applyCampaign_campaignNotFound_throwsException() {
+        Long cartId = 1L;
+        Long campaignId = 1L;
+
+        CartEntity cartEntity = new CartEntity();
+
+        when(cartRepository.findById(any(Long.class))).thenReturn(Optional.of(cartEntity));
+        when(offerRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(cartId, campaignId));
+    }
+
+    @Test
+    void applyCampaign_campaignAppliedSuccessfully() {
+        Long cartId = 1L;
+        Long campaignId = 1L;
+
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setPrice(100.0);
+
+        CartEntity cartEntity = new CartEntity();
+        cartEntity.setProduct(productEntity);
+
+        OfferEntity offerEntity = new OfferEntity();
+        offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
+
+        when(cartRepository.findById(any(Long.class))).thenReturn(Optional.of(cartEntity));
+        when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
+
+        cartService.applyCampaign(cartId, campaignId);
+
+        assertEquals(offerEntity, cartEntity.getAppliedOffer());
+    }
+
+    @Test
+    void createOrder_cartIsEmpty_returnsEmptyOrder() {
+        when(cartRepository.findAll()).thenReturn(new ArrayList<>());
+
+        OrderDTO orderDTO = new OrderDTO();
+        cartService.createOrder(orderDTO);
+
+        verify(orderRepository, times(1)).save(any(OrderEntity.class));
+    }
+
+    @Test
+    void createOrder_cartHasItems_returnsOrderWithItems() {
+        List<CartEntity> cartItems = new ArrayList<>();
+        CartEntity cartItem = new CartEntity();
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1L);
+        productEntity.setName("Test Product");
+        productEntity.setPrice(100.0);
+        cartItem.setProduct(productEntity);
+        cartItem.setQuantity(1);
+        cartItems.add(cartItem);
+
+        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
+
+        OrderDTO orderDTO = new OrderDTO();
+        cartService.createOrder(orderDTO);
+
+        verify(orderRepository, times(1)).save(any(OrderEntity.class));
+    }
+
+
+    @Test
+    void checkout_cartHasItems_returnsSuccessMessage() {
+        List<CartEntity> cartItems = new ArrayList<>();
+        CartEntity cartItem = new CartEntity();
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1L);
+        productEntity.setName("Test Product");
+        productEntity.setPrice(100.0);
+        cartItem.setProduct(productEntity);
+        cartItem.setQuantity(1);
+        cartItems.add(cartItem);
+
+        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
+
+        WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
+        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("Order created"));
+
+        when(orderRepository.save(any(OrderEntity.class))).thenAnswer((Answer<OrderEntity>) invocation -> {
+            OrderEntity orderEntity = (OrderEntity) invocation.getArguments()[0];
+            orderEntity.setId(1L);
+            return orderEntity;
+        });
+
+        String result = cartService.checkout();
+
+        assertEquals("Checkout successful. Order ID: 1", result);
+    }
 }
