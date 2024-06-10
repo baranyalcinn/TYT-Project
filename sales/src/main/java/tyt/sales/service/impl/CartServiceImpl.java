@@ -205,18 +205,17 @@ public class CartServiceImpl implements CartService {
             return 0.0;
         }
 
-        switch (offer.getOfferType()) {
-            case TEN_PERCENT_DISCOUNT:
-                return originalPrice * 0.1;
-
-            case BUY_THREE_PAY_TWO:
+        // Return 0 if offer applies but condition not met
+        return switch (offer.getOfferType()) {
+            case TEN_PERCENT_DISCOUNT -> originalPrice * 0.1;
+            case BUY_THREE_PAY_TWO -> {
                 if (cartItem.getQuantity() >= 3) {
                     int bundlesOfThree = cartItem.getQuantity() / 3;
-                    return cartItem.getProduct().getPrice() * bundlesOfThree;
+                    yield cartItem.getProduct().getPrice() * bundlesOfThree;
                 }
-            default:
-                return 0.0; // Or handle other offer types
-        }
+                yield 0.0;
+            }
+        };
     }
 
     /**
