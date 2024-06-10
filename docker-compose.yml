@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   db:
     image: postgres:latest
@@ -12,16 +14,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - tyt-network
 
   eureka:
     image: yalcinbaran/eureka:latest
     ports:
       - "8761:8761"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://eureka:8761/eureka/" ]
-      interval: 15s
-      timeout: 10s
-      retries: 20
+      test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - tyt-network
 
   auth:
     image: yalcinbaran/auth:latest
@@ -32,6 +39,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tyt-network
 
   management:
     image: yalcinbaran/management:latest
@@ -42,6 +56,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/management-service/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tyt-network
 
   product:
     image: yalcinbaran/product:latest
@@ -52,6 +73,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/product-service/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tyt-network
 
   sales:
     image: yalcinbaran/sales:latest
@@ -62,6 +90,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8082/sales-service/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tyt-network
 
   record:
     image: yalcinbaran/record:latest
@@ -72,6 +107,13 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tyt-network
 
   gateway:
     image: yalcinbaran/gateway:latest
@@ -92,3 +134,8 @@ services:
         condition: service_healthy
       db:
         condition: service_healthy
+    networks:
+      - tyt-network
+
+networks:
+  tyt-network:
