@@ -100,6 +100,7 @@ class UserServiceImplTest {
 
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(userDTO.getId()));
+        Long userId = userDTO.getId();
+        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(userId));
     }
 }
