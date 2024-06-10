@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getRequestURI().equals(LOGIN_URI)) {
+        if (request.getRequestURI().equals(LOGIN_URI) || request.getRequestURI().equals("/actuator/health")) {
             filterChain.doFilter(request, response);
             return;
         }

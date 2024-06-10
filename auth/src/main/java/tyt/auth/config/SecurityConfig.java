@@ -30,6 +30,7 @@ public class SecurityConfig {
     // URLs that don't require authentication
     private static final String[] WHITE_LIST_URL = {
             "/auth/login",
+            "/actuator/health",
     };
 
     /**
