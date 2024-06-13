@@ -1,23 +1,4 @@
 services:
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: tytDB
-      LANG: tr_TR.UTF-8
-      LANGUAGE: tr_TR:tr
-      LC_ALL: tr_TR.UTF-8
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d tytDB" ]
-      interval: 20s
-      timeout: 5s
-      retries: 5
-    networks:
-      - tyt-network
-
   eureka:
     image: yalcinbaran/eureka:latest
     ports:
@@ -38,13 +19,6 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tytDB
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
       interval: 20s
@@ -60,13 +34,6 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tytDB
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/management-service/actuator/health" ]
       interval: 20s
@@ -82,13 +49,6 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tytDB
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/product-service/actuator/health" ]
       interval: 20s
@@ -104,16 +64,9 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tytDB
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8082/sales-service/actuator/health" ]
-      interval: 20s
+      interval: 30s
       timeout: 5s
       retries: 5
     networks:
@@ -126,13 +79,6 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tytDB
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
       interval: 20s
@@ -158,17 +104,13 @@ services:
         condition: service_healthy
       record:
         condition: service_healthy
-      db:
-        condition: service_healthy
-    networks:
-      - tyt-network
-
-networks:
-  tyt-network:
-    driver: bridge
-
-    x-healthcheck-template: &default_healthcheck
-      test: [ "CMD", "curl", "-f", "http://localhost:${SERVICE_PORT}/actuator/health" ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
       interval: 20s
       timeout: 5s
       retries: 5
+    networks:
+      - tyt-network
+networks:
+  tyt-network:
+    driver: bridge

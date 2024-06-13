@@ -14,8 +14,8 @@ server:
     max-http-response-header-size: 16384
 eureka:
   client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://eureka:8761/eureka/}
 security:
   jwt:
     secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=
