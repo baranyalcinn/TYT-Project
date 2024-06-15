@@ -26,6 +26,8 @@ services:
       retries: 5
     networks:
       - tyt-network
+    environment:
+        - SPRING_PROFILES_ACTIVE=test
 
   management:
     image: yalcinbaran/management:latest
@@ -86,6 +88,8 @@ services:
       retries: 5
     networks:
       - tyt-network
+    volumes:
+      - /c/Users/recte/Desktop/slips:/usr/share/app/slips
 
   gateway:
     image: yalcinbaran/gateway:latest

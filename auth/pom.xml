@@ -131,8 +131,13 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.4.3</version>
+                <version>3.4.1</version>
                 <configuration>
+                    <container>
+                        <environment>
+                            <spring.profiles.active>test</spring.profiles.active>
+                        </environment>
+                    </container>
                     <to>
                         <image>yalcinbaran/${project.artifactId}:latest</image>
                     </to>

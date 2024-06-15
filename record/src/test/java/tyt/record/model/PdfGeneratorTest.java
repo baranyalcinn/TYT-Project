@@ -20,18 +20,19 @@ class PdfGeneratorTest {
 
     @Test
     void generatePdf_InvalidFilePath_ThrowsException() {
-        PdfGenerator pdfGenerator = new PdfGenerator();
+        PdfGenerator pdfGeneratorTest = new PdfGenerator();
         OrderDTO order = new OrderDTO();
 
         String invalidFilePath = "/path/does/not/exist.pdf";
 
-        assertThrows(IOException.class, () -> pdfGenerator.generatePdf(invalidFilePath, order));
+        assertThrows(IOException.class, () -> pdfGeneratorTest.generatePdf(invalidFilePath, order));
     }
 
     @Test
     void generatePdf_NullOrder_ThrowsException() {
-        PdfGenerator pdfGenerator = new PdfGenerator();
-        assertThrows(NullPointerException.class, () -> pdfGenerator.generatePdf("validFilePath", null));
+        PdfGenerator pdfGeneratorTest = new PdfGenerator();
+        assertThrows(NullPointerException.class,
+                () -> pdfGeneratorTest.generatePdf("validFilePath", null));
     }
 
     @Mock

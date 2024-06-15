@@ -1,29 +1,22 @@
 spring:
   application:
     name: product-service
-  datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/tytDB
-    username: postgres
-    password: 12345
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
   jmx:
     enabled: true
+
 server:
   port: 8081
   servlet:
     context-path: /product-service
+
 logging:
   level:
     tyt.product: INFO
   file:
     name: logs/product.log
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URI:http://eureka:8761/eureka/}
 
 management:
   endpoints:

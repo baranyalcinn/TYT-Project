@@ -43,7 +43,8 @@ class RecordServiceImplTest {
         RecordResponse result = recordService.createRecordForOrder(orderId);
 
         verify(pdfGenerator, times(1)).generatePdf(anyString(), any());
-        String expectedMessage = "PDF created successfully at " + System.getProperty("user.home") + "/Desktop/slips/slip-null.pdf";
+        String expectedFilePath = String.format("/usr/share/app/slips/%s.pdf", order.getOrderNumber());
+        String expectedMessage = "PDF created successfully at " + expectedFilePath;
         assertEquals(expectedMessage, result.getMessage());
     }
 

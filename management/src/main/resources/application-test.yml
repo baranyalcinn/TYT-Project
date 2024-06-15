@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5432/tytDB
+    username: postgres
+    password: 12345
+    driver-class-name: org.postgresql.Driver
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://eureka:8761/eureka/}
+  instance:
+    preferIpAddress: true
+
