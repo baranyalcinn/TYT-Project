@@ -22,5 +22,5 @@ public interface CartService {
 
     String checkout() throws IOException;
 
-    void applyCampaign(Long cartId, Long campaignId);
+    void applyCampaign(Long campaignId);
 }

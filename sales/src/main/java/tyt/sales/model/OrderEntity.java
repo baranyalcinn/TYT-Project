@@ -25,7 +25,7 @@ public class OrderEntity extends BaseEntity {
     @Column(unique = true)
     private UUID orderNumber = UUID.randomUUID();
 
-    @OneToOne
+    @ManyToOne
     @JoinTable(
             name = "order_campaign",
             joinColumns = @JoinColumn(name = "order_id"),

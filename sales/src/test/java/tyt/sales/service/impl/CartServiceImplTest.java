@@ -146,17 +146,16 @@ class CartServiceImplTest {
 
     @Test
     void applyCampaign_cartNotFound_throwsException() {
-        Long cartId = 1L;
         Long campaignId = 1L;
 
         when(cartRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(cartId, campaignId));
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(campaignId));
     }
 
     @Test
     void applyCampaign_campaignNotFound_throwsException() {
-        Long cartId = 1L;
+
         Long campaignId = 1L;
 
         CartEntity cartEntity = new CartEntity();
@@ -164,12 +163,11 @@ class CartServiceImplTest {
         when(cartRepository.findById(any(Long.class))).thenReturn(Optional.of(cartEntity));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(cartId, campaignId));
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(campaignId));
     }
 
     @Test
     void applyCampaign_campaignAppliedSuccessfully() {
-        Long cartId = 1L;
         Long campaignId = 1L;
 
         ProductEntity productEntity = new ProductEntity();
@@ -181,10 +179,9 @@ class CartServiceImplTest {
         OfferEntity offerEntity = new OfferEntity();
         offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
 
-        when(cartRepository.findById(any(Long.class))).thenReturn(Optional.of(cartEntity));
+        when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
-
-        cartService.applyCampaign(cartId, campaignId);
+        cartService.applyCampaign(campaignId);
 
         assertEquals(offerEntity, cartEntity.getAppliedOffer());
     }
@@ -198,28 +195,6 @@ class CartServiceImplTest {
 
         verify(orderRepository, times(1)).save(any(OrderEntity.class));
     }
-
-    @Test
-    void createOrder_cartHasItems_returnsOrderWithItems() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
-
-        when(cartRepository.findAll()).thenReturn(cartItems);
-        when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
-
-        OrderDTO orderDTO = new OrderDTO();
-        cartService.createOrder(orderDTO);
-
-        verify(orderRepository, times(1)).save(any(OrderEntity.class));
-    }
-
 
     @Test
     void checkout_cartHasItems_returnsSuccessMessage() {
@@ -254,5 +229,109 @@ class CartServiceImplTest {
         String result = cartService.checkout();
 
         assertEquals("Checkout successful. Order ID: 1", result);
+
+        // Verify that the cart is cleared after checkout
+        verify(cartRepository, times(1)).deleteAll();
+
+        // Verify that the webClient.post() method is called with the correct URI
+        verify(requestBodyUriSpec, times(1)).uri("/record/create/1");
+    }
+
+
+    @Test
+    void getCart_returnsEmptyCart_whenNoItemsInCart() {
+        when(cartRepository.findAll()).thenReturn(new ArrayList<>());
+        List<CartDTO> result = cartService.getCart();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void createOrder_createsOrderSuccessfully() {
+        List<CartEntity> cartItems = new ArrayList<>();
+        CartEntity cartItem = new CartEntity();
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1L);
+        productEntity.setName("Test Product");
+        productEntity.setPrice(100.0);
+        cartItem.setProduct(productEntity);
+        cartItem.setQuantity(1);
+        cartItems.add(cartItem);
+
+        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
+
+        OrderDTO orderDTO = new OrderDTO();
+        cartService.createOrder(orderDTO);
+
+        verify(orderRepository, times(1)).save(any(OrderEntity.class));
+    }
+
+    @Test
+    void addToCart_newProductAddedToCart_returnsSuccessMessage() {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(1L);
+        productDTO.setName("New Product");
+
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setStock(10);
+
+        when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
+        when(cartRepository.findByProductId(any(Long.class))).thenReturn(Optional.empty());
+
+        String result = cartService.addToCart(productDTO, 1);
+
+        assertEquals("Product added to cart: New Product", result);
+    }
+
+    @Test
+    void applyCampaign_validCampaignApplied_calculatesDiscountCorrectly() {
+        Long campaignId = 1L;
+
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setPrice(100.0);
+
+        CartEntity cartEntity = new CartEntity();
+        cartEntity.setProduct(productEntity);
+        cartEntity.setQuantity(5);
+
+        OfferEntity offerEntity = new OfferEntity();
+        offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
+
+        when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
+        when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
+
+        cartService.applyCampaign(campaignId);
+
+        assertEquals(offerEntity, cartEntity.getAppliedOffer());
+        assertEquals(450.0, cartEntity.getTotalPrice());
+    }
+
+    @Test
+    void checkout_webClientPostReturnsError_returnsErrorMessage() {
+        List<CartEntity> cartItems = new ArrayList<>();
+        CartEntity cartItem = new CartEntity();
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1L);
+        productEntity.setName("Test Product");
+        productEntity.setPrice(100.0);
+        cartItem.setProduct(productEntity);
+        cartItem.setQuantity(1);
+        cartItems.add(cartItem);
+
+        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
+
+        WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
+        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.error(new RuntimeException("Error")));
+
+        String result = cartService.checkout();
+
+        assertEquals("Record creation failed", result);
     }
 }

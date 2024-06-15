@@ -126,11 +126,19 @@ public class CartServiceImpl implements CartService {
                 .bodyToMono(String.class)
                 .onErrorReturn("Record creation failed");
 
-        recordResponse.subscribe();
+        String response;
+        try {
+            response = recordResponse.block();
+        } catch (Exception e) {
+            clearCart();
+            log.error("Checkout failed. Error: {}", e.getMessage());
+            return "Record creation failed";
+        }
 
         clearCart();
         log.info("Checkout successful. Order ID: {}", order.getId());
-        return "Checkout successful. Order ID: " + order.getId();
+        assert response != null;
+        return response.equals("Record creation failed") ? response : "Checkout successful. Order ID: " + order.getId();
     }
 
     private void clearCart() {
@@ -165,12 +173,14 @@ public class CartServiceImpl implements CartService {
     /**
      * Applies a campaign to a cart.
      *
-     * @param cartId     The ID of the cart.
      * @param campaignId The ID of the campaign.
      */
-    public void applyCampaign(Long cartId, Long campaignId) {
-        CartEntity cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + cartId));
+    public void applyCampaign(Long campaignId) {
+        List<CartEntity> carts = cartRepository.findAll();
+        if (carts.isEmpty()) {
+            throw new ResourceNotFoundException("No cart found");
+        }
+        CartEntity cart = carts.get(0);
 
         OfferEntity offer = offerRepository.findById(campaignId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campaign not found with id " + campaignId));
@@ -255,8 +265,13 @@ public class CartServiceImpl implements CartService {
         cartItems.stream()
                 .filter(cartItem -> cartItem.getAppliedOffer() != null)
                 .findFirst()
-                .map(CartEntity::getAppliedOffer)
-                .ifPresent(order::setOffer);
+                .ifPresent(cartItem -> {
+                    OfferEntity offer = cartItem.getAppliedOffer();
+                    // Check if the offer is already associated with an order
+                    if (offerRepository.findById(offer.getId()).isEmpty()) {
+                        order.setOffer(offer);
+                    }
+                });
 
         log.info("Order created: {}", order);
         return order;

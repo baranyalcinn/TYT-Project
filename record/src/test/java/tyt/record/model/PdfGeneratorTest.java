@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 class PdfGeneratorTest {
 
     @Test

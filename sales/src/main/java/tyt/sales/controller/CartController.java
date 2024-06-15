@@ -127,7 +127,7 @@ public class CartController {
      */
     @PostMapping("/apply-campaign")
     public ResponseEntity<String> applyCampaign(@RequestBody OfferApplyDTO offerApplyDTO) {
-        cartService.applyCampaign(offerApplyDTO.getCartId(), offerApplyDTO.getOfferId());
+        cartService.applyCampaign(offerApplyDTO.getOfferId());
         return ResponseEntity.ok().body("Campaign applied successfully");
     }
 }
