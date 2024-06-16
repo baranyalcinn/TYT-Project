@@ -20,6 +20,7 @@ import tyt.sales.service.CartService;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
-    private final WebClient webClient;
+    private final WebClient.Builder webClient;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
@@ -110,8 +111,8 @@ public class CartServiceImpl implements CartService {
      *
      * @return A message indicating the checkout was successful.
      */
-    @Override
     @Transactional
+    @Override
     public String checkout() {
         List<CartEntity> cartItems = cartRepository.findAll();
         if (cartItems.isEmpty()) {
@@ -121,8 +122,9 @@ public class CartServiceImpl implements CartService {
         OrderEntity order = createOrder(cartItems);
         orderRepository.save(order);
 
-        Mono<String> recordResponse = webClient.post()
-                .uri(String.format("/record/create/%s", order.getId()))
+        Mono<String> recordResponseMono = webClient.build()
+                .post()
+                .uri(String.format("http://record-service/record/create/%s", order.getId()))
                 .retrieve()
                 .bodyToMono(String.class)
                 .onErrorResume(throwable -> {
@@ -130,15 +132,16 @@ public class CartServiceImpl implements CartService {
                     return Mono.just("Record creation failed");
                 });
 
-        recordResponse.subscribe(
-                response -> log.info("Record creation response: {}", response),
-                error -> log.error("Record creation failed with error: {}", error.getMessage())
-        );
+        Optional<String> recordResponseOptional = recordResponseMono.blockOptional();
+        String recordResponse = recordResponseOptional.orElse("Record creation failed");
+
+        log.info("Record creation response: {}", recordResponse);
 
         clearCart();
         log.info("Checkout successful. Order ID: {}", order.getId());
-        return "Checkout successful. Order ID: " + order.getId();
+        return "Checkout successful. Order ID: " + order.getId() + ". Record creation response: " + recordResponse;
     }
+
 
     private void clearCart() {
         cartRepository.deleteAll();
@@ -216,18 +219,16 @@ public class CartServiceImpl implements CartService {
         }
 
         // Return 0 if offer applies but condition not met
-        switch (offer.getOfferType()) {
-            case TEN_PERCENT_DISCOUNT:
-                return originalPrice * 0.1;
-            case BUY_THREE_PAY_TWO:
+        return switch (offer.getOfferType()) {
+            case TEN_PERCENT_DISCOUNT -> originalPrice * 0.1;
+            case BUY_THREE_PAY_TWO -> {
                 if (cartItem.getQuantity() >= 3) {
                     int bundlesOfThree = cartItem.getQuantity() / 3;
-                    return cartItem.getProduct().getPrice() * bundlesOfThree;
+                    yield cartItem.getProduct().getPrice() * bundlesOfThree;
                 }
-                return 0.0;
-            default:
-                return 0.0; // Or throw an exception for unsupported offer types
-        }
+                yield 0.0;
+            }
+        };
     }
 
     /**

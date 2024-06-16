@@ -8,10 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-
     @Bean
     @LoadBalanced
-    public WebClient webClient() {
-        return WebClient.create("http://record-service");
+    public WebClient.Builder webClient() {
+        return WebClient.builder();
     }
 }

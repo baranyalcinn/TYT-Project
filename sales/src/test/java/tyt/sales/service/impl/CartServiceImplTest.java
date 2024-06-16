@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class CartServiceImplTest {
 
     @Mock
-    private WebClient webClient;
+    private WebClient.Builder webClient;
 
     @Mock
     private OrderRepository orderRepository;
@@ -52,11 +52,13 @@ class CartServiceImplTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        WebClient webClientMock = mock(WebClient.class);
         requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
         WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
         responseSpec = mock(WebClient.ResponseSpec.class);
 
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(webClient.build()).thenReturn(webClientMock);
+        when(webClientMock.post()).thenReturn(requestBodyUriSpec);
         when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
         when(requestBodySpec.retrieve()).thenReturn(responseSpec);
     }
@@ -208,12 +210,11 @@ class CartServiceImplTest {
             orderEntity.setId(1L);
             return orderEntity;
         });
-
         String result = cartService.checkout();
 
-        assertEquals("Checkout successful. Order ID: 1", result);
+        assertEquals("Checkout successful. Order ID: 1. Record creation response: Order created", result);
         verify(cartRepository, times(1)).deleteAll();
-        verify(requestBodyUriSpec, times(1)).uri("/record/create/1");
+        verify(requestBodyUriSpec, times(1)).uri("http://record-service/record/create/1");
     }
 
     @Test
@@ -278,7 +279,7 @@ class CartServiceImplTest {
 
         String result = cartService.checkout();
 
-        assertEquals("Checkout successful. Order ID: null", result);
+        assertEquals("Checkout successful. Order ID: null. Record creation response: Record creation failed", result);
     }
 
     @Test
