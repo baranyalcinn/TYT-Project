@@ -39,19 +39,54 @@ class CartServiceImplTest {
     @Mock
     private OfferRepository offerRepository;
 
+    @Mock
+    private OrderProductRepository orderProductRepository;
+
     @InjectMocks
     private CartServiceImpl cartService;
+
+    private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+    private WebClient.ResponseSpec responseSpec;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        when(webClient.post()).thenReturn(Mockito.mock(WebClient.RequestBodyUriSpec.class));
+
+        requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
+        responseSpec = mock(WebClient.ResponseSpec.class);
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+    }
+
+    private ProductDTO createProductDTO(String name) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(1L);
+        productDTO.setName(name);
+        return productDTO;
+    }
+
+    private ProductEntity createProductEntity(String name, int stock) {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(1L);
+        productEntity.setName(name);
+        productEntity.setPrice(100.0);
+        productEntity.setStock(stock);
+        return productEntity;
+    }
+
+    private CartEntity createCartEntity(ProductEntity productEntity, int quantity) {
+        CartEntity cartEntity = new CartEntity();
+        cartEntity.setProduct(productEntity);
+        cartEntity.setQuantity(quantity);
+        return cartEntity;
     }
 
     @Test
     void addToCart_productNotFound_throwsException() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
+        ProductDTO productDTO = createProductDTO("Test Product");
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
@@ -60,11 +95,9 @@ class CartServiceImplTest {
 
     @Test
     void addToCart_insufficientStock_throwsException() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
+        ProductDTO productDTO = createProductDTO("Test Product");
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(0);
+        ProductEntity productEntity = createProductEntity("Test Product", 0);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
 
@@ -73,16 +106,9 @@ class CartServiceImplTest {
 
     @Test
     void addToCart_productAddedToCart_returnsSuccessMessage() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
-        productDTO.setName("Test Product");
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(10);
-
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProduct(productEntity);
-        cartEntity.setQuantity(0);
+        ProductDTO productDTO = createProductDTO("Test Product");
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartEntity = createCartEntity(productEntity, 0);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
         when(cartRepository.findByProductId(any(Long.class))).thenReturn(Optional.of(cartEntity));
@@ -117,17 +143,10 @@ class CartServiceImplTest {
 
     @Test
     void getCart_returnsCartItems() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartItem = createCartEntity(productEntity, 1);
 
-        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
 
         List<CartDTO> result = cartService.getCart();
@@ -140,45 +159,29 @@ class CartServiceImplTest {
 
     @Test
     void applyCampaign_cartIsEmpty_throwsException() {
-        Long campaignId = 1L;
-
         when(cartRepository.findAll()).thenReturn(new ArrayList<>());
-
-        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(campaignId));
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(1L));
     }
 
     @Test
     void applyCampaign_campaignNotFound_throwsException() {
-        Long campaignId = 1L;
-
-        CartEntity cartEntity = new CartEntity();
-        List<CartEntity> cartEntities = new ArrayList<>();
-        cartEntities.add(cartEntity);
-
-        when(cartRepository.findAll()).thenReturn(cartEntities);
+        when(cartRepository.findAll()).thenReturn(List.of(createCartEntity(new ProductEntity(), 1)));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(campaignId));
+        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(1L));
     }
 
     @Test
     void applyCampaign_campaignAppliedSuccessfully() {
-        Long campaignId = 1L;
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setPrice(100.0);
-
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProduct(productEntity);
-        List<CartEntity> cartEntities = new ArrayList<>();
-        cartEntities.add(cartEntity);
-
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartEntity = createCartEntity(productEntity, 1);
         OfferEntity offerEntity = new OfferEntity();
         offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
 
-        when(cartRepository.findAll()).thenReturn(cartEntities);
+        when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
-        cartService.applyCampaign(campaignId);
+
+        cartService.applyCampaign(1L);
 
         assertEquals(offerEntity, cartEntity.getAppliedOffer());
     }
@@ -187,36 +190,19 @@ class CartServiceImplTest {
     void createOrder_cartIsEmpty_returnsEmptyOrder() {
         when(cartRepository.findAll()).thenReturn(new ArrayList<>());
 
-        OrderDTO orderDTO = new OrderDTO();
-        cartService.createOrder(orderDTO);
+        cartService.createOrder(new OrderDTO());
 
         verify(orderRepository, times(1)).save(any(OrderEntity.class));
     }
 
     @Test
     void checkout_cartHasItems_returnsSuccessMessage() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartItem = createCartEntity(productEntity, 1);
 
-        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
-
-        WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
-        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
-        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
-
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("Order created"));
-
         when(orderRepository.save(any(OrderEntity.class))).thenAnswer((Answer<OrderEntity>) invocation -> {
             OrderEntity orderEntity = (OrderEntity) invocation.getArguments()[0];
             orderEntity.setId(1L);
@@ -226,14 +212,9 @@ class CartServiceImplTest {
         String result = cartService.checkout();
 
         assertEquals("Checkout successful. Order ID: 1", result);
-
-        // Verify that the cart is cleared after checkout
         verify(cartRepository, times(1)).deleteAll();
-
-        // Verify that the webClient.post() method is called with the correct URI
         verify(requestBodyUriSpec, times(1)).uri("/record/create/1");
     }
-
 
     @Test
     void getCart_returnsEmptyCart_whenNoItemsInCart() {
@@ -244,33 +225,21 @@ class CartServiceImplTest {
 
     @Test
     void createOrder_createsOrderSuccessfully() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartItem = createCartEntity(productEntity, 1);
 
-        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
 
-        OrderDTO orderDTO = new OrderDTO();
-        cartService.createOrder(orderDTO);
+        cartService.createOrder(new OrderDTO());
 
         verify(orderRepository, times(1)).save(any(OrderEntity.class));
     }
 
     @Test
     void addToCart_newProductAddedToCart_returnsSuccessMessage() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
-        productDTO.setName("New Product");
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(10);
+        ProductDTO productDTO = createProductDTO("New Product");
+        ProductEntity productEntity = createProductEntity("New Product", 10);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
         when(cartRepository.findByProductId(any(Long.class))).thenReturn(Optional.empty());
@@ -282,24 +251,15 @@ class CartServiceImplTest {
 
     @Test
     void applyCampaign_validCampaignApplied_calculatesDiscountCorrectly() {
-        Long campaignId = 1L;
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setPrice(100.0);
-
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProduct(productEntity);
-        cartEntity.setQuantity(5);
-        List<CartEntity> cartEntities = new ArrayList<>();
-        cartEntities.add(cartEntity);
-
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartEntity = createCartEntity(productEntity, 5);
         OfferEntity offerEntity = new OfferEntity();
         offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
 
-        when(cartRepository.findAll()).thenReturn(cartEntities);
+        when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
 
-        cartService.applyCampaign(campaignId);
+        cartService.applyCampaign(1L);
 
         assertEquals(offerEntity, cartEntity.getAppliedOffer());
         assertEquals(450.0, cartEntity.getTotalPrice());
@@ -307,29 +267,13 @@ class CartServiceImplTest {
 
     @Test
     void checkout_webClientPostReturnsError_returnsErrorMessage() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartItem = createCartEntity(productEntity, 1);
 
-        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
-        OrderEntity order = new OrderEntity();
-        order.setId(1L);
-        when(orderRepository.save(any(OrderEntity.class))).thenReturn(order);
+        when(orderRepository.save(any(OrderEntity.class))).thenReturn(new OrderEntity());
 
-        WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
-        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
-        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
-
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.error(new RuntimeException("Error")));
 
         String result = cartService.checkout();
@@ -338,12 +282,25 @@ class CartServiceImplTest {
     }
 
     @Test
-    void addToCart_productOutOfStock_throwsException() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
+    void applyCampaign_buyThreePayTwoCampaignApplied_correctlyCalculatesDiscount() {
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartEntity = createCartEntity(productEntity, 6);
+        OfferEntity offerEntity = new OfferEntity();
+        offerEntity.setOfferType(OfferType.BUY_THREE_PAY_TWO);
 
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(0);
+        when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
+        when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
+
+        cartService.applyCampaign(1L);
+
+        assertEquals(offerEntity, cartEntity.getAppliedOffer());
+        assertEquals(400.0, cartEntity.getTotalPrice());
+    }
+
+    @Test
+    void addToCart_productOutOfStock_throwsException() {
+        ProductDTO productDTO = createProductDTO("Test Product");
+        ProductEntity productEntity = createProductEntity("Test Product", 0);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
 
@@ -351,47 +308,9 @@ class CartServiceImplTest {
     }
 
     @Test
-    void applyCampaign_buyThreePayTwoCampaignApplied_correctlyCalculatesDiscount() {
-        Long campaignId = 1L;
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setPrice(100.0);
-
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProduct(productEntity);
-        cartEntity.setQuantity(6);
-        List<CartEntity> cartEntities = new ArrayList<>();
-        cartEntities.add(cartEntity);
-
-        OfferEntity offerEntity = new OfferEntity();
-        offerEntity.setOfferType(OfferType.BUY_THREE_PAY_TWO);
-
-        when(cartRepository.findAll()).thenReturn(cartEntities);
-        when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
-
-        cartService.applyCampaign(campaignId);
-
-        assertEquals(offerEntity, cartEntity.getAppliedOffer());
-        assertEquals(400.0, cartEntity.getTotalPrice()); // 6 items for the price of 4
-    }
-
-    @Test
-    void applyCampaign_emptyCart_throwsResourceNotFoundException() {
-        when(cartRepository.findAll()).thenReturn(new ArrayList<>());
-
-        Long campaignId = 1L;
-        assertThrows(ResourceNotFoundException.class, () -> cartService.applyCampaign(campaignId));
-    }
-
-
-    @Test
     void addToCart_newProductAddedToCart_quantityIsUpdated() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
-        productDTO.setName("New Product");
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(10);
+        ProductDTO productDTO = createProductDTO("New Product");
+        ProductEntity productEntity = createProductEntity("New Product", 10);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
         when(cartRepository.findByProductId(any(Long.class))).thenReturn(Optional.empty());
@@ -406,16 +325,9 @@ class CartServiceImplTest {
 
     @Test
     void addToCart_existingProductInCart_quantityIsUpdated() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1L);
-        productDTO.setName("Existing Product");
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setStock(10);
-
-        CartEntity existingCartItem = new CartEntity();
-        existingCartItem.setProduct(productEntity);
-        existingCartItem.setQuantity(1);
+        ProductDTO productDTO = createProductDTO("Existing Product");
+        ProductEntity productEntity = createProductEntity("Existing Product", 10);
+        CartEntity existingCartItem = createCartEntity(productEntity, 1);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(productEntity));
         when(cartRepository.findByProductId(any(Long.class))).thenReturn(Optional.of(existingCartItem));
@@ -430,26 +342,11 @@ class CartServiceImplTest {
 
     @Test
     void checkout_cartHasItems_orderIsCreated() {
-        List<CartEntity> cartItems = new ArrayList<>();
-        CartEntity cartItem = new CartEntity();
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(1L);
-        productEntity.setName("Test Product");
-        productEntity.setPrice(100.0);
-        cartItem.setProduct(productEntity);
-        cartItem.setQuantity(1);
-        cartItems.add(cartItem);
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartItem = createCartEntity(productEntity, 1);
 
-        when(cartRepository.findAll()).thenReturn(cartItems);
+        when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
-
-        WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
-        WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
-        WebClient.ResponseSpec responseSpec = mock(WebClient.ResponseSpec.class);
-
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
-        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("Order created"));
 
         cartService.checkout();
@@ -459,22 +356,15 @@ class CartServiceImplTest {
 
     @Test
     void applyCampaign_validCampaignApplied_discountIsCalculatedCorrectly() {
-        Long campaignId = 1L;
-
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setPrice(100.0);
-
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setProduct(productEntity);
-        cartEntity.setQuantity(5);
-
+        ProductEntity productEntity = createProductEntity("Test Product", 10);
+        CartEntity cartEntity = createCartEntity(productEntity, 5);
         OfferEntity offerEntity = new OfferEntity();
         offerEntity.setOfferType(OfferType.TEN_PERCENT_DISCOUNT);
 
         when(cartRepository.findAll()).thenReturn(List.of(cartEntity));
         when(offerRepository.findById(any(Long.class))).thenReturn(Optional.of(offerEntity));
 
-        cartService.applyCampaign(campaignId);
+        cartService.applyCampaign(1L);
 
         ArgumentCaptor<CartEntity> argumentCaptor = ArgumentCaptor.forClass(CartEntity.class);
         verify(cartRepository, times(1)).save(argumentCaptor.capture());
