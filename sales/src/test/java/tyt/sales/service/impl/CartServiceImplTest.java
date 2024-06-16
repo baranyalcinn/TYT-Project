@@ -212,7 +212,7 @@ class CartServiceImplTest {
         });
         String result = cartService.checkout();
 
-        assertEquals("Checkout successful. Order ID: 1. Record creation response: Order created", result);
+        assertEquals("Checkout successful. Order ID: 1. Record creation response will be logged.", result);
         verify(cartRepository, times(1)).deleteAll();
         verify(requestBodyUriSpec, times(1)).uri("http://record-service/record/create/1");
     }
@@ -279,7 +279,7 @@ class CartServiceImplTest {
 
         String result = cartService.checkout();
 
-        assertEquals("Checkout successful. Order ID: null. Record creation response: Record creation failed", result);
+        assertEquals("Checkout successful. Order ID: null. Record creation response will be logged.", result);
     }
 
     @Test

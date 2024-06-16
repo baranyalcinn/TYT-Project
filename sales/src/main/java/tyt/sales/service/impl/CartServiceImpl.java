@@ -20,7 +20,6 @@ import tyt.sales.service.CartService;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -122,24 +121,24 @@ public class CartServiceImpl implements CartService {
         OrderEntity order = createOrder(cartItems);
         orderRepository.save(order);
 
-        Mono<String> recordResponseMono = webClient.build()
+        String orderId = String.valueOf(order.getId());
+
+        webClient.build()
                 .post()
-                .uri(String.format("http://record-service/record/create/%s", order.getId()))
+                .uri(String.format("http://record-service/record/create/%s", orderId))
                 .retrieve()
                 .bodyToMono(String.class)
                 .onErrorResume(throwable -> {
                     log.error("Record creation failed. Error: {}", throwable.getMessage());
                     return Mono.just("Record creation failed");
+                })
+                .subscribe(recordResponse -> {
+                    log.info("Record creation response: {}", recordResponse);
+                    clearCart();
+                    log.info("Checkout successful. Order ID: {}", orderId);
                 });
 
-        Optional<String> recordResponseOptional = recordResponseMono.blockOptional();
-        String recordResponse = recordResponseOptional.orElse("Record creation failed");
-
-        log.info("Record creation response: {}", recordResponse);
-
-        clearCart();
-        log.info("Checkout successful. Order ID: {}", order.getId());
-        return "Checkout successful. Order ID: " + order.getId() + ". Record creation response: " + recordResponse;
+        return "Checkout successful. Order ID: " + orderId + ". Record creation response will be logged.";
     }
 
 
