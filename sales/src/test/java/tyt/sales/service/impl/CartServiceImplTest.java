@@ -320,6 +320,9 @@ class CartServiceImplTest {
 
         when(cartRepository.findAll()).thenReturn(cartItems);
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
+        OrderEntity order = new OrderEntity();
+        order.setId(1L);
+        when(orderRepository.save(any(OrderEntity.class))).thenReturn(order);
 
         WebClient.RequestBodyUriSpec requestBodyUriSpec = mock(WebClient.RequestBodyUriSpec.class);
         WebClient.RequestBodySpec requestBodySpec = mock(WebClient.RequestBodySpec.class);
@@ -332,6 +335,6 @@ class CartServiceImplTest {
 
         String result = cartService.checkout();
 
-        assertEquals("Record creation failed", result);
+        assertEquals("Checkout successful. Order ID: null", result);
     }
 }

@@ -26,8 +26,8 @@ services:
       retries: 5
     networks:
       - tyt-network
-    environment:
-        - SPRING_PROFILES_ACTIVE=test
+    volumes:
+        - ./logs:/usr/share/app/logs/auth.log
 
   management:
     image: yalcinbaran/management:latest
@@ -43,6 +43,8 @@ services:
       retries: 5
     networks:
       - tyt-network
+    volumes:
+      - ./logs:/usr/share/app/logs/management.log
 
   product:
     image: yalcinbaran/product:latest
@@ -58,6 +60,8 @@ services:
       retries: 5
     networks:
       - tyt-network
+    volumes:
+      - ./logs:/usr/share/app/logs/product.log
 
   sales:
     image: yalcinbaran/sales:latest
@@ -73,6 +77,8 @@ services:
       retries: 5
     networks:
       - tyt-network
+    volumes:
+      - ./logs:/usr/share/app/logs/sales.log
 
   record:
     image: yalcinbaran/record:latest
@@ -90,6 +96,7 @@ services:
       - tyt-network
     volumes:
       - /c/Users/recte/Desktop/slips:/usr/share/app/slips
+      - ./logs:/usr/share/app/logs/record.log
 
   gateway:
     image: yalcinbaran/gateway:latest
@@ -115,6 +122,9 @@ services:
       retries: 5
     networks:
       - tyt-network
+    volumes:
+      - ./logs:/usr/share/app/logs
+
 networks:
   tyt-network:
     driver: bridge

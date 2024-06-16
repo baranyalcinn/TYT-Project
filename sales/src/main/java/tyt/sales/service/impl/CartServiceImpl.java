@@ -124,21 +124,19 @@ public class CartServiceImpl implements CartService {
                 .uri(String.format("/record/create/%s", order.getId()))
                 .retrieve()
                 .bodyToMono(String.class)
-                .onErrorReturn("Record creation failed");
+                .onErrorResume(throwable -> {
+                    log.error("Record creation failed. Error: {}", throwable.getMessage());
+                    return Mono.just("Record creation failed");
+                });
 
-        String response;
-        try {
-            response = recordResponse.block();
-        } catch (Exception e) {
-            clearCart();
-            log.error("Checkout failed. Error: {}", e.getMessage());
-            return "Record creation failed";
-        }
+        recordResponse.subscribe(
+                response -> log.info("Record creation response: {}", response),
+                error -> log.error("Record creation failed with error: {}", error.getMessage())
+        );
 
         clearCart();
         log.info("Checkout successful. Order ID: {}", order.getId());
-        assert response != null;
-        return response.equals("Record creation failed") ? response : "Checkout successful. Order ID: " + order.getId();
+        return "Checkout successful. Order ID: " + order.getId();
     }
 
     private void clearCart() {
@@ -261,17 +259,17 @@ public class CartServiceImpl implements CartService {
                 .toList();
         order.setOrderProducts(orderProducts);
 
-        // Assuming you only want to apply one offer per order
-        cartItems.stream()
-                .filter(cartItem -> cartItem.getAppliedOffer() != null)
-                .findFirst()
-                .ifPresent(cartItem -> {
-                    OfferEntity offer = cartItem.getAppliedOffer();
-                    // Check if the offer is already associated with an order
-                    if (offerRepository.findById(offer.getId()).isEmpty()) {
-                        order.setOffer(offer);
-                    }
-                });
+        OfferEntity appliedOffer = null;
+        for (CartEntity cartItem : cartItems) {
+            if (cartItem.getAppliedOffer() != null) {
+                if (appliedOffer == null) {
+                    appliedOffer = cartItem.getAppliedOffer();
+                } else if (!appliedOffer.equals(cartItem.getAppliedOffer())) {
+                    throw new IllegalArgumentException("Different offers cannot be applied to the same order");
+                }
+            }
+        }
+        order.setOffer(appliedOffer);
 
         log.info("Order created: {}", order);
         return order;

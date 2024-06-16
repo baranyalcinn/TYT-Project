@@ -28,7 +28,7 @@ public class CartEntity extends BaseEntity {
     @Transient
     private double productPrice;
 
-    @OneToOne
+    @ManyToOne
     private OfferEntity appliedOffer;
 
     @Override
