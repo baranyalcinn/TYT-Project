@@ -19,6 +19,7 @@ import tyt.sales.service.CartService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -173,6 +174,7 @@ public class CartServiceImpl implements CartService {
      *
      * @param campaignId The ID of the campaign.
      */
+    @Transactional
     public void applyCampaign(Long campaignId) {
         List<CartEntity> carts = cartRepository.findAll();
         if (carts.isEmpty()) {
@@ -214,16 +216,18 @@ public class CartServiceImpl implements CartService {
         }
 
         // Return 0 if offer applies but condition not met
-        return switch (offer.getOfferType()) {
-            case TEN_PERCENT_DISCOUNT -> originalPrice * 0.1;
-            case BUY_THREE_PAY_TWO -> {
+        switch (offer.getOfferType()) {
+            case TEN_PERCENT_DISCOUNT:
+                return originalPrice * 0.1;
+            case BUY_THREE_PAY_TWO:
                 if (cartItem.getQuantity() >= 3) {
                     int bundlesOfThree = cartItem.getQuantity() / 3;
-                    yield cartItem.getProduct().getPrice() * bundlesOfThree;
+                    return cartItem.getProduct().getPrice() * bundlesOfThree;
                 }
-                yield 0.0;
-            }
-        };
+                return 0.0;
+            default:
+                return 0.0; // Or throw an exception for unsupported offer types
+        }
     }
 
     /**
@@ -259,16 +263,12 @@ public class CartServiceImpl implements CartService {
                 .toList();
         order.setOrderProducts(orderProducts);
 
-        OfferEntity appliedOffer = null;
-        for (CartEntity cartItem : cartItems) {
-            if (cartItem.getAppliedOffer() != null) {
-                if (appliedOffer == null) {
-                    appliedOffer = cartItem.getAppliedOffer();
-                } else if (!appliedOffer.equals(cartItem.getAppliedOffer())) {
-                    throw new IllegalArgumentException("Different offers cannot be applied to the same order");
-                }
-            }
-        }
+        OfferEntity appliedOffer = cartItems.stream()
+                .map(CartEntity::getAppliedOffer)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
         order.setOffer(appliedOffer);
 
         log.info("Order created: {}", order);
