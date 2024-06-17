@@ -8,7 +8,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import tyt.sales.controller.request.CartRequest;
+import tyt.sales.controller.request.CheckoutRequest;
 import tyt.sales.controller.response.CartResponse;
+import tyt.sales.model.PaymentMethod;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.ProductDTO;
 import tyt.sales.rules.CartIsEmptyException;
@@ -68,19 +70,24 @@ class CartControllerTest {
     @Test
     void checkout_cartNotEmpty_checksOut() throws IOException {
         when(cartService.getCart()).thenReturn(Collections.singletonList(new CartDTO()));
-        when(cartService.checkout()).thenReturn("Checkout successful");
 
-        ResponseEntity<CartResponse> response = cartController.checkout();
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; // Use a constant from the PaymentMethod enum
+        CheckoutRequest checkoutRequest = new CheckoutRequest();
+        checkoutRequest.setPaymentMethod(paymentMethod);
+        when(cartService.checkout(paymentMethod)).thenReturn("Checkout successful");
+
+        ResponseEntity<CartResponse> response = cartController.checkout(checkoutRequest); // Pass the CheckoutRequest object to the checkout method
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Checkout successful", Objects.requireNonNull(response.getBody()).getMessage());
     }
 
     @Test
-    void checkout_cartIsEmpty_throwsException(){
+    void checkout_cartIsEmpty_throwsException() {
         when(cartService.getCart()).thenReturn(Collections.emptyList());
 
-        assertThrows(CartIsEmptyException.class, () -> cartController.checkout());
+        CheckoutRequest checkoutRequest = new CheckoutRequest();
+        assertThrows(CartIsEmptyException.class, () -> cartController.checkout(checkoutRequest));
     }
 
     @Test

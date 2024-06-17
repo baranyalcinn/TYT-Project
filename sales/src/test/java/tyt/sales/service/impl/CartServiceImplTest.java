@@ -139,7 +139,8 @@ class CartServiceImplTest {
     @Test
     void checkout_cartIsEmpty_returnsErrorMessage() {
         when(cartRepository.findAll()).thenReturn(new ArrayList<>());
-        String result = cartService.checkout();
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; // Use a constant from the PaymentMethod enum
+        String result = cartService.checkout(paymentMethod); // Pass it to the checkout method
         assertEquals("Cart is empty!", result);
     }
 
@@ -205,12 +206,14 @@ class CartServiceImplTest {
         when(cartRepository.findAll()).thenReturn(List.of(cartItem));
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("Order created"));
+
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; // Use a constant from the PaymentMethod enum
         when(orderRepository.save(any(OrderEntity.class))).thenAnswer((Answer<OrderEntity>) invocation -> {
             OrderEntity orderEntity = (OrderEntity) invocation.getArguments()[0];
             orderEntity.setId(1L);
             return orderEntity;
         });
-        String result = cartService.checkout();
+        String result = cartService.checkout(paymentMethod); // Pass it to the checkout method
 
         assertEquals("Checkout successful. Order ID: 1. Record creation response will be logged.", result);
         verify(cartRepository, times(1)).deleteAll();
@@ -277,7 +280,8 @@ class CartServiceImplTest {
 
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.error(new RuntimeException("Error")));
 
-        String result = cartService.checkout();
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; // Use a constant from the PaymentMethod enum
+        String result = cartService.checkout(paymentMethod); // Pass it to the checkout method
 
         assertEquals("Checkout successful. Order ID: null. Record creation response will be logged.", result);
     }
@@ -350,7 +354,8 @@ class CartServiceImplTest {
         when(productRepository.findAllById(any())).thenReturn(List.of(productEntity));
         when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just("Order created"));
 
-        cartService.checkout();
+        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD; // Use a constant from the PaymentMethod enum
+        cartService.checkout(paymentMethod); // Pass it to the checkout method
 
         verify(orderRepository, times(1)).save(any(OrderEntity.class));
     }
