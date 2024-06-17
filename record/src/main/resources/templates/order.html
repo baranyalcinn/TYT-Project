@@ -165,6 +165,7 @@
         <tr>
             <th>Product</th>
             <th>Quantity</th>
+            <th>Payment</th>
             <th>Price</th>
         </tr>
         </thead>
@@ -172,6 +173,7 @@
         <tr th:each="orderProduct : ${order.orderProducts}">
             <td th:text="${orderProduct.product.name}"></td>
             <td th:text="${orderProduct.quantity}"></td>
+            <td th:text="${order.paymentMethod.getName()}"></td>
             <td th:text="${#numbers.formatDecimal(orderProduct.product.price, 1, 2)}"></td>
         </tr>
         </tbody>

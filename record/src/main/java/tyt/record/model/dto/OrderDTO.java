@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tyt.record.model.PaymentMethod;
 
 import java.util.Date;
 import java.util.List;
@@ -47,4 +48,10 @@ public class OrderDTO {
      * Offer associated with the order.
      */
     private String offer;
+
+    /**
+     * Payment method used for the order.
+     */
+    private PaymentMethod paymentMethod;
+
 }

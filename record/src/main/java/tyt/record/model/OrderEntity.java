@@ -46,6 +46,9 @@ public class OrderEntity extends BaseEntity implements Serializable {
      */
     private String orderNumber;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     /**
      * This field represents the OfferEntity associated with the OrderEntity.
      * The @OneToOne annotation indicates that an OrderEntity can have only one OfferEntity.
@@ -53,7 +56,6 @@ public class OrderEntity extends BaseEntity implements Serializable {
      * The joinColumns attribute specifies the column in the join table that references the OrderEntity.
      * The inverseJoinColumns attribute specifies the column in the join table that references the OfferEntity.
      */
-
     @OneToOne
     @JoinTable(
             name = "order_campaign",
