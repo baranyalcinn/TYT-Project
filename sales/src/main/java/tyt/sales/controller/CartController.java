@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tyt.sales.controller.request.CartRequest;
+import tyt.sales.controller.request.CheckoutRequest;
 import tyt.sales.controller.response.CartResponse;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OfferApplyDTO;
@@ -52,12 +53,12 @@ public class CartController {
      * @return A response entity containing a message and HTTP status.
      */
     @PostMapping("/checkout")
-    public ResponseEntity<CartResponse> checkout() throws CartIsEmptyException, IOException {
+    public ResponseEntity<CartResponse> checkout(@RequestBody CheckoutRequest checkoutRequest) throws CartIsEmptyException, IOException {
         if (cartService.getCart().isEmpty()) {
             throw new CartIsEmptyException("Cart is empty, cannot checkout.");
         }
-        log.info("Checking out cart.");
-        return ResponseEntity.ok(new CartResponse(cartService.checkout(), HttpStatus.OK.value()));
+        log.info("Checking out cart with payment method: {}", checkoutRequest.getPaymentMethod());
+        return ResponseEntity.ok(new CartResponse(cartService.checkout(checkoutRequest.getPaymentMethod()), HttpStatus.OK.value()));
     }
 
     @ExceptionHandler(CartIsEmptyException.class)

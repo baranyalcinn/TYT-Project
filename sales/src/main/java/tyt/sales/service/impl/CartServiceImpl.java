@@ -16,6 +16,7 @@ import tyt.sales.repository.*;
 import tyt.sales.rules.InsufficientStockException;
 import tyt.sales.rules.ResourceNotFoundException;
 import tyt.sales.service.CartService;
+import tyt.sales.model.PaymentMethod;
 
 import java.util.List;
 import java.util.Map;
@@ -112,13 +113,14 @@ public class CartServiceImpl implements CartService {
      */
     @Transactional
     @Override
-    public String checkout() {
+    public String checkout(PaymentMethod paymentMethod) {
         List<CartEntity> cartItems = cartRepository.findAll();
         if (cartItems.isEmpty()) {
             return "Cart is empty!";
         }
 
         OrderEntity order = createOrder(cartItems);
+        order.setPaymentMethod(paymentMethod);
         orderRepository.save(order);
 
         String orderId = String.valueOf(order.getId());

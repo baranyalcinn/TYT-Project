@@ -32,6 +32,9 @@ public class OrderEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "offer_id"))
     private OfferEntity offer;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     @Override
     public String toString() {
         return "OrderEntity{" +
@@ -40,6 +43,7 @@ public class OrderEntity extends BaseEntity {
                 ", orderDate=" + orderDate +
                 ", orderNumber=" + orderNumber +
                 ", offer=" + (offer != null ? offer.getId() : null) +
+                ", paymentMethod=" + paymentMethod +
                 '}';
     }
 }

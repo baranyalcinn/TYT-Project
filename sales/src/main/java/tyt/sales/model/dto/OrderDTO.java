@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tyt.sales.model.PaymentMethod;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,5 +38,7 @@ public class OrderDTO {
     // Total cost of the order
     private double total;
 
+    // Payment method used for the order
+    private PaymentMethod paymentMethod;
 
 }

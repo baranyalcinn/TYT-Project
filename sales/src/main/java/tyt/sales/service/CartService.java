@@ -1,5 +1,6 @@
 package tyt.sales.service;
 
+import tyt.sales.model.PaymentMethod;
 import tyt.sales.model.dto.CartDTO;
 import tyt.sales.model.dto.OrderDTO;
 import tyt.sales.model.dto.ProductDTO;
@@ -20,7 +21,7 @@ public interface CartService {
 
     List<CartDTO> getCart();
 
-    String checkout() throws IOException;
+    String checkout(PaymentMethod paymentMethod) throws IOException;
 
     void applyCampaign(Long campaignId);
 }
