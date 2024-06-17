@@ -1,6 +1,7 @@
 spring:
   application:
     name: record-service
+
   profiles:
     active: dev
 
@@ -12,6 +13,7 @@ spring:
   thymeleaf:
     mode: HTML
     cache: true
+
 server:
   port: 8083
 
@@ -19,7 +21,7 @@ logging:
   level:
     tyt.record: INFO
   file:
-    name: logs/record.log
+    name: app/logs/record.log
 
 management:
   endpoints:

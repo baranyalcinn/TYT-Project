@@ -16,7 +16,7 @@ logging:
   level:
     tyt.management: INFO
   file:
-    name: logs/auth.log
+    name: app/logs/auth.log
 
 server:
   port: 8087

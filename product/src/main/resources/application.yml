@@ -19,7 +19,7 @@ logging:
   level:
     tyt.product: INFO
   file:
-    name: logs/product.log
+    name: app/logs/product.log
 
 management:
   endpoints:

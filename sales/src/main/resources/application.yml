@@ -17,7 +17,7 @@ logging:
   level:
     tyt.sales: INFO
   file:
-    name: logs/sales.log
+    name: app/logs/sales.log
 management:
   endpoints:
     web:

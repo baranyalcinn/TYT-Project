@@ -27,7 +27,7 @@ services:
     networks:
       - tyt-network
     volumes:
-        - ./logs:/usr/share/app/logs/auth.log
+      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
 
   management:
     image: yalcinbaran/management:latest
@@ -44,7 +44,7 @@ services:
     networks:
       - tyt-network
     volumes:
-      - ./logs:/usr/share/app/logs/management.log
+      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
 
   product:
     image: yalcinbaran/product:latest
@@ -61,7 +61,7 @@ services:
     networks:
       - tyt-network
     volumes:
-      - ./logs:/usr/share/app/logs/product.log
+      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
 
   sales:
     image: yalcinbaran/sales:latest
@@ -78,7 +78,7 @@ services:
     networks:
       - tyt-network
     volumes:
-      - ./logs:/usr/share/app/logs/sales.log
+      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
 
   record:
     image: yalcinbaran/record:latest
@@ -96,7 +96,7 @@ services:
       - tyt-network
     volumes:
       - /c/Users/recte/Desktop/slips:/usr/share/app/slips
-      - ./logs:/usr/share/app/logs/record.log
+      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
 
   gateway:
     image: yalcinbaran/gateway:latest
@@ -122,8 +122,6 @@ services:
       retries: 5
     networks:
       - tyt-network
-    volumes:
-      - ./logs:/usr/share/app/logs
 
 networks:
   tyt-network:

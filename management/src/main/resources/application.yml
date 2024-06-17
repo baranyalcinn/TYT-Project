@@ -17,7 +17,7 @@ logging:
   level:
     tyt.management: INFO
   file:
-    name: logs/management.log
+    name: app/logs/management.log
 
 management:
   endpoints:

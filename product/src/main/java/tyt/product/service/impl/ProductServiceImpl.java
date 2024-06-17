@@ -74,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
                 -> new Exceptions.NoSuchProductException("Product with id " + productDTO.getId() + " not found"));
 
         productMapper.updateProductFromDTO(productDTO, productEntity);
+        productEntity.setActive(true);
         ProductEntity updatedEntity = productRepository.save(productEntity);
 
         log.info("Product updated successfully. ID: {}", updatedEntity.getId());
