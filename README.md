@@ -5,7 +5,6 @@
 
 <br />
 <div align="center">
-<a href="https://github.com/othneildrew/Best-README-Template">
     <img src="logo.jpg" alt="Logo" width="100" height="auto">
   </a>
   <h3 align="center">TOYOTA - 32Bit Backend Project</h3>
