@@ -149,38 +149,35 @@ This project includes a Postman collection to help you quickly explore and test 
 
 <br />
 
-### Exporting Your Database to `readyForProject.sql`
 
-To export your existing PostgreSQL database to the `readyForProject.sql` file, you can use one of the following methods:
+This file (`readyForProject.sql`) contains the SQL statements to create and populate tables for your project.  Follow these steps to import the tables into your PostgreSQL database:
 
-**1. Using the `pg_dump` Tool (Command Line):**
+**1. Using the `psql` Tool (Command Line):**
 
    1. Open your terminal and connect to your PostgreSQL server:
       ```bash
       psql -h localhost -p 5432 -U your_username -d your_database_name
       ```
       (Replace `localhost`, `5432`, `your_username`, and `your_database_name` with your actual credentials if needed)
-   2. Run the following command:
+   2. Run the following command to import the SQL file:
 
       ```bash
-      pg_dump -h localhost -p 5432 -U your_username -d your_database_name > readyForProject.sql
+      psql -h localhost -p 5432 -U your_username -d your_database_name < readyForProject.sql
       ```
-
-   This command will export the schema and data of your `your_database_name` database to a file named `readyForProject.sql`.
 
 **2. Using the pgAdmin Tool (Graphical):**
 
    1. Open pgAdmin and connect to your PostgreSQL server.
-   2. Right-click on the database you want to export.
-   3. Select the "Backup" option.
-   4. In the "Filename" section, set the filename to `readyForProject.sql`.
-   5. In the "General" tab, set the "Format" to "Plain." 
-   6. Click the "Backup" button.
+   2. Right-click on your target database.
+   3. Select the "Query Tool" option.
+   4. Open the `readyForProject.sql` file in a text editor, copy its contents, and paste them into the Query Tool.
+   5. Click the "Execute" button (looks like a lightning bolt).
 
 **Important Notes:**
 
-* These methods will export your entire database to the `readyForProject.sql` file. 
-* The `readyForProject.sql` file may contain sensitive data. Store this file in a secure location. 
+* Make sure your PostgreSQL server is running and you can connect to the database where you want to import the tables.
+* **Backup your existing database:** This process will overwrite any existing tables with the same names. If you have valuable data in those tables, back them up before importing. 
+* The `readyForProject.sql` file might contain sensitive data. Store this file securely. 
 
 <br />
 
