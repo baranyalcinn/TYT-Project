@@ -116,7 +116,7 @@
    ```
 
 4. **Update Database Configuration**
-   Open the `application.yml` or `application-test.yml` file in the `src/main/resources` directory and update the database connection details:
+   Open the `application-dev.yml` or `application-test.yml` file in the `src/main/resources` directory and update the database connection details:
     ```properties
     spring:
       datasource:
