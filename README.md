@@ -1,6 +1,7 @@
 <a name="readme-top"></a>
 
 [![LinkedIn][linkedin-shield]][linkedin-url]
+[![32Bit][32Bit.com]][32Bit-url]
 
 <br />
 <div align="center">
@@ -54,16 +55,18 @@
 
 [![Product Name Screen Shot](sample-slip.PNG)](sample-slip.PNG)
 
- This project is a role-controlled application designed for selling products and generating receipts in PDF format. It utilizes a robust architecture built on top of Spring Boot framework and leverages various technologies to ensure efficiency and security.
+ This project tackles the challenges of managing product sales and generating professional receipts. Our role-based application, built on the robust Spring Boot framework, streamlines these processes for enhanced efficiency and accuracy. 
 
 **Key Features:**
 
-* **Role-based Access Control:** Allows for different user roles with specific permissions for managing products, orders, and receipts.
-* **Product Management:** Enables creating, updating, and deleting product information with detailed descriptions and pricing.
-* **Order Processing:** Supports placing orders, tracking their status, and generating invoices.
-* **PDF Receipt Generation:** Creates professional-looking PDF receipts containing order details and product information.
+- **Role-based Access Control:**  Securely manage user permissions (product management, orders, receipts).
+- **Product Management:**  Effortlessly add, update, and track product details and pricing.
+- **Order Processing:** Simplify order placement, monitor status, and generate invoices.
+- **Automated PDF Receipts:**  Generate professional PDF receipts with comprehensive order and product information.
 
 <p align="right"><a href="#readme-top">⬆️</a></p>
+
+*** 
 
 ### Built With
 
@@ -78,6 +81,7 @@
 * [![Lombok][Lombok.com]][Lombok-url]
 * [![Docker][Docker.com]][Docker-url]
 * [![Jib][Jib.com]][Jib-url]
+* [![Maven][Maven.com]][Maven-url]
 
 <p align="right"><a href="#readme-top">⬆️</a></p>
 
@@ -272,3 +276,7 @@ Project Link: [https://github.com/baranyalcinn/TYT-Project/tree/master](https://
 [Docker-url]: https://www.docker.com/
 [Jib.com]: https://img.shields.io/badge/Jib-Build%20Container%20Images-blue.svg?logo=google-cloud&logoColor=white
 [Jib-url]: https://cloud.google.com/java/getting-started/jib
+[Maven.com]: https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white
+[Maven-url]: https://maven.apache.org/
+[32Bit.com]: https://img.shields.io/badge/32Bit-007EC6?style=for-the-badge&logo=apache-spark&logoColor=white 
+[32Bit-url]: https://32bit.com.tr/en/home/ 
