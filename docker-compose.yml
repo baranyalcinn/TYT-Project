@@ -1,3 +1,14 @@
+x-log-volume: &log-volume
+                /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+
+x-slips-volume: &slips-volume
+                  /c/Users/recte/Desktop/slips:/usr/share/app/slips
+
+x-healthcheck: &default-healthcheck
+  interval: 30s
+  timeout: 5s
+  retries: 5
+
 services:
   eureka:
     image: yalcinbaran/eureka:latest
@@ -5,9 +16,7 @@ services:
       - "8761:8761"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
-      interval: 20s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
       start_period: 45s
     networks:
       - tyt-network
@@ -21,13 +30,11 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
     volumes:
-      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+      - *log-volume
 
   management:
     image: yalcinbaran/management:latest
@@ -38,13 +45,11 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/management-service/actuator/health" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
     volumes:
-      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+      - *log-volume
 
   product:
     image: yalcinbaran/product:latest
@@ -55,13 +60,11 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/product-service/actuator/health" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
     volumes:
-      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+      - *log-volume
 
   sales:
     image: yalcinbaran/sales:latest
@@ -72,13 +75,11 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8082/sales-service/actuator/health" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
     volumes:
-      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+      - *log-volume
 
   record:
     image: yalcinbaran/record:latest
@@ -89,14 +90,12 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
     volumes:
-      - /c/Users/recte/Desktop/slips:/usr/share/app/slips
-      - /c/Users/recte/Desktop/TYT-Project/logs:/app/logs
+      - *log-volume
+      - *slips-volume
 
   gateway:
     image: yalcinbaran/gateway:latest
@@ -117,9 +116,7 @@ services:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
-      interval: 20s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     networks:
       - tyt-network
 
