@@ -82,6 +82,9 @@
 * [![Docker][Docker.com]][Docker-url]
 * [![Jib][Jib.com]][Jib-url]
 * [![Maven][Maven.com]][Maven-url]
+* [![MapStruct][MapStruct.com]][MapStruct-url]
+* [![iText][iText.com]][iText-url]
+* [![ZXing][ZXing.com]][ZXing-url]
 
 <p align="right"><a href="#readme-top">⬆️</a></p>
 
@@ -323,3 +326,9 @@ Project Link: [https://github.com/baranyalcinn/TYT-Project/tree/master](https://
 [Maven-url]: https://maven.apache.org/
 [32Bit.com]: https://img.shields.io/badge/32Bit-007EC6?style=for-the-badge&logo=apache-spark&logoColor=white 
 [32Bit-url]: https://32bit.com.tr/en/home/ 
+[MapStruct.com]: https://img.shields.io/badge/-MapStruct-07689f?style=for-the-badge&logo=mapstruct
+[MapStruct-url]: https://mapstruct.org/
+[iText.com]: https://img.shields.io/badge/-iText-0E90C2?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white
+[iText-url]: https://itextpdf.com/
+[ZXing.com]: https://img.shields.io/badge/-ZXing-black?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5gIXFywk68W8MgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAApSURBVDjLY/z//z8DJZgzDgPbP/8j/Pvf/4/f/8DAAjcNrKYqksWwAAAAASUVORK5CYII=
+[ZXing-url]: https://github.com/zxing/zxing
