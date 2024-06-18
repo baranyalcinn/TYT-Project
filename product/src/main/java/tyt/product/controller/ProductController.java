@@ -4,8 +4,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +29,6 @@ public class ProductController {
 
     private final ProductService productService;
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
-    private static final int PAGE_SIZE = 5;
 
     /**
      * Get a specific product by its id.
@@ -102,10 +99,15 @@ public class ProductController {
     }
 
     @GetMapping("/paginated")
-    public Page<ProductDTO> getPaginatedProducts(
-            @RequestParam(defaultValue = "0") int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        return productService.getProducts(pageable);
+    public Page<ProductDTO> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        return productService.getProducts(page, size, sortBy, sortDirection, name, minPrice, maxPrice);
     }
 
 

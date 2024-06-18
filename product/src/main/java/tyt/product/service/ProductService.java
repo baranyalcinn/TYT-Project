@@ -1,7 +1,6 @@
 package tyt.product.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.dto.ProductDTO;
 
@@ -19,7 +18,7 @@ public interface ProductService {
 
     List<ProductDTO> getAllProducts();
 
-    Page<ProductDTO> getProducts(Pageable pageable);
+    Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice);
 
     List<ProductDTO> getProductsByCategory(CategoryEntity category);
 }

@@ -2,6 +2,7 @@ package tyt.product.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tyt.product.model.CategoryEntity;
@@ -16,5 +17,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     List<ProductEntity> findByCategory(CategoryEntity category);
 
-    Page<ProductEntity> findAll(Pageable pageable);
+    Page<ProductEntity> findAll(Specification<ProductEntity> spec, Pageable pageable);
+
 }

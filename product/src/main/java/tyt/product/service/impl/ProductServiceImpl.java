@@ -5,11 +5,15 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import tyt.product.exception.Exceptions;
 import tyt.product.model.CategoryEntity;
 import tyt.product.model.ProductEntity;
+import tyt.product.model.ProductSpecification;
 import tyt.product.model.dto.ProductDTO;
 import tyt.product.model.mapper.ProductMapper;
 import tyt.product.repository.ProductRepository;
@@ -127,10 +131,25 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-    @Override
-    public Page<ProductDTO> getProducts(Pageable pageable) {
-        Page<ProductEntity> productEntities = productRepository.findAll(pageable);
-        return productEntities.map(productMapper::toDTO);
+
+    public Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<ProductEntity> spec = Specification.where(null);
+        if (name != null && !name.isEmpty()) {
+            spec = spec.and(ProductSpecification.hasName(name));
+        }
+        if (minPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceGreaterThan(minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceLessThan(maxPrice));
+        }
+
+        Page<ProductEntity> productEntityPage = productRepository.findAll(spec, pageable);
+        return productEntityPage.map(productMapper::toDTO);
     }
 
     /**
