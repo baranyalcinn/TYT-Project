@@ -181,6 +181,52 @@ This file (`readyForProject.sql`) contains the SQL statements to create and popu
 
 <br />
 
+## Docker Compose and Volumes Explanation
+
+The `docker-compose.yml` file makes it easy to run the application using Docker containers. The **volumes** section within this file manages how files are shared between the containers and your host computer. Here's a breakdown of the volume definitions used in this project: 
+
+**1. Application Logs (`x-log-volume`)**
+
+This volume maps the application logs from your host machine to the `/app/logs` directory inside the container.
+
+* **On your host machine:**
+    1. Create a directory named `TYT-Project` in a location you prefer (e.g., `Documents`).
+    2. Inside the `TYT-Project` directory, create a subdirectory named `logs`.
+* **Updating `docker-compose.yml`:**
+    * Modify the `x-log-volume` definition to point to this new logs directory:
+        ```yaml
+        x-log-volume: &log-volume
+                        /path/to/your/TYT-Project/logs:/app/logs 
+        ```
+    *  Replace `/path/to/your/TYT-Project/logs` with the actual path to your logs directory.
+
+<br />
+
+**2. Generated Slips (`x-slips-volume`)**
+
+This volume maps the generated slips from your host machine to the `/usr/share/app/slips` directory inside the container.
+
+* **On your host machine:**
+    * Inside the  `TYT-Project` directory, create another subdirectory named `slips`.
+* **Updating `docker-compose.yml`:**
+    * Update the `x-slips-volume` definition:
+        ```yaml
+        x-slips-volume: &slips-volume
+                        /path/to/your/TYT-Project/slips:/usr/share/app/slips
+        ```
+    * Replace  `/path/to/your/TYT-Project/slips` with the actual path to your slips directory.
+
+<br />
+
+**Key Advantages of Using Volumes:**
+- **Persistence:** Even if your Docker containers are stopped or removed, your log files and generated slips will remain safe in the designated folders on your host machine.
+- **Easy Access:** You can directly access and manage these files using your preferred tools on your host system.
+- **Organization:** Keeping these files separate from the container's file system promotes better organization of your project.
+
+By following these steps, you'll create dedicated directories on your host machine for both the logs and the generated slips. This makes it much simpler to manage these files, even when you're running your application with Docker.
+
+<br />
+
 ### Docker:
 1. **Build the Docker image:**
 
