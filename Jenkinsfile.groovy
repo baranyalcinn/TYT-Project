@@ -4,32 +4,29 @@ pipeline {
     environment {
         GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
     }
+
     stages {
         stage('Checkout') {
             steps {
+                checkout scm
                 script {
                     def changes = getChangedDirectories()
                     echo "Changed directories: ${changes}"
-                    if (changes.size() == 0) {
+                    if (changes.isEmpty()) { // Use isEmpty() instead of size() == 0
+                        echo "No changes detected in TYT-Project subdirectories, skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
                 }
-                checkout scm
             }
         }
+
         stage('Verify Docker Installation') {
             steps {
-                script {
-                    try {
-                        sh 'docker --version'
-                        echo 'Docker is installed.'
-                    } catch (Exception ignored) {
-                        error 'Docker is not installed or not accessible in this environment.'
-                    }
-                }
+                sh 'docker --version'
             }
         }
+
         stage('Build and Push Docker Images') {
             steps {
                 script {
@@ -52,9 +49,10 @@ def getChangedDirectories() {
             script: "git diff-tree --no-commit-id --name-only -r \$(git log -1 --pretty=format:'%H')",
             returnStdout: true
     ).trim().split("\n")
+
     def directories = [] as Set
     for (file in changedFiles) {
-        def parts = file.split('/' as Closure)
+        def parts = file.split('/')
         if (parts.length > 1 && parts[0] == 'TYT-Project') {
             directories.add(parts[1])
         }
