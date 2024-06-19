@@ -6,7 +6,7 @@ pipeline {
         }
     }
     environment {
-        GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git' // Git repo URL'inizi buraya ekleyin
+        GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
     }
     stages {
         stage('Checkout') {
