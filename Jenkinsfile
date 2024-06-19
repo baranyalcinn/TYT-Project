@@ -22,6 +22,18 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Verify Docker Installation') {
+            steps {
+                script {
+                    try {
+                        sh 'docker --version'
+                        echo 'Docker is installed.'
+                    } catch (Exception e) {
+                        error 'Docker is not installed or not accessible in this environment.'
+                    }
+                }
+            }
+        }
         stage('Build and Push Docker Images') {
             steps {
                 script {
