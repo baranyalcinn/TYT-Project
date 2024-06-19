@@ -12,7 +12,7 @@ pipeline {
                 script {
                     def changes = getChangedDirectories()
                     echo "Changed directories: ${changes}"
-                    if (changes.isEmpty()) { // Use isEmpty() instead of size() == 0
+                    if (changes.isEmpty()) {
                         echo "No changes detected in TYT-Project subdirectories, skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
