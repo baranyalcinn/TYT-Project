@@ -1,10 +1,6 @@
 pipeline {
-   agent {
-    docker {
-        image 'docker:dind'
-        args '--privileged'
-    }
-}
+    agent any
+
     environment {
         GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
     }
@@ -28,7 +24,7 @@ pipeline {
                     try {
                         sh 'docker --version'
                         echo 'Docker is installed.'
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                         error 'Docker is not installed or not accessible in this environment.'
                     }
                 }
@@ -53,12 +49,12 @@ pipeline {
 
 def getChangedDirectories() {
     def changedFiles = sh(
-        script: "git diff-tree --no-commit-id --name-only -r \$(git log -1 --pretty=format:'%H')",
-        returnStdout: true
+            script: "git diff-tree --no-commit-id --name-only -r \$(git log -1 --pretty=format:'%H')",
+            returnStdout: true
     ).trim().split("\n")
     def directories = [] as Set
     for (file in changedFiles) {
-        def parts = file.split('/')
+        def parts = file.split('/' as Closure)
         if (parts.length > 1 && parts[0] == 'TYT-Project') {
             directories.add(parts[1])
         }
