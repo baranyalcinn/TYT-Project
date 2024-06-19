@@ -59,3 +59,4 @@ def getChangedDirectories() {
     }
     return directories as List
 }
+
