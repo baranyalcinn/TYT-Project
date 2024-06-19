@@ -1,10 +1,10 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.7-jdk-17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
+   agent {
+    docker {
+        image 'docker:dind'
+        args '--privileged'
     }
+}
     environment {
         GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
     }
