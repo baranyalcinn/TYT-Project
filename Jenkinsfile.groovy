@@ -1,6 +1,9 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'jenkins-agent'
+        }
+    }
     environment {
         GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
     }
