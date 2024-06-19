@@ -8,8 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
                 script {
+                    checkout scm
                     def changes = getChangedDirectories()
                     echo "Changed directories: ${changes}"
                     if (changes.isEmpty()) {
