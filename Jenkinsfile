@@ -6,7 +6,7 @@ pipeline {
         }
     }
     environment {
-        GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
+        GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git' // Git repo URL'inizi buraya ekleyin
     }
     stages {
         stage('Checkout') {
@@ -45,3 +45,11 @@ def getChangedDirectories() {
         returnStdout: true
     ).trim().split("\n")
     def directories = [] as Set
+    for (file in changedFiles) {
+        def parts = file.split('/')
+        if (parts.length > 1 && parts[0] == 'TYT-Project') {
+            directories.add(parts[1])
+        }
+    }
+    return directories as List
+}
