@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'jenkins-agent'
+            image 'jenkins/inbound-agent'
         }
     }
     environment {
