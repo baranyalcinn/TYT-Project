@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollscm('H/15 * * * *')
+        pollSCM('H/5 * * * *')
     }
     stages {
         stage('change detection') {
