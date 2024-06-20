@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent {label 'jenkins/inbound-agent'}
 
     environment {
         GIT_REPO = 'https://github.com/baranyalcinn/TYT-Project.git'
