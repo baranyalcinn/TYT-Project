@@ -21,11 +21,7 @@ pipeline {
             }
         }
 
-        stage('Verify Docker Installation') {
-            steps {
-                sh 'docker --version'
-            }
-        }
+
 
         stage('Build and Push Docker Images') {
             steps {
