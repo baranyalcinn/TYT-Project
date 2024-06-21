@@ -8,8 +8,6 @@ pipeline {
     stages {
         stage('Detect Changes') {
             steps {
-                checkout scm
-
                 script {
                     def changedDirs = sh(returnStdout: true, script: 'git diff --name-only HEAD^ HEAD').trim().split("\n")
 
