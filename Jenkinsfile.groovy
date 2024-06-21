@@ -1,17 +1,16 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('H/5 * * * *')
+        scm('* * * * *')
     }
     stages {
-        stage('change detection') {
+        stage('Change Detection') {
             steps {
                 script {
                     def changedDirs = sh(returnStdout: true, script: 'git diff --name-only HEAD^ HEAD').trim().split("\n")
-
                     for (dir in changedDirs) {
                         if (fileExists("${dir}/pom.xml")) {
-                            echo "Değişiklik tespit edildi: ${dir}"
+                            echo "file changed ${dir}"
                             buildDockerImage(dir)
                         }
                     }
@@ -22,7 +21,7 @@ pipeline {
 }
 
 def buildDockerImage(dir) {
-    stage("Docker Image Creation - ${dir}") {
+    stage("Docker Image - ${dir}") {
         dir(dir) {
             sh 'mvn compile jib:dockerBuild'
         }
