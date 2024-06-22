@@ -37,9 +37,8 @@ def buildDockerImage(String dir) {
         script {
             echo "Building Docker image for directory: ${dir}"
             try {
-                dir(dir) {
-                    sh 'mvn compile jib:dockerBuild'
-                }
+                // No need for dir(dir) here
+                sh 'mvn compile jib:dockerBuild'
                 echo "Docker image successfully built for ${dir}"
             } catch (Exception e) {
                 echo "Failed to build Docker image for ${dir}: ${e.message}"
