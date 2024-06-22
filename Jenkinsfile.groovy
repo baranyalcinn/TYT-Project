@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     triggers {
         pollSCM('* * * * *')
     }
@@ -13,29 +12,19 @@ pipeline {
                     def changedFiles = sh(returnStdout: true, script: 'git diff --name-only HEAD^ HEAD').trim().split("\n")
                     echo "Changed files: ${changedFiles.join(', ')}"
 
-                    def changedDirsWithPom = []
-                    for (file in changedFiles) {
-                        if (file.contains('/')) {
-                            def currentDir = file.substring(0, file.lastIndexOf('/'))
-                            while (currentDir != '') {
-                                if (fileExists("${currentDir}/pom.xml")) {
-                                    echo "Change detected in directory with pom.xml: ${currentDir}"
-                                    changedDirsWithPom.add(currentDir)
-                                    break // Stop searching once pom.xml is found
-                                }
-                                // Go up one directory level
-                                currentDir = currentDir.substring(0, currentDir.lastIndexOf('/'))
-                                if (currentDir == '/') {
-                                    break // Reached the root directory
-                                }
-                            }
-                        }
-                    }
-                    changedDirsWithPom = changedDirsWithPom.unique()
+                    // Get the top-level directories of the changed files
+                    def changedDirs = changedFiles.collect { it.split('/')[0] }.unique()
+                    echo "Top-level changed directories: ${changedDirs.join(', ')}"
 
-                    // Build images for each unique directory containing pom.xml
-                    for (dir in changedDirsWithPom) {
-                        buildDockerImage(dir)
+                    // Check each top-level directory for pom.xml
+                    for (dir in changedDirs) {
+                        def pomPath = "${dir}/pom.xml"
+                        if (fileExists(pomPath)) {
+                            echo "Change detected in directory with pom.xml: ${dir}"
+                            buildDockerImage(dir)
+                        } else {
+                            echo "No pom.xml found in ${dir}, skipping..."
+                        }
                     }
                 }
             }
