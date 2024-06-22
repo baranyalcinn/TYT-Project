@@ -33,14 +33,16 @@ pipeline {
 }
 
 def buildDockerImage(dir) {
-    stage("Build Docker Image - ${dir}") {
-        dir(dir) {
-            echo "Building Docker image for directory: ${dir}"
-            try {
-                sh 'mvn compile jib:dockerBuild'
-                echo "Docker image successfully built for ${dir}"
-            } catch (Exception e) {
-                echo "Failed to build Docker image for ${dir}: ${e.message}"
+    script {
+        stage("Build Docker Image - ${dir}") {
+            dir(dir) {
+                echo "Building Docker image for directory: ${dir}"
+                try {
+                    sh 'mvn compile jib:dockerBuild'
+                    echo "Docker image successfully built for ${dir}"
+                } catch (Exception e) {
+                    echo "Failed to build Docker image for ${dir}: ${e.message}"
+                }
             }
         }
     }
