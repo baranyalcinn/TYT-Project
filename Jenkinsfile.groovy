@@ -21,7 +21,7 @@ pipeline {
                         def pomPath = "${dir}/pom.xml"
                         if (fileExists(pomPath)) {
                             echo "Change detected in directory with pom.xml: ${dir}"
-                            buildDockerImage(dir as String)
+                            buildDockerImage(dir)
                         } else {
                             echo "No pom.xml found in ${dir}, skipping..."
                         }
