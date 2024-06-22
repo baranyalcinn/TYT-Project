@@ -18,7 +18,7 @@ public interface ProductService {
 
     List<ProductDTO> getAllProducts();
 
-//    Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice);
+    Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice);
 
     List<ProductDTO> getProductsByCategory(CategoryEntity category);
 }

@@ -132,25 +132,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-//    public Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice) {
-//        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
-//                Sort.by(sortBy).descending();
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//
-//        Specification<ProductEntity> spec = Specification.where(null);
-//        if (name != null && !name.isEmpty()) {
-//            spec = spec.and(ProductSpecification.hasName(name));
-//        }
-//        if (minPrice != null) {
-//            spec = spec.and(ProductSpecification.hasPriceGreaterThan(minPrice));
-//        }
-//        if (maxPrice != null) {
-//            spec = spec.and(ProductSpecification.hasPriceLessThan(maxPrice));
-//        }
-//
-//        Page<ProductEntity> productEntityPage = productRepository.findAll(spec, pageable);
-//        return productEntityPage.map(productMapper::toDTO);
-//    }
+    public Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<ProductEntity> spec = Specification.where(null);
+        if (name != null && !name.isEmpty()) {
+            spec = spec.and(ProductSpecification.hasName(name));
+        }
+        if (minPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceGreaterThan(minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceLessThan(maxPrice));
+        }
+
+        Page<ProductEntity> productEntityPage = productRepository.findAll(spec, pageable);
+        return productEntityPage.map(productMapper::toDTO);
+    }
 
     /**
      * Retrieves all products by category.
