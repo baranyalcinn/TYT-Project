@@ -152,7 +152,6 @@ public class ProductServiceImpl implements ProductService {
         return productEntityPage.map(productMapper::toDTO);
     }
 
-
     /**
      * Retrieves all products by category.
      *
