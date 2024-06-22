@@ -131,7 +131,6 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-
     /**
      * Retrieves all products with pagination and sorting.
      *
