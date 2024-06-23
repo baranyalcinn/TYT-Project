@@ -33,7 +33,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private static final ProductMapper productMapper = ProductMapper.INSTANCE;
 
-
     /**
      * Converts a ProductDTO to a ProductEntity.
      *
@@ -134,13 +133,13 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Retrieves all products with pagination and sorting.
      *
-     * @param page the page number
-     * @param size the number of products per page
-     * @param sortBy the field to sort by
+     * @param page          the page number
+     * @param size          the number of products per page
+     * @param sortBy        the field to sort by
      * @param sortDirection the direction to sort by
-     * @param name the name of the product
-     * @param minPrice the minimum price of the product
-     * @param maxPrice the maximum price of the product
+     * @param name          the name of the product
+     * @param minPrice      the minimum price of the product
+     * @param maxPrice      the maximum price of the product
      * @return a page of product DTOs
      */
     public Page<ProductDTO> getProducts(int page, int size, String sortBy, String sortDirection, String name, Double minPrice, Double maxPrice) {
