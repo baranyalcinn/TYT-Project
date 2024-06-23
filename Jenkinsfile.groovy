@@ -3,7 +3,6 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-
     stages {
         stage('Detect Changes') {
             steps {
@@ -11,11 +10,9 @@ pipeline {
                     // Get the list of changed files
                     def changedFiles = sh(returnStdout: true, script: 'git diff --name-only HEAD^ HEAD').trim().split("\n")
                     echo "Changed files: ${changedFiles.join(', ')}"
-
                     // Get the top-level directories of the changed files
                     def changedDirs = changedFiles.collect { it.split('/')[0] }.unique()
                     echo "Top-level changed directories: ${changedDirs.join(', ')}"
-
                     // Check each top-level directory for pom.xml
                     for (dir in changedDirs) {
                         def pomPath = "${dir}/pom.xml"
@@ -26,23 +23,21 @@ pipeline {
                             echo "No pom.xml found in ${dir}, skipping..."
                         }
                     }
+
+                    def buildDockerImage = { String dir ->
+                        echo "Building Docker image for directory: ${dir}"
+                        try {
+                            // Use dir block correctly within script
+                            dir(dir) {
+                                sh 'mvn compile jib:dockerBuild'
+                            }
+                            echo "Docker image successfully built for ${dir}"
+                        } catch (Exception e) {
+                            echo "Failed to build Docker image for ${dir}: ${e.message}"
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-def buildDockerImage(String dir) {
-    echo "Building Docker image for directory: ${dir}"
-    try {
-        // Use dir block correctly within script
-        script {
-            dir(dir) {
-                sh 'mvn compile jib:dockerBuild'
-            }
-        }
-        echo "Docker image successfully built for ${dir}"
-    } catch (Exception e) {
-        echo "Failed to build Docker image for ${dir}: ${e.message}"
     }
 }
