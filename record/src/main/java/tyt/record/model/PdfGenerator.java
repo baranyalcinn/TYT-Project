@@ -142,7 +142,7 @@ public class PdfGenerator {
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         hints.put(EncodeHintType.MARGIN, 2);
 
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200, hints);
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 115, 115, hints);
         BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
         return generateDataUrl(qrCodeImage);
