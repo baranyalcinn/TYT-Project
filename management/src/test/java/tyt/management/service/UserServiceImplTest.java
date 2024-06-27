@@ -5,15 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import tyt.management.model.UserEntity;
 import tyt.management.model.dto.UserDTO;
 import tyt.management.repository.UserRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -58,9 +60,10 @@ class UserServiceImplTest {
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
-        String userId = userService.updateUser(userDTO);
+        ResponseEntity<String> response = userService.updateUser(userDTO);
 
-        assertEquals("1", userId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(Objects.requireNonNull(response.getBody()).contains("User with ID: 1 has been successfully updated."));
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 

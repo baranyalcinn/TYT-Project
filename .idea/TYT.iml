@@ -8,4 +8,7 @@
     <orderEntry type="library" name="groovy-5.0.0-alpha-1" level="project" />
     <orderEntry type="library" name="groovy-5.0.0-alpha-1" level="project" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="projectKey" value="tyt-project" />
+  </component>
 </module>

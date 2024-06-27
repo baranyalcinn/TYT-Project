@@ -82,8 +82,7 @@ public class UserController {
      * @return a string indicating the result of the operation
      */
     @PutMapping("/update")
-    public String updateUser(@RequestBody UpdateUserRequest request) {
-
+    public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         log.info("Updating user with id: {}", request.getId());
         return userService.updateUser(UserMapper.INSTANCE.updateRequestToDto(request));
     }

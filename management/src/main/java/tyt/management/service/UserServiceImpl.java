@@ -1,6 +1,8 @@
 package tyt.management.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import tyt.management.model.UserEntity;
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
      * @return The ID of the updated user.
      */
     @Override
-    public String updateUser(UserDTO userDTO) {
+    public ResponseEntity<String> updateUser(UserDTO userDTO) {
         UserEntity entity = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userDTO.getId()));
         entity.setName(userDTO.getName());
@@ -53,7 +55,7 @@ public class UserServiceImpl implements UserService {
         entity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         entity.setRoles(userDTO.getRoles());
         userRepository.save(entity);
-        return entity.getId().toString();
+        return new ResponseEntity<>("User with ID: " + entity.getId() + " has been successfully updated.", HttpStatus.OK);
     }
 
     /**
@@ -70,7 +72,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Deletes a user by setting their active status to false.
-     *
      */
     @Override
     public void deleteUser(Long id) {

@@ -64,11 +64,12 @@ class UserControllerTest {
         roles.add(Role.ADMIN);
         UpdateUserRequest request
                 = new UpdateUserRequest(1L, "baran", "yalçın", "baran@gmail.com", "password123", roles);
-        when(userService.updateUser(any())).thenReturn("User updated");
+        when(userService.updateUser(any())).thenReturn(new ResponseEntity<>("User updated", HttpStatus.OK));
 
-        String result = userController.updateUser(request);
+        ResponseEntity<String> result = userController.updateUser(request);
 
-        assertEquals("User updated", result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("User updated", result.getBody());
     }
 
     @Test
