@@ -125,6 +125,17 @@ public class CartServiceImpl implements CartService {
 
         String orderId = String.valueOf(order.getId());
 
+        notifyRecordService(orderId);
+
+        return "Checkout successful. Order ID: " + orderId + ". Record creation response will be logged.";
+    }
+
+    /**
+     * Notifies the record service to create a record for an order.
+     *
+     * @param orderId The ID of the order.
+     */
+    private void notifyRecordService(String orderId) {
         webClient.build()
                 .post()
                 .uri(String.format("http://record-service/record/create/%s", orderId))
@@ -139,8 +150,6 @@ public class CartServiceImpl implements CartService {
                     clearCart();
                     log.info("Checkout successful. Order ID: {}", orderId);
                 });
-
-        return "Checkout successful. Order ID: " + orderId + ". Record creation response will be logged.";
     }
 
 

@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -89,12 +91,13 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
         return excludedPaths.stream().noneMatch(requestPath::startsWith);
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String message) {
-        log.error(message);
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return Mono.error(new RuntimeException(message));
-    }
-
+   private Mono<Void> onError(ServerWebExchange exchange, String message) {
+    log.error(message);
+    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+    exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+    DataBuffer dataBuffer = exchange.getResponse().bufferFactory().wrap(("{\"error\": \"" + message + "\"}").getBytes());
+    return exchange.getResponse().writeWith(Mono.just(dataBuffer));
+}
     private boolean hasRequiredRole(Claims claims, List<String> requiredRoles) {
         if (requiredRoles == null || requiredRoles.isEmpty()) {
             return true;
