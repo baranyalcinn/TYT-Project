@@ -4,6 +4,10 @@ spring:
   profiles:
     active: dev
 
+  main:
+    lazy-initialization: true
+  jmx:
+    enabled: false
   jpa:
     hibernate:
       ddl-auto: none
@@ -25,7 +29,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info
+        include: health,info
   endpoint:
     health:
       probes:

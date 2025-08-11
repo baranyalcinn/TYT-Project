@@ -9,7 +9,7 @@ import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * A utility class that generates a PDF document for an OrderEntity object using Thymeleaf.
  */
-@Log4j2
+@Slf4j
 @Component
 @Async
 public class PdfGenerator {

@@ -7,11 +7,19 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: true
+  main:
+    lazy-initialization: true
 
 server:
   port: 8086
   jetty:
     max-http-response-header-size: 16384
+  http2:
+    enabled: true
+  reactive:
+    session:
+      timeout: 10m
+
 eureka:
   client:
     serviceUrl:
@@ -19,3 +27,9 @@ eureka:
 security:
   jwt:
     secret-key: TNDbOVzVNAzfbxBaqEkGRuY/bV5mMPjv5ZNL0kWuqMc=
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

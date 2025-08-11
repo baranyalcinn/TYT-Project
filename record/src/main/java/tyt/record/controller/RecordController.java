@@ -2,7 +2,7 @@ package tyt.record.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ import java.io.IOException;
  * It is annotated with @RestController, meaning it's a special @Controller that always returns @ResponseBody.
  * It is also annotated with @Log4j2 for logging purposes.
  */
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping("/record")
 @AllArgsConstructor

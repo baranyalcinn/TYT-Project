@@ -1,7 +1,7 @@
 package tyt.product.service.impl;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tyt.product.controller.response.CategoryResponse;
@@ -19,7 +19,7 @@ import java.util.Optional;
  * Service class for Category related operations.
  */
 @Service
-@Log4j2
+@Slf4j
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
