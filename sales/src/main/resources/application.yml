@@ -4,11 +4,13 @@ spring:
   profiles:
     active: dev
 
+  main:
+    lazy-initialization: true
   jpa:
     hibernate:
       ddl-auto: update
   jmx:
-    enabled: true
+    enabled: false
 server:
   port: 8082
   servlet:
@@ -22,7 +24,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info
+        include: health,info
   endpoint:
     health:
       probes:

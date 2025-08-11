@@ -2,7 +2,7 @@ package tyt.sales.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -21,6 +21,9 @@ import tyt.sales.model.PaymentMethod;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  * Service class for managing shopping cart operations.
  */
 @Service
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
@@ -41,6 +44,8 @@ public class CartServiceImpl implements CartService {
 
     private static final CartMapper cartMapper = CartMapper.INSTANCE;
     private static final OrderMapper orderMapper = OrderMapper.INSTANCE;
+
+    private static final ScheduledExecutorService notificationExecutor = Executors.newScheduledThreadPool(2);
 
     /**
      * Adds a product to the cart.
@@ -125,7 +130,8 @@ public class CartServiceImpl implements CartService {
 
         String orderId = String.valueOf(order.getId());
 
-        notifyRecordService(orderId);
+        // Dispatch notification asynchronously with slight backoff to avoid burst
+        notificationExecutor.schedule(() -> notifyRecordService(orderId), 100, TimeUnit.MILLISECONDS);
 
         return "Checkout successful. Order ID: " + orderId + ". Record creation response will be logged.";
     }
@@ -141,6 +147,7 @@ public class CartServiceImpl implements CartService {
                 .uri(String.format("http://record-service/record/create/%s", orderId))
                 .retrieve()
                 .bodyToMono(String.class)
+                .timeout(java.time.Duration.ofSeconds(5))
                 .onErrorResume(throwable -> {
                     log.error("Record creation failed. Error: {}", throwable.getMessage());
                     return Mono.just("Record creation failed");
@@ -303,8 +310,9 @@ public class CartServiceImpl implements CartService {
         orderProduct.setProduct(product);
         orderProduct.setQuantity(cartItem.getQuantity());
         orderProduct.setOrder(order);
+        orderProduct.setTotalPrice(cartItem.getTotalPrice());
+        orderProductRepository.save(orderProduct);
 
-        log.info("Order product created: {}", orderProduct);
-        return orderProductRepository.save(orderProduct);
+        return orderProduct;
     }
 }

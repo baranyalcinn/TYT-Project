@@ -2,7 +2,7 @@ package tyt.product.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import java.util.List;
  * This is the main controller for the Product entity.
  * It handles all the HTTP requests related to the Product entity.
  */
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping("/product")
 @AllArgsConstructor

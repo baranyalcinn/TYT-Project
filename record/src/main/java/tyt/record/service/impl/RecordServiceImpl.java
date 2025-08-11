@@ -1,7 +1,7 @@
 package tyt.record.service.impl;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 @Service
 @Primary
-@Log4j2
+@Slf4j
 @AllArgsConstructor
 public class RecordServiceImpl implements RecordService {
 
